@@ -1,0 +1,51 @@
+package scwebapp
+
+object HttpStatusCodes {
+	sealed abstract class HttpStatusCode(val id:Int)
+	
+	case object CONTINUE						extends HttpStatusCode(100)
+	case object SWITCHING_PROTOCOLS				extends HttpStatusCode(101)
+	
+	case object OK								extends HttpStatusCode(200)
+	case object CREATED							extends HttpStatusCode(201)
+	case object ACCEPTED						extends HttpStatusCode(202)
+	case object NON_AUTHORITATIVE_INFORMATION	extends HttpStatusCode(203)
+	case object NO_CONTENT						extends HttpStatusCode(204)
+	case object RESET_CONTENT					extends HttpStatusCode(205)
+	case object PARTIAL_CONTENT					extends HttpStatusCode(206)
+	
+	case object MULTIPLE_CHOICES				extends HttpStatusCode(300)
+	case object MOVED_PERMANENTLY				extends HttpStatusCode(301)
+	case object MOVED_TEMPORARILY				extends HttpStatusCode(302)
+	// case object FOUND							extends HttpStatusCode(302)
+	case object SEE_OTHER						extends HttpStatusCode(303)
+	case object NOT_MODIFIED					extends HttpStatusCode(304)
+	case object USE_PROXY						extends HttpStatusCode(305)
+	case object TEMPORARY_REDIRECT				extends HttpStatusCode(307)
+	
+	case object BAD_REQUEST						extends HttpStatusCode(400)
+	case object UNAUTHORIZED					extends HttpStatusCode(401)
+	case object PAYMENT_REQUIRED				extends HttpStatusCode(402)
+	case object FORBIDDEN						extends HttpStatusCode(403)
+	case object NOT_FOUND						extends HttpStatusCode(404)
+	case object METHOD_NOT_ALLOWED				extends HttpStatusCode(405)
+	case object NOT_ACCEPTABLE					extends HttpStatusCode(406)
+	case object PROXY_AUTHENTICATION_REQUIRED	extends HttpStatusCode(407)
+	case object REQUEST_TIMEOUT					extends HttpStatusCode(408)
+	case object CONFLICT						extends HttpStatusCode(409)
+	case object GONE							extends HttpStatusCode(410)
+	case object LENGTH_REQUIRED					extends HttpStatusCode(411)
+	case object PRECONDITION_FAILED				extends HttpStatusCode(412)
+	case object REQUEST_ENTITY_TOO_LARGE		extends HttpStatusCode(413)
+	case object REQUEST_URI_TOO_LONG			extends HttpStatusCode(414)
+	case object UNSUPPORTED_MEDIA_TYPE			extends HttpStatusCode(415)
+	case object REQUESTED_RANGE_NOT_SATISFIABLE	extends HttpStatusCode(416)
+	case object EXPECTATION_FAILED				extends HttpStatusCode(417)
+	
+	case object INTERNAL_SERVER_ERROR			extends HttpStatusCode(500)
+	case object NOT_IMPLEMENTED					extends HttpStatusCode(501)
+	case object BAD_GATEWAY						extends HttpStatusCode(502)
+	case object SERVICE_UNAVAILABLE				extends HttpStatusCode(503)
+	case object GATEWAY_TIMEOUT					extends HttpStatusCode(504)
+	case object HTTP_VERSION_NOT_SUPPORTED		extends HttpStatusCode(505)
+}
