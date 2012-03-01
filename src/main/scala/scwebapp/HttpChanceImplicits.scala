@@ -2,7 +2,7 @@ package scwebapp
 
 import javax.servlet.http._
 
-import scutil.Types._
+import scutil.Functions._
 import scutil.Implicits._
 
 object HttpChanceImplicits extends HttpChanceImplicits

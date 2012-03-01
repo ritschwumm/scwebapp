@@ -2,8 +2,8 @@ package scwebapp
 
 import javax.servlet.http._
 
+import scutil.Functions._
 import scutil.Implicits._
-import scutil.Types._
 
 object HttpHandlerImplicits extends HttpHandlerImplicits
 

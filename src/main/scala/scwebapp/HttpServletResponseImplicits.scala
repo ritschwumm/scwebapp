@@ -5,6 +5,7 @@ import java.nio.charset.Charset
 import java.util.zip.GZIPOutputStream
 import javax.servlet.http._
 
+import scutil.Functions._
 import scutil.Implicits._
 import scutil.Resource._
 
@@ -66,12 +67,19 @@ final class HttpServletResponseExtension(delegate:HttpServletResponse) {
 	}
 	
 	def sendFile(file:File) {
-		sendStream(new FileInputStream(file))
+		// BETTER include content length here?
+		streamFrom(thunk(new FileInputStream(file)))
 	}
 	
-	def sendStream(stream:InputStream) {
+	def streamFrom(stream:Thunk[InputStream]) {
 		// TODO handle exceptions
-		stream use { _ copyTo delegate.getOutputStream }
+		stream() use { _ copyTo delegate.getOutputStream }
+		delegate.getOutputStream.flush()
+	}
+	
+	def writeFrom(reader:Thunk[Reader]) {
+		// TODO handle exceptions
+		reader() use { _ copyTo delegate.getWriter }
 		delegate.getOutputStream.flush()
 	}
 	
@@ -82,12 +90,20 @@ final class HttpServletResponseExtension(delegate:HttpServletResponse) {
 	}
 	
 	def sendFileGZIP(file:File) {
-		sendStreamGZIP(new FileInputStream(file))
+		streamFromGZIP(thunk(new FileInputStream(file)))
 	}
 	
-	def sendStreamGZIP(stream:InputStream) {
+	def streamFromGZIP(stream:Thunk[InputStream]) {
 		outputStreamGZIP { out =>
-			stream use { in =>
+			stream() use { in =>
+				in copyTo out
+			}
+		}
+	}
+	
+	def writeFromGZIP(reader:Thunk[Reader]) {
+		writerGZIP { out =>
+			reader() use { in =>
 				in copyTo out
 			}
 		}
@@ -97,7 +113,7 @@ final class HttpServletResponseExtension(delegate:HttpServletResponse) {
 	private val gzipBufferSize	= 8192
 	
 	// TODO handle exceptions
-	private def writerGZIP(func:Writer=>Unit) {
+	private def writerGZIP(func:Effect[Writer]) {
 		val encoding	= delegate.getCharacterEncoding nullError "missing response character encoding"
 		outputStreamGZIP { stream =>
 			val writer	= new OutputStreamWriter(stream, encoding)
@@ -107,7 +123,7 @@ final class HttpServletResponseExtension(delegate:HttpServletResponse) {
 	}
 	
 	// TODO handle exceptions
-	private def outputStreamGZIP(func:OutputStream=>Unit) {
+	private def outputStreamGZIP(func:Effect[OutputStream]) {
 		val stream	= new GZIPOutputStream(delegate.getOutputStream, gzipBufferSize)
 		func(stream)
 		stream.finish()

@@ -1,6 +1,6 @@
 import javax.servlet.http._
 
-import scutil.Types._
+import scutil.Functions._
 
 package object scwebapp {
 	type HttpResponder	= Effect[HttpServletResponse]

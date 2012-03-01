@@ -25,6 +25,8 @@ object HttpCondition {
 	val LockMethod:HttpCondition		= MethodIs("LOCK")
 	val UnlockMethod:HttpCondition		= MethodIs("UNLOCK")
 			
+	//------------------------------------------------------------------------------
+	
 	def MethodIs(method:String):HttpCondition	=
 			request => request.getMethod.toUpperCase ==== method.toUpperCase
 

@@ -1,5 +1,6 @@
 package scwebapp
 
+import scutil.Functions.neverComesHere
 // @see http://tools.ietf.org/html/rfc2046
 // @see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.1
 
@@ -37,10 +38,11 @@ object MimeType {
 					else				return None
 			}
 		}
-		sys error "silence, i kill you"
+		neverComesHere
 	}
 }
 	
 case class MimeType(major:String, minor:String, parameters:Map[String,String]) {
 	def value:String = major + "/" + minor + (parameters map { case (key,value) => "; " + key + "=" + value } mkString "")
+	def attribute(key:String, value:String):MimeType	= copy(parameters = parameters + (key->value))
 }
