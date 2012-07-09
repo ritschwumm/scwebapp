@@ -3,6 +3,8 @@ package scwebapp
 import javax.servlet._
 import javax.servlet.http._
 
+import scutil.Functions._
+
 object HttpAttribute {
 	def servlet[T<:AnyRef](context:ServletContext, name:String)	= new HttpAttribute[T](
 			()	=> (context getAttribute name).asInstanceOf[T],
@@ -20,7 +22,7 @@ object HttpAttribute {
 			()	=> context removeAttribute name)
 }
 
-final class HttpAttribute[T](getter:()=>T, setter:T=>Unit, remover:()=>Unit) {
+final class HttpAttribute[T](getter:Thunk[T], setter:Effect[T], remover:Task) {
 	def get:Option[T] = Option(getter())
 	
 	def set(t:Option[T]) { 

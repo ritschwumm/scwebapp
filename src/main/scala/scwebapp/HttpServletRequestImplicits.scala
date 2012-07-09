@@ -65,6 +65,9 @@ final class HttpServletRequestExtension(delegate:HttpServletRequest) {
 			
 	//------------------------------------------------------------------------------
 	
+	def cookies:Seq[Cookie]	= 
+			delegate.getCookies.guardNotNull.toSeq.flatten
+	
 	/*
 	// NOTE this is an unfold
 	
