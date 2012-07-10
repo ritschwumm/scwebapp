@@ -58,7 +58,7 @@ object HttpResponder {
 	
 	/** the string function gets passed a function to encode urls */
 	def WithEncodeLink(mkResponder:(String=>String)=>HttpResponder):HttpResponder	=
-			response	=> mkResponder(response.encodeURL)
+			response	=> mkResponder(response.encodeURL)(response)
 		
 	/** mkString gets passed a function encoding a path suitable for a link */
 	def SendStringWithLinks(mkString:(String=>String)=>String):HttpResponder	=
