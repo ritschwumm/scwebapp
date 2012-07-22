@@ -1,4 +1,5 @@
 package scwebapp
+package api
 
 import javax.servlet.http._
 
@@ -10,6 +11,9 @@ trait HttpSessionImplicits {
 }
 
 final class HttpSessionExtension(delegate:HttpSession) {
-	def attribute[T<:AnyRef](name:String):HttpAttribute[T]	=
-			HttpAttribute session (delegate, name)
+	def attribute[T<:AnyRef](name:String):HttpAttribute[T]	= 
+			new HttpAttribute[T](
+					()	=> (delegate getAttribute name).asInstanceOf[T],
+					t	=> delegate setAttribute (name, t),
+					()	=> delegate removeAttribute name)
 }

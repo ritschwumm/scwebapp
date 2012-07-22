@@ -1,4 +1,5 @@
 package scwebapp
+package syntax
 
 import javax.servlet.http._
 
@@ -14,11 +15,5 @@ trait HttpHandlerImplicits {
 	final class HttpHandlerExt(delegate:HttpHandler) {
 		def toChance:HttpChance	= 
 				request	=> Some(delegate(request))
-				
-		def when(condition:HttpCondition):HttpChance	=
-				condition guardOn delegate
-						
-		def unless(condition:HttpCondition):HttpChance	= 
-				condition preventOn delegate
 	}
 }

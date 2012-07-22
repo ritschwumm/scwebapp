@@ -1,7 +1,11 @@
 package scwebapp
+package api
 
+import java.util.{ Enumeration=>JEnumeration }
 import java.nio.charset.Charset
 import javax.servlet.http._
+
+import scala.collection.JavaConverters._
 
 import scutil.Implicits._
 import scutil.Base64
@@ -32,9 +36,16 @@ final class HttpServletRequestExtension(delegate:HttpServletRequest) {
 	def setEncoding(encoding:Charset) {
 		delegate setCharacterEncoding encoding.name
 	}
-	
+			
 	//------------------------------------------------------------------------------
 	
+	def parameters:Seq[(String,String)]	=
+			for {	
+				name	<- delegate.getParameterNames.asInstanceOf[JEnumeration[String]].asScala.toSeq
+				value	<- (delegate getParameterValues name)
+			}
+			yield (name, value)
+			
 	def paramExists(name:String):Boolean	=
 			(delegate getParameter name) != null
 			
@@ -49,6 +60,13 @@ final class HttpServletRequestExtension(delegate:HttpServletRequest) {
 	
 	//------------------------------------------------------------------------------
 	
+	def headers:Seq[(String,String)]	=
+			for {	
+				name	<- delegate.getHeaderNames.asInstanceOf[JEnumeration[String]].asScala.toSeq
+				value	<- (delegate getHeaders name).asInstanceOf[JEnumeration[String]].asScala
+			}
+			yield (name, value)
+			
 	def headerString(name:String):Option[String] = 
 			Option(delegate getHeader name)
 			
@@ -60,25 +78,14 @@ final class HttpServletRequestExtension(delegate:HttpServletRequest) {
 		
 	//------------------------------------------------------------------------------
 	
-	def attribute[T<:AnyRef](name:String):HttpAttribute[T]	=
-			HttpAttribute request (delegate, name)
-			
+	def cookies:Seq[(String,String)]	=
+			delegate.getCookies.guardNotNull.toSeq.flatten map { it => (it.getName, it.getValue) }
+		
 	//------------------------------------------------------------------------------
 	
-	def cookies:Seq[Cookie]	= 
-			delegate.getCookies.guardNotNull.toSeq.flatten
-	
-	/*
-	// NOTE this is an unfold
-	
-	val names	= delegate.getHeaderNames
-	while (names.hasMoreElements) {
-		val	name	= names.nextElement
-		val values	= delegate getHeaders name.asInstanceOf[String]
-		while (values.hasMoreElements) {
-			val	value	= values.nextElement
-			println(name + "=" + value)
-		}
-	}
-	*/
+	def attribute[T<:AnyRef](name:String):HttpAttribute[T]	=
+			new HttpAttribute[T](
+					()	=> (delegate getAttribute name).asInstanceOf[T],
+					t	=> delegate setAttribute (name, t),
+					()	=> delegate removeAttribute name)
 }

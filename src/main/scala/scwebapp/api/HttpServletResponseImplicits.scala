@@ -1,4 +1,5 @@
 package scwebapp
+package api
 
 import java.io._
 import java.nio.charset.Charset
@@ -9,7 +10,7 @@ import scutil.Functions._
 import scutil.Implicits._
 import scutil.Resource._
 
-import HttpStatusCodes._
+import HttpStatusEnum._
 
 object HttpServletResponseImplicits extends HttpServletResponseImplicits
 	
@@ -56,7 +57,7 @@ final class HttpServletResponseExtension(delegate:HttpServletResponse) {
 		delegate setHeader ("Content-Length", contentLength.toString)
 	}
 	
-	def setStatus(status:HttpStatusCode) {
+	def setStatus(status:HttpStatus) {
 		delegate setStatus status.id
 	}
 	

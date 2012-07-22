@@ -1,4 +1,5 @@
 package scwebapp
+package syntax
 
 import javax.servlet.http._
 
@@ -17,11 +18,5 @@ trait HttpChanceImplicits {
 						
 		def orElse(that:HttpChance):HttpChance	= 
 				request	=> delegate(request) orElse that(request)
-				
-		def filter(condition:HttpCondition):HttpChance	=
-				condition flatGuardOn delegate
-						
-		def filterNot(condition:HttpCondition):HttpChance	=
-				condition flatPreventOn delegate
 	}
 }

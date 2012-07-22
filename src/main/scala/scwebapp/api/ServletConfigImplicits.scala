@@ -1,6 +1,7 @@
 package scwebapp
+package api
 
-import java.util.{Enumeration=>JEnumeration}
+import java.util.{ Enumeration=>JEnumeration }
 import javax.servlet._
 
 import scala.collection.JavaConverters._
@@ -15,6 +16,9 @@ trait ServletConfigImplicits {
 }
 
 final class ServletConfigExtension(delegate:ServletConfig) {
+	def initParameters:Seq[(String,String)]	=
+			delegate.getInitParameterNames.asInstanceOf[JEnumeration[String]].asScala.toSeq map { _ firstBy  delegate.getInitParameter }
+			
 	def initParamNames:Seq[String]	=
 			delegate.getInitParameterNames.asInstanceOf[JEnumeration[String]].asScala.toSeq
 			

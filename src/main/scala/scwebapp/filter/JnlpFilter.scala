@@ -14,12 +14,28 @@ to allow deploying the application to different servers without changing
 the original jnlp file
 */
 final class JnlpFilter extends Filter with Logging {
-	// TODO hardcoded
-	private val charset	= "UTF-8"
+	@volatile private var filterConfig:Option[FilterConfig] 	= None
 	
-	def init(filterConfig:FilterConfig) {}
-	def destroy() {}
+	def init(filterConfig:FilterConfig) {
+		this.filterConfig	= Some(filterConfig)
+	}
 	
+	def destroy() {
+		this.filterConfig	= None
+	}
+	
+	private def charset:String	=
+			configCharset getOrElse "UTF-8"
+		
+	private def configCharset:Option[String]	=
+			for {
+				config	<- filterConfig
+				charset	<- Option(config getInitParameter "charset")
+			}
+			yield charset
+			
+	//------------------------------------------------------------------------------
+		
 	def doFilter(request:ServletRequest, response:ServletResponse, filterChain:FilterChain) {
 		val	httpRequest		= request.asInstanceOf[HttpServletRequest]
 		val	httpResponse	= response.asInstanceOf[HttpServletResponse]
@@ -30,7 +46,7 @@ final class JnlpFilter extends Filter with Logging {
 		
 		val input		= new String(wrapper.written, charset)
 		val codeBase	= httpRequest.getRequestURL.toString replaceAll ("/[^/]*$", "/")
-		val patched		= input replace ("$$codeBase", codeBase)
+		val patched		= input replace ("$$codebase", codeBase)
 		val output		= patched getBytes charset
 		
 		httpResponse setContentLength	output.size

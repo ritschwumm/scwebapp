@@ -1,8 +1,9 @@
 package scwebapp
+package api
 
+import java.util.{ Set=>JSet }
 import java.io.InputStream
 import java.net.URL
-import java.util.{Set=>JSet}
 import javax.servlet._
 
 import scala.collection.JavaConverters._
@@ -15,9 +16,6 @@ trait ServletContextImplicits {
 }
 
 final class ServletContextExtension(delegate:ServletContext) {
-	def attribute[T<:AnyRef](name:String):HttpAttribute[T]	=
-			HttpAttribute servlet (delegate, name)
-			
 	def mimeTypeFor(path:String):Option[MimeType]	=
 			Option(delegate getMimeType path) flatMap MimeType.parse 
 	
@@ -29,4 +27,10 @@ final class ServletContextExtension(delegate:ServletContext) {
 			
 	def resourcePaths(base:String):Option[Set[String]]	=
 			Option(delegate getResourcePaths base) map { _.asInstanceOf[JSet[String]].asScala.toSet }
+		
+	def attribute[T<:AnyRef](name:String):HttpAttribute[T]	=
+		 	new HttpAttribute[T](
+					()	=> (delegate getAttribute name).asInstanceOf[T],
+					t	=> delegate setAttribute (name, t),
+					()	=> delegate removeAttribute name)
 }

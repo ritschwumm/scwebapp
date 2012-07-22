@@ -1,4 +1,5 @@
 package scwebapp
+package syntax
 
 object HttpResponderImplicits extends HttpResponderImplicits
 
