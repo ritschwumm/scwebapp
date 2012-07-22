@@ -74,6 +74,7 @@ object HttpInstances {
 		cookie	setMaxAge	age
 		cookie	setSecure	secure
 		cookie	setVersion	version	
+		it addCookie cookie
 	}
 	
 	def AddHeader(name:String, value:String):HttpResponder		= _ addHeader			(name, value)
