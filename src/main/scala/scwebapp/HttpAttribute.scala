@@ -1,6 +1,6 @@
 package scwebapp
 
-import scutil.Functions._
+import scutil.lang._
 
 final class HttpAttribute[T](getter:Thunk[T], setter:Effect[T], remover:Task) {
 	def get:Option[T] = Option(getter())

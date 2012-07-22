@@ -6,8 +6,8 @@ import java.nio.charset.Charset
 import javax.servlet._
 import javax.servlet.http._
 
+import scutil.lang._
 import scutil.Implicits._
-import scutil.Functions._
 import scutil.time._
 
 import HttpImplicits._

@@ -3,7 +3,7 @@ package syntax
 
 import javax.servlet.http._
 
-import scutil.Functions._
+import scutil.lang._
 import scutil.Implicits._
 
 object HttpChanceImplicits extends HttpChanceImplicits

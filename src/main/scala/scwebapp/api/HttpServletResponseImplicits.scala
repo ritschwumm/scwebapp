@@ -6,7 +6,7 @@ import java.nio.charset.Charset
 import java.util.zip.GZIPOutputStream
 import javax.servlet.http._
 
-import scutil.Functions._
+import scutil.lang._
 import scutil.Implicits._
 import scutil.Resource._
 

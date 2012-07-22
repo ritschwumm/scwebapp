@@ -1,6 +1,6 @@
 package scwebapp
 
-import scutil.Functions.neverComesHere
+import scutil.lang._
 // @see http://tools.ietf.org/html/rfc2046
 // @see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.1
 
