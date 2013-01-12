@@ -47,7 +47,7 @@ final class HttpServletResponseExtension(delegate:HttpServletResponse) {
 	}
 	
 	/*
-	// TODO implement ContentEncoding (?)
+	// BETTER implement ContentEncoding (?)
 	def setContentEncoding(contentEncoding:ContentEncoding) {
 		delegate setHeader  ("Content-Encoding", contentEncoding.value)	
 	}

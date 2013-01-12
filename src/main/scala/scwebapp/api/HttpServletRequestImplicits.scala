@@ -23,13 +23,12 @@ final class HttpServletRequestExtension(delegate:HttpServletRequest) {
 	def remoteUser:Option[String]	= Option(delegate.getRemoteUser)
 
 	/** see http://www.ietf.org/rfc/rfc2617.txt */
-	def authorizationBasic:Option[(String,String)]	=
+	def authorizationBasic(encoding:Charset):Option[(String,String)]	=
 			for {
 				header	<- Option(delegate getHeader "Authorization")
 				code	<- header cutPrefix "Basic "
 				bytes	<- Base64 read code
-				// TODO check UTF-8 makes sense here
-				pair	<- new String(bytes, "UTF-8") splitAroundFirst ':'
+				pair	<- new String(bytes, encoding) splitAroundFirst ':'
 			}
 			yield pair
 			

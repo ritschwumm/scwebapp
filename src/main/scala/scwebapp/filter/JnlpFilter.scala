@@ -64,28 +64,12 @@ final class JnlpFilter extends Filter with Logging {
 		}
 		private val writer	= new PrintWriter(new OutputStreamWriter(outputStream, charset))
 		
+		def failed	= response.getStatus != 200
+		
 		/** provide the response string */
 		def written:Array[Byte]	= buffer.toArray
 		
 		override def getWriter():PrintWriter				= writer
 		override def getOutputStream():ServletOutputStream	= outputStream
-		
-		// TODO use response.getStatus (in servlet 2.0)
-		var failed	= false
-		
-		override def setStatus(sc:Int) {
-			if (sc != 200)	failed	= true
-			super.setStatus(sc)
-		}
-		
-		override def sendError(sc:Int) { 
-			failed	= true
-			super.sendError(sc)			
-		}
-		
-		override def sendError(sc:Int, msg:String) {
-			failed	= true
-			super.sendError(sc, msg)	
-		}
 	}
 }
