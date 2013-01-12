@@ -27,7 +27,7 @@ final class HttpServletRequestExtension(delegate:HttpServletRequest) {
 			for {
 				header	<- Option(delegate getHeader "Authorization")
 				code	<- header cutPrefix "Basic "
-				bytes	<- Base64 unapply code
+				bytes	<- Base64 read code
 				// TODO check UTF-8 makes sense here
 				pair	<- new String(bytes, "UTF-8") splitAroundFirst ':'
 			}

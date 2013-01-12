@@ -9,8 +9,6 @@ top-level:	text image audio video application multipart message
 */
 
 object MimeType {
-	def apply(major:String, minor:String):MimeType	= MimeType(major, minor, Map.empty)
-	
 	private val	 RE1	= """^([a-z]+|\*)/([a-z*]+|\*)(.*)$""".r
 	def parse(s:String):Option[MimeType]	= {
 		s match {
@@ -42,7 +40,7 @@ object MimeType {
 	}
 }
 	
-case class MimeType(major:String, minor:String, parameters:Map[String,String]) {
+case class MimeType(major:String, minor:String, parameters:Map[String,String] = Map.empty) {
 	def value:String = major + "/" + minor + (parameters map { case (key,value) => "; " + key + "=" + value } mkString "")
 	def attribute(key:String, value:String):MimeType	= copy(parameters = parameters + (key->value))
 }
