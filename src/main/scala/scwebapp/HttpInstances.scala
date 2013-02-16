@@ -70,7 +70,7 @@ object HttpInstances {
 		path	foreach cookie.setPath
 		domain	foreach cookie.setDomain
 		comment	foreach	cookie.setComment
-		val	age	= maxAge	cata (_.millis / 1000 toInt, -1)
+		val	age	= maxAge	cataSwapped (_.millis / 1000 toInt, -1)
 		cookie	setMaxAge	age
 		cookie	setSecure	secure
 		cookie	setVersion	version	

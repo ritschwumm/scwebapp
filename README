@@ -1,7 +1,7 @@
 Simple web framework, a thin wrapper around HttpServlets.
 
 To build this code, get and install SBT from 
-	https://github.com/harrah/xsbt
+	https://github.com/sbt/sbt
 
 Get and install these library/libraries before building:
 	https://github.com/ritschwumm/scutil
