@@ -7,8 +7,8 @@ package object scwebapp {
 	type HttpResponder	= Effect[HttpServletResponse]
 	
 	type HttpHandler	= HttpServletRequest => HttpResponder
-	type HttpChance		= Chance[HttpServletRequest,HttpResponder]
+	type HttpPHandler	= PFunction[HttpServletRequest,HttpResponder]
 	
-	// implicit def ResponderToHandler(responder:HttpResponder):HttpChance		= _ => Some(responder)
+	// implicit def ResponderToHandler(responder:HttpResponder):HttpPHandler		= _ => Some(responder)
 	// implicit def StatusToResponder(status:HttpStatus):HttpResponder		= _ setStatus status
 }

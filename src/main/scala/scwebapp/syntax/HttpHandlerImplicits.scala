@@ -13,7 +13,7 @@ trait HttpHandlerImplicits {
 			new HttpHandlerExt(delegate)
 	
 	final class HttpHandlerExt(delegate:HttpHandler) {
-		def toChance:HttpChance	= 
+		def toPFunction:HttpPHandler	= 
 				request	=> Some(delegate(request))
 	}
 }

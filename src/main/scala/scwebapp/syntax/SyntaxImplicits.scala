@@ -5,5 +5,5 @@ object SyntaxImplicits extends SyntaxImplicits
 
 trait SyntaxImplicits
 		extends	HttpHandlerImplicits
-		with	HttpChanceImplicits
+		with	HttpPHandlerImplicits
 		with	HttpResponderImplicits
