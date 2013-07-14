@@ -2,12 +2,12 @@ name			:= "scwebapp"
 
 organization	:= "de.djini"
 
-version			:= "0.17.0"
+version			:= "0.18.0"
 
-scalaVersion	:= "2.10.1"
+scalaVersion	:= "2.10.2"
 
 libraryDependencies	++= Seq(
-	"de.djini"		%%	"scutil"			% "0.20.0"	% "compile",
+	"de.djini"		%%	"scutil"			% "0.21.0"	% "compile",
 	"javax.servlet"	%	"javax.servlet-api"	% "3.0.1"	% "provided"
 )
 
