@@ -8,7 +8,7 @@ import javax.servlet.http._
 
 import scutil.lang._
 import scutil.Implicits._
-import scutil.Resource._
+import scutil.Resources._
 
 import HttpStatusEnum._
 
