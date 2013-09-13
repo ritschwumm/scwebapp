@@ -59,12 +59,12 @@ object HttpInstances {
 	def AddCookie(
 		name:String,
 		value:String,
-		path:Option[String]		= None,	
-		domain:Option[String]	= None,
-		comment:Option[String]	= None,
-		maxAge:Option[Duration]	= None,	// None deletes on browser exit, zero deletes immediately
-		secure:Boolean			= false,
-		version:Int				= 0		// 0=netscape, 1=RFC
+		path:Option[String]				= None,	
+		domain:Option[String]			= None,
+		comment:Option[String]			= None,
+		maxAge:Option[MilliDuration]	= None,	// None deletes on browser exit, zero deletes immediately
+		secure:Boolean					= false,
+		version:Int						= 0		// 0=netscape, 1=RFC
 	):HttpResponder = { it	=> 
 		val cookie	= new Cookie(name, value)
 		path	foreach cookie.setPath

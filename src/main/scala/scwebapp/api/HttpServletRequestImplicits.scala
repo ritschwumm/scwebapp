@@ -8,7 +8,7 @@ import javax.servlet.http._
 import scala.collection.JavaConverters._
 
 import scutil.Implicits._
-import scutil.Base64
+import scutil.io.Base64
 
 object HttpServletRequestImplicits extends HttpServletRequestImplicits
 
