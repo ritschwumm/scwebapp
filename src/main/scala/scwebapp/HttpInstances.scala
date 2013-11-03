@@ -22,7 +22,7 @@ object HttpInstances {
 			constant(responder)
 		
 	//------------------------------------------------------------------------------
-	//## chances
+	//## partial handlers
 	
 	val Reject:HttpPHandler	= 
 			constant(None)
@@ -33,8 +33,17 @@ object HttpInstances {
 	def Method(method:HttpMethod):HttpPredicate	=
 			_.getMethod.toUpperCase ==== method.id.toUpperCase
 			
-	def FullPath(path:String):HttpPredicate	=
-			_.fullPath ==== path
+	def FullPath(path:String, encoding:Charset):HttpPredicate	=
+			it => (it fullPath encoding) ==== path
+			
+	def FullPathRaw(path:String):HttpPredicate	=
+			_.fullPathRaw ==== path
+		
+	def PathInfo(path:String, encoding:Charset):HttpPredicate	=
+			_ pathInfo encoding exists { _ ==== path }
+		
+	def PathInfoRaw(path:String):HttpPredicate	=
+			_.pathInfoRaw exists { _ ==== path }
 			
 	def ServletPath(path:String):HttpPredicate	=
 			_.getServletPath ==== path
@@ -114,5 +123,5 @@ object HttpInstances {
 	def SendStringWithLinks(mkString:(String=>String)=>String):HttpResponder	=
 			WithEncodeLink(mkString andThen SendString)
 		
-	val Pass:HttpResponder	= _ => ()
+	val Pass:HttpResponder	= constant(())
 }

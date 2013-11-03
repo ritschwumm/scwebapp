@@ -6,14 +6,14 @@ import javax.servlet.http._
 object HttpSessionImplicits extends HttpSessionImplicits
 
 trait HttpSessionImplicits {
-	implicit def extendHttpSession(delegate:HttpSession):HttpSessionExtension		= 
-			new HttpSessionExtension(delegate)
+	implicit def extendHttpSession(peer:HttpSession):HttpSessionExtension		= 
+			new HttpSessionExtension(peer)
 }
 
-final class HttpSessionExtension(delegate:HttpSession) {
+final class HttpSessionExtension(peer:HttpSession) {
 	def attribute[T<:AnyRef](name:String):HttpAttribute[T]	= 
 			new HttpAttribute[T](
-					()	=> (delegate getAttribute name).asInstanceOf[T],
-					t	=> delegate setAttribute (name, t),
-					()	=> delegate removeAttribute name)
+					()	=> (peer getAttribute name).asInstanceOf[T],
+					t	=> peer setAttribute (name, t),
+					()	=> peer removeAttribute name)
 }

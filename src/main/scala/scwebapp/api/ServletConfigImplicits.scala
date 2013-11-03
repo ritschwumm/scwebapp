@@ -11,22 +11,22 @@ import scutil.Implicits._
 object ServletConfigImplicits extends ServletConfigImplicits
 
 trait ServletConfigImplicits {
-	implicit def extendServletConfig(delegate:ServletConfig):ServletConfigExtension		= 
-			new ServletConfigExtension(delegate)
+	implicit def extendServletConfig(peer:ServletConfig):ServletConfigExtension		= 
+			new ServletConfigExtension(peer)
 }
 
-final class ServletConfigExtension(delegate:ServletConfig) {
+final class ServletConfigExtension(peer:ServletConfig) {
 	def initParameters:Seq[(String,String)]	=
-			delegate.getInitParameterNames.asInstanceOf[JEnumeration[String]].asScala.toSeq map { _ firstBy  delegate.getInitParameter }
+			peer.getInitParameterNames.asInstanceOf[JEnumeration[String]].asScala.toVector map { _ firstBy peer.getInitParameter }
 			
 	def initParamNames:Seq[String]	=
-			delegate.getInitParameterNames.asInstanceOf[JEnumeration[String]].asScala.toSeq
+			peer.getInitParameterNames.asInstanceOf[JEnumeration[String]].asScala.toVector
 			
 	def initParamExists(name:String):Boolean	=
-			(delegate getInitParameter name) != null
+			(peer getInitParameter name) != null
 			
 	def initParamString(name:String):Option[String] =
-			Option(delegate getInitParameter name)
+			Option(peer getInitParameter name)
 	
 	def initParamInt(name:String):Option[Int] =
 			initParamString(name) flatMap { _.toIntOption }

@@ -6,7 +6,7 @@ import javax.servlet.http._
 
 import scala.collection.mutable
 
-import scutil.log.Logging
+import scutil.log._
 
 /** 
 replaces "$$codebase" with the parent of the JNLP file itself
@@ -42,16 +42,19 @@ final class JnlpFilter extends Filter with Logging {
 		
 		val	wrapper	= new ResponseWrapper(httpResponse)
 		filterChain doFilter (httpRequest, wrapper)
-		if (wrapper.failed)	return
-		
-		val input		= new String(wrapper.written, charset)
-		val codeBase	= httpRequest.getRequestURL.toString replaceAll ("/[^/]*$", "/")
-		val patched		= input replace ("$$codebase", codeBase)
-		val output		= patched getBytes charset
-		
-		httpResponse setContentLength	output.size
-		httpResponse.getOutputStream	write	output
-		httpResponse.getOutputStream 	flush	()
+		if (wrapper.failed) {
+			ERROR("wrapped failed")
+		}
+		else {
+			val input		= new String(wrapper.written, charset)
+			val codeBase	= httpRequest.getRequestURL.toString replaceAll ("/[^/]*$", "/")
+			val patched		= input replace ("$$codebase", codeBase)
+			val output		= patched getBytes charset
+			
+			httpResponse setContentLength	output.size
+			httpResponse.getOutputStream	write	output
+			httpResponse.getOutputStream 	flush	()
+		}
 	}
 	
 	/** swallows the response and makes it accessible via the get method  */
@@ -64,7 +67,7 @@ final class JnlpFilter extends Filter with Logging {
 		}
 		private val writer	= new PrintWriter(new OutputStreamWriter(outputStream, charset))
 		
-		def failed	= response.getStatus != 200
+		def failed:Boolean	= response.getStatus != 200
 		
 		/** provide the response string */
 		def written:Array[Byte]	= buffer.toArray

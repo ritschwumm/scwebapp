@@ -14,56 +14,56 @@ import HttpStatusEnum._
 object HttpServletResponseImplicits extends HttpServletResponseImplicits
 	
 trait HttpServletResponseImplicits {
-	implicit def extendHttpServletResponse(delegate:HttpServletResponse):HttpServletResponseExtension	= 
-			new HttpServletResponseExtension(delegate)
+	implicit def extendHttpServletResponse(peer:HttpServletResponse):HttpServletResponseExtension	= 
+			new HttpServletResponseExtension(peer)
 }
 
-final class HttpServletResponseExtension(delegate:HttpServletResponse) {
+final class HttpServletResponseExtension(peer:HttpServletResponse) {
 	def noCache() {
-		delegate addHeader ("Cache-Control",	"no-cache, must-revalidate")
-		delegate addHeader ("Expires",			"1 Jan 1971")
+		peer addHeader ("Cache-Control",	"no-cache, must-revalidate")
+		peer addHeader ("Expires",			"1 Jan 1971")
 	}
 	
 	/** see http://www.ietf.org/rfc/rfc2617.txt */
 	def unauthorized(realm:String) {
-		delegate setHeader ("WWW-Authenticate", "Basic realm=\"" + realm + "\"")
+		peer setHeader ("WWW-Authenticate", "Basic realm=\"" + realm + "\"")
 		setStatus(UNAUTHORIZED)
 	}
 
 	/** redirect the client to another URL */
 	def redirect(path:String) {
-		delegate sendRedirect (delegate encodeRedirectURL path)
+		peer sendRedirect (peer encodeRedirectURL path)
 	}
 	
 	//------------------------------------------------------------------------------
 		
 	def setEncoding(encoding:Charset) {
-		delegate setCharacterEncoding encoding.name
+		peer setCharacterEncoding encoding.name
 	}
 
 	def setContentType(contentType:MimeType) {
-		delegate setContentType contentType.value
+		peer setContentType contentType.value
 	}
 	
 	/*
 	// BETTER implement ContentEncoding (?)
 	def setContentEncoding(contentEncoding:ContentEncoding) {
-		delegate setHeader  ("Content-Encoding", contentEncoding.value)	
+		peer setHeader  ("Content-Encoding", contentEncoding.value)	
 	}
 	*/
 	
 	def setContentLength(contentLength:Long) {
-		delegate setHeader ("Content-Length", contentLength.toString)
+		peer setHeader ("Content-Length", contentLength.toString)
 	}
 	
 	def setStatus(status:HttpStatus) {
-		delegate setStatus status.id
+		peer setStatus status.id
 	}
 	
 	//------------------------------------------------------------------------------
 	
 	def sendString(string:String) {
-		delegate.getWriter write string
+		peer.getWriter write string
 	}
 	
 	def sendFile(file:File) {
@@ -73,14 +73,14 @@ final class HttpServletResponseExtension(delegate:HttpServletResponse) {
 	
 	def streamFrom(stream:Thunk[InputStream]) {
 		// TODO handle exceptions
-		stream() use { _ copyTo delegate.getOutputStream }
-		delegate.getOutputStream.flush()
+		stream() use { _ copyTo peer.getOutputStream }
+		peer.getOutputStream.flush()
 	}
 	
 	def writeFrom(reader:Thunk[Reader]) {
 		// TODO handle exceptions
-		reader() use { _ copyTo delegate.getWriter }
-		delegate.getOutputStream.flush()
+		reader() use { _ copyTo peer.getWriter }
+		peer.getOutputStream.flush()
 	}
 	
 	//------------------------------------------------------------------------------
@@ -114,7 +114,7 @@ final class HttpServletResponseExtension(delegate:HttpServletResponse) {
 	
 	// TODO handle exceptions
 	private def writerGZIP(func:Effect[Writer]) {
-		val encoding	= delegate.getCharacterEncoding nullError "missing response character encoding"
+		val encoding	= peer.getCharacterEncoding nullError "missing response character encoding"
 		outputStreamGZIP { stream =>
 			val writer	= new OutputStreamWriter(stream, encoding)
 			func(writer)
@@ -124,7 +124,7 @@ final class HttpServletResponseExtension(delegate:HttpServletResponse) {
 	
 	// TODO handle exceptions
 	private def outputStreamGZIP(func:Effect[OutputStream]) {
-		val stream	= new GZIPOutputStream(delegate.getOutputStream, gzipBufferSize)
+		val stream	= new GZIPOutputStream(peer.getOutputStream, gzipBufferSize)
 		func(stream)
 		stream.finish()
 	}

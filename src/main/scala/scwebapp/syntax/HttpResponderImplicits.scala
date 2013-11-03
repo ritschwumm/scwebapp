@@ -4,11 +4,11 @@ package syntax
 object HttpResponderImplicits extends HttpResponderImplicits
 
 trait HttpResponderImplicits {
-	implicit def extendHttpResponder(delegate:HttpResponder):HttpResponderExt	= 
-			new HttpResponderExt(delegate)
+	implicit def extendHttpResponder(peer:HttpResponder):HttpResponderExt	= 
+			new HttpResponderExt(peer)
 	
-	final class HttpResponderExt(delegate:HttpResponder) {
+	final class HttpResponderExt(peer:HttpResponder) {
 		def ~>(that:HttpResponder):HttpResponder	= 
-				response => { delegate(response); that(response) } 
+				response => { peer(response); that(response) } 
 	}
 }
