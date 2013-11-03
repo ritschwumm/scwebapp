@@ -1,5 +1,5 @@
 package scwebapp
-package api
+package pimp
 
 import java.io._
 import java.nio.charset.Charset
@@ -9,7 +9,7 @@ import javax.servlet.http._
 import scutil.lang._
 import scutil.Implicits._
 
-import HttpStatusEnum._
+import scwebapp.status._
 
 object HttpServletResponseImplicits extends HttpServletResponseImplicits
 	

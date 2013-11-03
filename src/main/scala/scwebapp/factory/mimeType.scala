@@ -1,6 +1,9 @@
 package scwebapp
+package factory
 
-object StandardMimeTypes {
+object mimeType extends mimeType
+
+trait mimeType {
 	val text_plain				= MimeType("text",			"plain")
 	val text_html				= MimeType("text",			"html")
 	val text_javascript			= MimeType("text",			"javascript")

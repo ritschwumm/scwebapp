@@ -1,5 +1,5 @@
 package scwebapp
-package api
+package pimp
 
 import javax.servlet.http._
 

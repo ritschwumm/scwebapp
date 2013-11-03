@@ -9,6 +9,14 @@ package object scwebapp {
 	type HttpHandler	= HttpServletRequest => HttpResponder
 	type HttpPHandler	= PFunction[HttpServletRequest,HttpResponder]
 	
-	// implicit def ResponderToHandler(responder:HttpResponder):HttpPHandler		= _ => Some(responder)
-	// implicit def StatusToResponder(status:HttpStatus):HttpResponder		= _ setStatus status
+	/*
+	import scutil.lang._
+	import implicits._
+	import instances._
+	
+	implicit def MethodToPredicate(method:HttpMethod):HttpPredicate			= Method(method)
+	implicit def ResponderToHandler(responder:HttpResponder):HttpHandler	= Respond(responder)
+	implicit def ResponderToPHandler(responder:HttpResponder):HttpPHandler	= PRespond(responder)
+	implicit def StatusToResponder(status:HttpStatus):HttpResponder			= SetStatus(status)
+	*/
 }

@@ -1,5 +1,5 @@
 package scwebapp
-package api
+package pimp
 
 import java.util.{ Enumeration=>JEnumeration }
 import java.net.URLDecoder
@@ -78,13 +78,13 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 	
 	def parameters:Seq[(String,String)]	=
 			for {	
-				name	<- peer.getParameterNames.asInstanceOf[JEnumeration[String]].asScala.toVector
-				value	<- (peer getParameterValues name)
+				name	<- parameterNames
+				value	<- peer getParameterValues name
 			}
 			yield (name, value)
 			
-	def paramExists(name:String):Boolean	=
-			(peer getParameter name) != null
+	def parameterNames:Seq[String]	=
+			peer.getParameterNames.asInstanceOf[JEnumeration[String]].asScala.toVector
 			
 	def paramString(name:String):Option[String] =
 			Option(peer getParameter name)
@@ -99,11 +99,14 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 	
 	def headers:Seq[(String,String)]	=
 			for {	
-				name	<- peer.getHeaderNames.asInstanceOf[JEnumeration[String]].asScala.toVector
+				name	<- headerNames
 				value	<- (peer getHeaders name).asInstanceOf[JEnumeration[String]].asScala
 			}
 			yield (name, value)
 			
+	def headerNames:Seq[String]	=
+			peer.getHeaderNames.asInstanceOf[JEnumeration[String]].asScala.toVector
+		
 	def headerString(name:String):Option[String] = 
 			Option(peer getHeader name)
 			

@@ -1,8 +1,8 @@
 package scwebapp
 
-object HttpStatusEnum {
-	sealed abstract class HttpStatus(val id:Int)
-	
+sealed abstract class HttpStatus(val id:Int)
+
+package status {
 	case object CONTINUE						extends HttpStatus(100)
 	case object SWITCHING_PROTOCOLS				extends HttpStatus(101)
 	

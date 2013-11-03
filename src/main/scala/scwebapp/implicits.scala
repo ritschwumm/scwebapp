@@ -1,11 +1,13 @@
 package scwebapp
-package api
 
-object ApiImplicits extends ApiImplicits		
+import scwebapp.pimp._
 
-trait ApiImplicits
+object implicits extends implicits		
+
+trait implicits
 		extends HttpServletRequestImplicits 
 		with	HttpServletResponseImplicits
 		with	HttpSessionImplicits
 		with	ServletContextImplicits
 		with	ServletConfigImplicits
+		with	HttpResponderImplicits

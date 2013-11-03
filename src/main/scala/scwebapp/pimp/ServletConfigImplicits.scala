@@ -1,5 +1,5 @@
 package scwebapp
-package api
+package pimp
 
 import java.util.{ Enumeration=>JEnumeration }
 import javax.servlet._
@@ -17,13 +17,10 @@ trait ServletConfigImplicits {
 
 final class ServletConfigExtension(peer:ServletConfig) {
 	def initParameters:Seq[(String,String)]	=
-			peer.getInitParameterNames.asInstanceOf[JEnumeration[String]].asScala.toVector map { _ firstBy peer.getInitParameter }
+			initParameterNames map { _ firstBy peer.getInitParameter }
 			
-	def initParamNames:Seq[String]	=
+	def initParameterNames:Seq[String]	=
 			peer.getInitParameterNames.asInstanceOf[JEnumeration[String]].asScala.toVector
-			
-	def initParamExists(name:String):Boolean	=
-			(peer getInitParameter name) != null
 			
 	def initParamString(name:String):Option[String] =
 			Option(peer getInitParameter name)

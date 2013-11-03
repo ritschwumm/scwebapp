@@ -1,56 +1,21 @@
 package scwebapp
+package factory
 
 import java.io._
 import java.nio.charset.Charset
 
-import javax.servlet._
 import javax.servlet.http._
 
 import scutil.lang._
 import scutil.Implicits._
 import scutil.time._
 
-import HttpImplicits._
-import HttpMethodEnum._
-import HttpStatusEnum._
+import scwebapp.implicits._
+import scwebapp.status._
 
-object HttpInstances {
-	//------------------------------------------------------------------------------
-	//## handlers
-	
-	def Respond(responder:HttpResponder):HttpHandler	=
-			constant(responder)
-		
-	//------------------------------------------------------------------------------
-	//## partial handlers
-	
-	val Reject:HttpPHandler	= 
-			constant(None)
-	
-	//------------------------------------------------------------------------------
-	//## predicates
-	
-	def Method(method:HttpMethod):HttpPredicate	=
-			_.getMethod.toUpperCase ==== method.id.toUpperCase
-			
-	def FullPath(path:String, encoding:Charset):HttpPredicate	=
-			it => (it fullPath encoding) ==== path
-			
-	def FullPathRaw(path:String):HttpPredicate	=
-			_.fullPathRaw ==== path
-		
-	def PathInfo(path:String, encoding:Charset):HttpPredicate	=
-			_ pathInfo encoding exists { _ ==== path }
-		
-	def PathInfoRaw(path:String):HttpPredicate	=
-			_.pathInfoRaw exists { _ ==== path }
-			
-	def ServletPath(path:String):HttpPredicate	=
-			_.getServletPath ==== path
-		
-	//------------------------------------------------------------------------------
-	//## responders
-	
+object responder extends responder
+
+trait responder {
 	// base servlet
 	
 	// FlushBuffer

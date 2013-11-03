@@ -1,5 +1,5 @@
 package scwebapp
-package api
+package pimp
 
 import java.util.{ Set=>JSet }
 import java.io.InputStream

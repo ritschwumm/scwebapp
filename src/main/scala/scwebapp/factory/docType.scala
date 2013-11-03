@@ -1,7 +1,10 @@
 package scwebapp
+package factory
+
+object docType extends docType
 
 // @see http://www.w3.org/QA/2002/04/valid-dtd-list.html
-object StandardDocTypes {
+trait docType {
 	val	html_401_strict			= DocType("""<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">""")
 	val html_401_transitional	= DocType("""<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">""")
 	val html_401_frameset		= DocType("""<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">""")
@@ -21,14 +24,14 @@ object StandardDocTypes {
 			
 	// optional
 	
-	val svg_11_full		= DocType("""<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">""")
-	val svg_10			= DocType("""<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">""")
-	val svg_11_basic	= DocType("""<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1 Basic//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-basic.dtd">""")
-	val svg_11_tiny		= DocType("""<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1 Tiny//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-tiny.dtd">""")
+	val svg_11_full				= DocType("""<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">""")
+	val svg_10					= DocType("""<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">""")
+	val svg_11_basic			= DocType("""<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1 Basic//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-basic.dtd">""")
+	val svg_11_tiny				= DocType("""<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1 Tiny//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-tiny.dtd">""")
 			
 	// historical
 	
-	val html_20			= DocType("""<!DOCTYPE html PUBLIC "-//IETF//DTD HTML 2.0//EN">""")
-	val html_32			= DocType("""<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">""")
-	val xhtml_basic_10	= DocType("""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.0//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic10.dtd">""")
+	val html_20					= DocType("""<!DOCTYPE html PUBLIC "-//IETF//DTD HTML 2.0//EN">""")
+	val html_32					= DocType("""<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">""")
+	val xhtml_basic_10			= DocType("""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.0//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic10.dtd">""")
 }

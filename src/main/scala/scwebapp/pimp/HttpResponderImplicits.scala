@@ -1,5 +1,5 @@
 package scwebapp
-package syntax
+package pimp
 
 object HttpResponderImplicits extends HttpResponderImplicits
 

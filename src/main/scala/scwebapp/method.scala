@@ -1,8 +1,8 @@
 package scwebapp
 
-object HttpMethodEnum {
-	sealed abstract class HttpMethod(val id:String)
-	
+sealed abstract class HttpMethod(val id:String)
+
+package method {
 	// http
 	case object OPTIONS		extends HttpMethod("OPTIONS")
 	case object HEAD		extends HttpMethod("HEAD")
@@ -12,7 +12,7 @@ object HttpMethodEnum {
 	case object DELETE		extends HttpMethod("DELETE")
 	case object TRACE		extends HttpMethod("TRACE")
 	case object CONNECT		extends HttpMethod("CONNECT")
-
+	
 	// webdav
 	case object PROPFIND	extends HttpMethod("PROPFIND")
 	case object PROPPATCH	extends HttpMethod("PROPPATCH")
