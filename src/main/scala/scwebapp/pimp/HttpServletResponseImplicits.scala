@@ -4,6 +4,7 @@ package pimp
 import java.io._
 import java.nio.charset.Charset
 import java.util.zip.GZIPOutputStream
+
 import javax.servlet.http._
 
 import scutil.lang._
@@ -36,7 +37,9 @@ final class HttpServletResponseExtension(peer:HttpServletResponse) {
 	}
 	
 	//------------------------------------------------------------------------------
-		
+	//## metadata
+	
+	/** this is a bit magic: if used after setContentType it can append a charset parameter */
 	def setEncoding(encoding:Charset) {
 		peer setCharacterEncoding encoding.name
 	}
@@ -61,6 +64,7 @@ final class HttpServletResponseExtension(peer:HttpServletResponse) {
 	}
 	
 	//------------------------------------------------------------------------------
+	//## content
 	
 	def sendString(string:String) {
 		peer.getWriter write string
@@ -84,6 +88,7 @@ final class HttpServletResponseExtension(peer:HttpServletResponse) {
 	}
 	
 	//------------------------------------------------------------------------------
+	//## gzip content
 	
 	def sendStringGZIP(string:String) {
 		writerGZIP { _ write string }

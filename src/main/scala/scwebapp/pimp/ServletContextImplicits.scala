@@ -4,6 +4,7 @@ package pimp
 import java.util.{ Set=>JSet }
 import java.io.InputStream
 import java.net.URL
+
 import javax.servlet._
 
 import scala.collection.JavaConverters._

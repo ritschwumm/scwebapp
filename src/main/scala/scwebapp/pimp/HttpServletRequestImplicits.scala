@@ -2,12 +2,16 @@ package scwebapp
 package pimp
 
 import java.util.{ Enumeration=>JEnumeration }
+import java.io.IOException
 import java.net.URLDecoder
 import java.nio.charset.Charset
+
+import javax.servlet.ServletException
 import javax.servlet.http._
 
 import scala.collection.JavaConverters._
 
+import scutil.lang._
 import scutil.Implicits._
 import scutil.io.Base64
 
@@ -19,43 +23,13 @@ trait HttpServletRequestImplicits {
 }
 
 final class HttpServletRequestExtension(peer:HttpServletRequest) {
-	// NOTE
-	// requestURI	always contains contextPath, servletPath and pathInfo but is still URL-encoded
-	// mapping /*	causes an empty servletPath
-	// ROOT context causes an empty contextPath
-	// *.foo mapping causes pathInfo to be null and a servletPath containing everything below the context
+	/** note this does not influence how PathInfo and therefore FullPath are treated */
+	def setEncoding(encoding:Charset) {
+		peer setCharacterEncoding encoding.name
+	}
 	
-	/** 
-	the full path after the context path, 
-	decoded according to server settings which by default (in tomcat) is ISO-8859-1.
-	this is not influenced by setCharacterEncoding or setEncoding 
-	*/
-	def fullPathDecoded:String	= Seq(peer.getServletPath, peer.getPathInfo) filter { _ != null } mkString ""
-	
-	/** the full path after the context path, not yet url-decoded */
-	def fullPathRaw:String	= 
-			peer.getRequestURI	cutPrefix 
-			peer.getContextPath	getOrError 
-			s"expected RequestURI ${peer.getRequestURI} to start with context path ${peer.getContextPath}"
-			
-	/** the full path after the context path, URL-decoded with the given Charset */
-	def fullPath(encoding:Charset):String	= 
-			URIComponent decode (fullPathRaw, encoding)
-		
-	def pathInfoDecoded:Option[String]	=
-			Option(peer.getPathInfo)
-	
-	def pathInfoRaw:Option[String]	=
-			pathInfoDecoded.isDefined guard {
-				fullPathRaw	cutPrefix
-				peer.getServletPath	getOrError 
-				s"expected RequestURI ${peer.getRequestURI} to start with context path ${peer.getContextPath} and servlet path ${peer.getServletPath}"
-			}
-			
-	def pathInfo(encoding:Charset):Option[String]	=
-			pathInfoRaw map { it =>
-				URIComponent decode (it, encoding)
-			}
+	def method:HttpMethod	=
+			HttpMethods find { _.id == peer.getMethod.toUpperCase } getOrError s"unexpected method ${peer.getMethod}"
 	
 	def remoteUser:Option[String]	=
 			Option(peer.getRemoteUser)
@@ -69,12 +43,63 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 				pair	<- new String(bytes, encoding) splitAroundFirst ':'
 			}
 			yield pair
+	
+	//------------------------------------------------------------------------------
+	//## paths
+	
+	// NOTE
+	// requestURI	always contains contextPath, servletPath and pathInfo but is still URL-encoded
+	// mapping /*	causes an empty servletPath
+	// ROOT context causes an empty contextPath
+	// *.foo mapping causes pathInfo to be null and a servletPath containing everything below the context
+	
+	/** 
+	the full path after the context path, 
+	decoded according to server settings which by default (in tomcat) is ISO-8859-1.
+	this is not influenced by setCharacterEncoding or setEncoding 
+	*/
+	def fullPathServlet:String	=
+			Seq(peer.getServletPath, peer.getPathInfo) filter { _ != null } mkString ""
+	
+	/** the full path after the context path, not yet url-decoded */
+	def fullPathRaw:String	= 
+			peer.getRequestURI	cutPrefix 
+			peer.getContextPath	getOrError 
+			s"expected RequestURI ${peer.getRequestURI} to start with context path ${peer.getContextPath}"
 			
-	def setEncoding(encoding:Charset) {
-		peer setCharacterEncoding encoding.name
-	}
+	/** the full path after the context path, URL-decoded with the given Charset */
+	def fullPathUTF8:String	= 
+			URIComponent decode fullPathRaw
+		
+	def pathInfoServlet:Option[String]	=
+			Option(peer.getPathInfo)
+	
+	def pathInfoRaw:Option[String]	=
+			pathInfoServlet.isDefined guard {
+				fullPathRaw	cutPrefix
+				peer.getServletPath	getOrError 
+				s"expected RequestURI ${peer.getRequestURI} to start with context path ${peer.getContextPath} and servlet path ${peer.getServletPath}"
+			}
+			
+	def pathInfoUTF8:Option[String]	=
+			pathInfoRaw map URIComponent.decode
+
+	//------------------------------------------------------------------------------
+	//## multipart
+	
+	def parts:Tried[HttpPartsProblem,Seq[Part]]	=
+			try {
+				Win(peer.getParts.asScala.toVector)
+			}
+			catch {
+				// not multipart/form-data
+				case e:ServletException			=> Fail(NotMultipart(e))
+				case e:IOException				=> Fail(InputOutputFailed(e))
+				case e:IllegalStateException	=> Fail(SizeLimitExceeded(e))
+			}
 			
 	//------------------------------------------------------------------------------
+	//## parameters
 	
 	def parameters:Seq[(String,String)]	=
 			for {	
@@ -96,6 +121,7 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 			paramString(name) flatMap { _.toLongOption }
 	
 	//------------------------------------------------------------------------------
+	//## headers
 	
 	def headers:Seq[(String,String)]	=
 			for {	
@@ -117,11 +143,13 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 			headerString(name) flatMap { _.toLongOption }
 		
 	//------------------------------------------------------------------------------
+	//## cookies
 	
 	def cookies:Seq[(String,String)]	=
 			peer.getCookies.guardNotNull.flattenMany map { it => (it.getName, it.getValue) }
 		
 	//------------------------------------------------------------------------------
+	//## attributes
 	
 	def attribute[T<:AnyRef](name:String):HttpAttribute[T]	=
 			new HttpAttribute[T](

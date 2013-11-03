@@ -2,6 +2,7 @@ package scwebapp
 package pimp
 
 import java.util.{ Enumeration=>JEnumeration }
+
 import javax.servlet._
 
 import scala.collection.JavaConverters._
