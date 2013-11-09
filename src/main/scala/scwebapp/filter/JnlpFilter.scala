@@ -67,8 +67,11 @@ final class JnlpFilter extends Filter with Logging {
 			}
 		}
 		private val writer	= new PrintWriter(new OutputStreamWriter(outputStream, charset))
-		
-		def failed:Boolean	= response.getStatus != 200
+	
+		// BETTER use HttpStatus	
+		def failed:Boolean	=
+				response.getStatus != 200	&&
+				response.getStatus != 304
 		
 		/** provide the response string */
 		def written:Array[Byte]	= buffer.toArray
