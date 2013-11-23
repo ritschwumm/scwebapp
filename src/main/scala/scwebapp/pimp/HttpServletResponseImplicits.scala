@@ -77,13 +77,13 @@ final class HttpServletResponseExtension(peer:HttpServletResponse) {
 	
 	def streamFrom(stream:Thunk[InputStream]) {
 		// TODO handle exceptions
-		stream() use { _ copyTo peer.getOutputStream }
+		stream() use { _ transferTo peer.getOutputStream }
 		peer.getOutputStream.flush()
 	}
 	
 	def writeFrom(reader:Thunk[Reader]) {
 		// TODO handle exceptions
-		reader() use { _ copyTo peer.getWriter }
+		reader() use { _ transferTo peer.getWriter }
 		peer.getOutputStream.flush()
 	}
 	
@@ -101,7 +101,7 @@ final class HttpServletResponseExtension(peer:HttpServletResponse) {
 	def streamFromGZIP(stream:Thunk[InputStream]) {
 		outputStreamGZIP { out =>
 			stream() use { in =>
-				in copyTo out
+				in transferTo out
 			}
 		}
 	}
@@ -109,7 +109,7 @@ final class HttpServletResponseExtension(peer:HttpServletResponse) {
 	def writeFromGZIP(reader:Thunk[Reader]) {
 		writerGZIP { out =>
 			reader() use { in =>
-				in copyTo out
+				in transferTo out
 			}
 		}
 	}

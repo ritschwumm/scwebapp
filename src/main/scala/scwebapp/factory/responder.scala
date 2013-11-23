@@ -81,11 +81,11 @@ trait responder {
 	// extras
 	
 	/** the string function gets passed a function to encode urls */
-	def WithEncodeLink(mkResponder:(String=>String)=>HttpResponder):HttpResponder	=
+	def WithEncodeLink(mkResponder:Endo[String]=>HttpResponder):HttpResponder	=
 			response	=> mkResponder(response.encodeURL)(response)
 		
 	/** mkString gets passed a function encoding a path suitable for a link */
-	def SendStringWithLinks(mkString:(String=>String)=>String):HttpResponder	=
+	def SendStringWithLinks(mkString:Endo[String]=>String):HttpResponder	=
 			WithEncodeLink(mkString andThen SendString)
 		
 	val Pass:HttpResponder	= constant(())
