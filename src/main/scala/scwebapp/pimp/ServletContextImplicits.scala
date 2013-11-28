@@ -19,6 +19,9 @@ trait ServletContextImplicits {
 final class ServletContextExtension(peer:ServletContext) {
 	def mimeTypeFor(path:String):Option[MimeType]	=
 			Option(peer getMimeType path) flatMap MimeType.parse 
+		
+	def realPath(path:String):Option[String]	=
+			Option(peer getRealPath path)
 	
 	def resourceOption(path:String):Option[URL]	=
 			Option(peer getResource path)

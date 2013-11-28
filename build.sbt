@@ -2,7 +2,7 @@ name			:= "scwebapp"
 
 organization	:= "de.djini"
 
-version			:= "0.33.0"
+version			:= "0.34.0"
 
 scalaVersion	:= "2.10.3"
 

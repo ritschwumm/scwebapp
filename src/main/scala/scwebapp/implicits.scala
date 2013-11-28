@@ -11,3 +11,4 @@ trait implicits
 		with	ServletContextImplicits
 		with	ServletConfigImplicits
 		with	HttpResponderImplicits
+		with	PartImplicits

@@ -14,6 +14,7 @@ import scala.collection.JavaConverters._
 import scutil.lang._
 import scutil.Implicits._
 import scutil.io.Base64
+import scutil.time.MilliInstant
 
 object HttpServletRequestImplicits extends HttpServletRequestImplicits
 
@@ -87,12 +88,21 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 	//------------------------------------------------------------------------------
 	//## multipart
 	
+	def part(name:String):Tried[HttpPartsProblem,Option[Part]]	=
+			try {
+				Win(Option(peer getPart name))
+			}
+			catch {
+				case e:ServletException			=> Fail(NotMultipart(e))
+				case e:IOException				=> Fail(InputOutputFailed(e))
+				case e:IllegalStateException	=> Fail(SizeLimitExceeded(e))
+			}
+    
 	def parts:Tried[HttpPartsProblem,Seq[Part]]	=
 			try {
 				Win(peer.getParts.asScala.toVector)
 			}
 			catch {
-				// not multipart/form-data
 				case e:ServletException			=> Fail(NotMultipart(e))
 				case e:IOException				=> Fail(InputOutputFailed(e))
 				case e:IllegalStateException	=> Fail(SizeLimitExceeded(e))
@@ -141,6 +151,9 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 			
 	def headerLong(name:String):Option[Long] = 
 			headerString(name) flatMap { _.toLongOption }
+		
+	def headerHttpDate(name:String):Option[HttpDate]	=
+			headerString(name) flatMap { HttpDateFormat.parse }
 		
 	//------------------------------------------------------------------------------
 	//## cookies

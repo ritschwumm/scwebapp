@@ -9,6 +9,7 @@ import javax.servlet.http._
 
 import scutil.lang._
 import scutil.Implicits._
+import scutil.time._
 
 import scwebapp.status._
 
@@ -61,6 +62,14 @@ final class HttpServletResponseExtension(peer:HttpServletResponse) {
 	
 	def setStatus(status:HttpStatus) {
 		peer setStatus status.id
+	}
+	
+	def addLongHeader(name:String, value:Long) {
+		peer addHeader (name, value.toString)
+	}
+	
+	def addHttpDateHeader(name:String, value:HttpDate) {
+		peer addHeader (name, HttpDateFormat unparse value)
 	}
 	
 	//------------------------------------------------------------------------------
