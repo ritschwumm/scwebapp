@@ -7,7 +7,7 @@ import java.util.Locale
 import java.util.TimeZone
 
 import scutil.lang._
-import scutil.Implicits._
+import scutil.implicits._
 import scutil.time.MilliInstant
 
 object HttpDateFormat {

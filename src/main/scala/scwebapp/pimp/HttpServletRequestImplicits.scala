@@ -2,8 +2,7 @@ package scwebapp
 package pimp
 
 import java.util.{ Enumeration=>JEnumeration }
-import java.io.IOException
-import java.net.URLDecoder
+import java.io._
 import java.nio.charset.Charset
 
 import javax.servlet.ServletException
@@ -12,9 +11,10 @@ import javax.servlet.http._
 import scala.collection.JavaConverters._
 
 import scutil.lang._
-import scutil.Implicits._
+import scutil.implicits._
 import scutil.io.Base64
 import scutil.io.URIComponent
+import scutil.io.Charsets.utf_8
 import scutil.time.MilliInstant
 
 object HttpServletRequestImplicits extends HttpServletRequestImplicits
@@ -90,18 +90,14 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 	//## multipart
 	
 	def part(name:String):Tried[HttpPartsProblem,Option[Part]]	=
-			try {
-				Win(Option(peer getPart name))
-			}
-			catch {
-				case e:ServletException			=> Fail(NotMultipart(e))
-				case e:IOException				=> Fail(InputOutputFailed(e))
-				case e:IllegalStateException	=> Fail(SizeLimitExceeded(e))
-			}
+			catchHttpPartsProblem(Option(peer getPart name))
     
 	def parts:Tried[HttpPartsProblem,Seq[Part]]	=
+			catchHttpPartsProblem(peer.getParts.asScala.toVector)
+			
+	private def catchHttpPartsProblem[T](it: =>T):Tried[HttpPartsProblem,T]	=
 			try {
-				Win(peer.getParts.asScala.toVector)
+				Win(it)
 			}
 			catch {
 				case e:ServletException			=> Fail(NotMultipart(e))
@@ -112,55 +108,62 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 	//------------------------------------------------------------------------------
 	//## parameters
 	
-	def parameters:Seq[(String,String)]	=
-			for {	
-				name	<- parameterNames
-				value	<- peer getParameterValues name
+	def parameters:Parameters	=
+			new Parameters {
+				def caseSensitive:Boolean	= true
+				
+				def all:Seq[(String,String)]	=
+						for {	
+							name	<- names
+							value	<- peer getParameterValues name
+						}
+						yield (name, value)
+						
+				def names:Seq[String]	=
+						peer.getParameterNames.asInstanceOf[JEnumeration[String]].asScala.toVector
+					
+				def firstString(name:String):Option[String] =
+						Option(peer getParameter name)
 			}
-			yield (name, value)
-			
-	def parameterNames:Seq[String]	=
-			peer.getParameterNames.asInstanceOf[JEnumeration[String]].asScala.toVector
-			
-	def paramString(name:String):Option[String] =
-			Option(peer getParameter name)
-	
-	def paramInt(name:String):Option[Int] =
-			paramString(name) flatMap { _.toIntOption }
-		
-	def paramLong(name:String):Option[Long] =
-			paramString(name) flatMap { _.toLongOption }
 	
 	//------------------------------------------------------------------------------
 	//## headers
 	
-	def headers:Seq[(String,String)]	=
-			for {	
-				name	<- headerNames
-				value	<- (peer getHeaders name).asInstanceOf[JEnumeration[String]].asScala
+	def headers:Parameters	=
+			new Parameters {
+				def caseSensitive:Boolean	= false
+				
+				def all:Seq[(String,String)]	=
+						for {	
+							name	<- names
+							value	<- (peer getHeaders name).asInstanceOf[JEnumeration[String]].asScala
+						}
+						yield (name, value)
+						
+				def names:Seq[String]	=
+						peer.getHeaderNames.asInstanceOf[JEnumeration[String]].asScala.toVector
+					
+				def firstString(name:String):Option[String] = 
+						Option(peer getHeader name)
 			}
-			yield (name, value)
-			
-	def headerNames:Seq[String]	=
-			peer.getHeaderNames.asInstanceOf[JEnumeration[String]].asScala.toVector
-		
-	def headerString(name:String):Option[String] = 
-			Option(peer getHeader name)
-			
-	def headerInt(name:String):Option[Int] = 
-			headerString(name) flatMap { _.toIntOption }
-			
-	def headerLong(name:String):Option[Long] = 
-			headerString(name) flatMap { _.toLongOption }
-		
-	def headerHttpDate(name:String):Option[HttpDate]	=
-			headerString(name) flatMap { HttpDateFormat.parse }
 		
 	//------------------------------------------------------------------------------
 	//## cookies
 	
-	def cookies:Seq[(String,String)]	=
-			peer.getCookies.guardNotNull.flattenMany map { it => (it.getName, it.getValue) }
+	def cookies:Parameters	=
+			new Parameters {
+				def caseSensitive:Boolean	= true
+				
+				def all:Seq[(String,String)]	=
+						peer.getCookies.guardNotNull.flattenMany map { it => (it.getName, it.getValue) }
+						
+				def names:Seq[String]	=
+						all map { _._1 }
+					
+				def firstString(name:String):Option[String] = 
+						all collectFirst { case (`name`, value) => value }
+			}
+			
 		
 	//------------------------------------------------------------------------------
 	//## attributes
@@ -170,4 +173,23 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 					()	=> (peer getAttribute name).asInstanceOf[T],
 					t	=> peer setAttribute (name, t),
 					()	=> peer removeAttribute name)
+					
+	//------------------------------------------------------------------------------
+	//## stream
+	
+	// TODO handle exceptions
+	
+	def asString(encoding:Charset):String	=
+			withReader(encoding) { _.readFully }
+		
+	def asStringUTF8:String	=
+			asString(utf_8)
+		
+	def withReader[T](encoding:Charset)(func:Reader=>T):T	=
+			new InputStreamReader(openInputStream(), encoding) use func
+			
+	def withInputStream[T](func:InputStream=>T):T	=
+			openInputStream() use func
+			
+	def openInputStream():InputStream	= peer.getInputStream
 }

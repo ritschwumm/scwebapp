@@ -9,15 +9,15 @@ import scala.collection.JavaConverters._
 
 import scutil.implicits._
 
-object ServletConfigImplicits extends ServletConfigImplicits
+object FilterConfigImplicits extends FilterConfigImplicits
 
-trait ServletConfigImplicits {
-	implicit def extendServletConfig(peer:ServletConfig):ServletConfigExtension		= 
-			new ServletConfigExtension(peer)
+trait FilterConfigImplicits {
+	implicit def extendFilterConfig(peer:FilterConfig):FilterConfigExtension		= 
+			new FilterConfigExtension(peer)
 }
 
-final class ServletConfigExtension(peer:ServletConfig) {
-	def initParameters:Parameters	=
+final class FilterConfigExtension(peer:FilterConfig) {
+	def initParameters:Parameters	= 
 			new Parameters {
 				def caseSensitive:Boolean	= true
 				

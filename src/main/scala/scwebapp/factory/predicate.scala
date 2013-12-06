@@ -3,7 +3,7 @@ package factory
 
 import java.nio.charset.Charset
 
-import scutil.Implicits._
+import scutil.implicits._
 
 import scwebapp.implicits._
 import scwebapp.method._
