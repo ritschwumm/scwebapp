@@ -14,6 +14,7 @@ import scala.collection.JavaConverters._
 import scutil.lang._
 import scutil.Implicits._
 import scutil.io.Base64
+import scutil.io.URIComponent
 import scutil.time.MilliInstant
 
 object HttpServletRequestImplicits extends HttpServletRequestImplicits

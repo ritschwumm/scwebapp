@@ -36,7 +36,7 @@ object MimeType {
 					else				return None
 			}
 		}
-		neverComesHere
+		nothing
 	}
 }
 	
