@@ -17,17 +17,11 @@ trait ServletConfigImplicits {
 }
 
 final class ServletConfigExtension(peer:ServletConfig) {
-	def initParameters:Parameters	=
-			new Parameters {
-				def caseSensitive:Boolean	= true
-				
-				def all:Seq[(String,String)]	=
-						names map { _ firstBy peer.getInitParameter }
-						
-				def names:Seq[String]	=
-						peer.getInitParameterNames.asInstanceOf[JEnumeration[String]].asScala.toVector
-					
-				def firstString(name:String):Option[String] =
-						Option(peer getInitParameter name)
-			}
+	def initParameters:CaseParameters	=
+			CaseParameters(
+				for {
+					name	<- peer.getInitParameterNames.asInstanceOf[JEnumeration[String]].asScala.toVector
+				}
+				yield name -> (peer getInitParameter name)
+			)
 }

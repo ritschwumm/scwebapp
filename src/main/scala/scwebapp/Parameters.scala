@@ -2,18 +2,15 @@ package scwebapp
 
 import scutil.implicits._
 
-trait Parameters {
+sealed trait Parameters {
 	def all:Seq[(String,String)]
+	def names:Set[String]
+	def get(name:String):Seq[String]
 	
-	def names:Seq[String]
+	//------------------------------------------------------------------------------
 	
-	def allString(name:String):Seq[String]	=
-			all flatMap { case (k, v) =>
-				if (matchName(k, name))	Seq(v)
-				else					Seq.empty
-			}
-	
-	def firstString(name:String):Option[String]
+	def firstString(name:String):Option[String]	=
+			get(name).headOption
 	
 	def firstInt(name:String):Option[Int]	=
 			firstString(name) flatMap { _.toIntOption }
@@ -23,12 +20,73 @@ trait Parameters {
 		
 	def firstDate(name:String):Option[HttpDate]	=
 			firstString(name) flatMap HttpDateFormat.parse
-		
-	//------------------------------------------------------------------------------
+}
+
+//------------------------------------------------------------------------------
+
+object CaseParameters {
+	val empty	= CaseParameters(Vector.empty)
 	
-	protected def caseSensitive:Boolean
+	def apply(values:Seq[(String,String)]):CaseParameters	= 
+			new CaseParameters(values)
+}
+
+/** case sensitive */
+final class CaseParameters(values:Seq[(String,String)]) extends Parameters {
+	def all:Seq[(String,String)]	=
+			values
 		
-	protected def matchName(a:String, b:String):Boolean	=
-			if (caseSensitive)	a == b
-			else				a equalsIgnoreCase b
+	def names:Set[String]	=
+			(values map { _._1 }).toSet
+		
+	def get(name:String):Seq[String]	=
+			values collect { case (`name`, value) => value }
+			
+	def append(name:String, value:String):CaseParameters	=
+			new CaseParameters(values :+ (name -> value))
+		
+	override def equals(that:Any):Boolean	=
+			that match {
+				case x:CaseParameters	=> this.all == x.all
+				case _					=> false
+			}
+			
+	override def toString:String	=
+			"CaseParameters(" + (values map {case (k,v) => k + "=" + v } mkString " ,") + ")"
+}
+
+//------------------------------------------------------------------------------
+
+object NoCaseParameters {
+	val empty	= NoCaseParameters(Vector.empty)
+	
+	def apply(values:Seq[(String,String)]):NoCaseParameters	= 
+			new NoCaseParameters(values)
+}
+
+/** case insensitive */
+final class NoCaseParameters(values:Seq[(String,String)]) extends Parameters {
+	def all:Seq[(String,String)]	=
+			values map { case (k,v) => (k.toLowerCase, v) }
+		
+	def names:Set[String]	=
+			(values map { _._1.toLowerCase }).toSet
+		
+	def get(name:String):Seq[String]	=
+			values flatMap { case (k, v) =>
+				if (k equalsIgnoreCase name)	Vector(v)
+				else							Vector.empty
+			}
+			
+	def append(name:String, value:String):NoCaseParameters	=
+			new NoCaseParameters(values :+ (name -> value))
+		
+	override def equals(that:Any):Boolean	=
+			that match {
+				case x:NoCaseParameters	=> this.all == x.all
+				case _					=> false
+			}
+		
+	override def toString:String	=
+			"NoCaseParameters(" + (values map {case (k,v) => k + "=" + v } mkString " ,") + ")"
 }

@@ -38,9 +38,9 @@ final class HttpServletResponseExtension(peer:HttpServletResponse) {
 	}
 	
 	//------------------------------------------------------------------------------
-	//## metadata
+	//## headers
 	
-	/** this is a bit magic: if used after setContentType it can append a charset parameter */
+	/** this is a bit of magic: if used after setContentType it can append a charset parameter */
 	def setEncoding(encoding:Charset) {
 		peer setCharacterEncoding encoding.name
 	}
@@ -74,6 +74,8 @@ final class HttpServletResponseExtension(peer:HttpServletResponse) {
 	
 	//------------------------------------------------------------------------------
 	//## content
+	
+	// TODO getWriter is too much magic
 	
 	def sendString(string:String) {
 		peer.getWriter write string
@@ -128,6 +130,7 @@ final class HttpServletResponseExtension(peer:HttpServletResponse) {
 	
 	// TODO handle exceptions
 	private def writerGZIP(func:Effect[Writer]) {
+		// TODO morally wrong
 		val encoding	= peer.getCharacterEncoding nullError "missing response character encoding"
 		outputStreamGZIP { stream =>
 			val writer	= new OutputStreamWriter(stream, encoding)

@@ -31,21 +31,13 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 	}
 	
 	def method:HttpMethod	=
-			HttpMethods find { _.id == peer.getMethod.toUpperCase } getOrError s"unexpected method ${peer.getMethod}"
+			HttpMethods 
+			.find		{ _.id == peer.getMethod.toUpperCase }
+			.getOrError (s"unexpected method ${peer.getMethod}")
 	
 	def remoteUser:Option[String]	=
 			Option(peer.getRemoteUser)
 
-	/** see http://www.ietf.org/rfc/rfc2617.txt */
-	def authorizationBasic(encoding:Charset):Option[(String,String)]	=
-			for {
-				header	<- Option(peer getHeader "Authorization")
-				code	<- header cutPrefix "Basic "
-				bytes	<- Base64 read code
-				pair	<- new String(bytes, encoding) splitAroundFirst ':'
-			}
-			yield pair
-	
 	//------------------------------------------------------------------------------
 	//## paths
 	
@@ -78,7 +70,7 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 	
 	def pathInfoRaw:Option[String]	=
 			pathInfoServlet.isDefined guard {
-				fullPathRaw	cutPrefix
+				fullPathRaw			cutPrefix
 				peer.getServletPath	getOrError 
 				s"expected RequestURI ${peer.getRequestURI} to start with context path ${peer.getContextPath} and servlet path ${peer.getServletPath}"
 			}
@@ -108,74 +100,64 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 	//------------------------------------------------------------------------------
 	//## parameters
 	
-	def parameters:Parameters	=
-			new Parameters {
-				def caseSensitive:Boolean	= true
-				
-				def all:Seq[(String,String)]	=
-						for {	
-							name	<- names
-							value	<- peer getParameterValues name
-						}
-						yield (name, value)
-						
-				def names:Seq[String]	=
-						peer.getParameterNames.asInstanceOf[JEnumeration[String]].asScala.toVector
-					
-				def firstString(name:String):Option[String] =
-						Option(peer getParameter name)
-			}
+	def parameters:CaseParameters	=
+			CaseParameters(
+				for {	
+					name	<- peer.getParameterNames.asInstanceOf[JEnumeration[String]].asScala.toVector
+					value	<- peer getParameterValues name
+				}
+				yield name -> value
+			)
 	
 	//------------------------------------------------------------------------------
 	//## headers
 	
-	def headers:Parameters	=
-			new Parameters {
-				def caseSensitive:Boolean	= false
-				
-				def all:Seq[(String,String)]	=
-						for {	
-							name	<- names
-							value	<- (peer getHeaders name).asInstanceOf[JEnumeration[String]].asScala
-						}
-						yield (name, value)
-						
-				def names:Seq[String]	=
-						peer.getHeaderNames.asInstanceOf[JEnumeration[String]].asScala.toVector
-					
-				def firstString(name:String):Option[String] = 
-						Option(peer getHeader name)
-			}
+	def headers:NoCaseParameters	=
+			NoCaseParameters(
+				for {	
+					name	<- peer.getHeaderNames.asInstanceOf[JEnumeration[String]].asScala.toVector
+					value	<- (peer getHeaders name).asInstanceOf[JEnumeration[String]].asScala
+				}
+				yield name -> value
+			)
 		
 	//------------------------------------------------------------------------------
-	//## cookies
+	//## special headers
 	
-	def cookies:Parameters	=
-			new Parameters {
-				def caseSensitive:Boolean	= true
-				
-				def all:Seq[(String,String)]	=
-						peer.getCookies.guardNotNull.flattenMany map { it => (it.getName, it.getValue) }
-						
-				def names:Seq[String]	=
-						all map { _._1 }
-					
-				def firstString(name:String):Option[String] = 
-						all collectFirst { case (`name`, value) => value }
-			}
+	/** Fail is invalid, Win(None) if missing, Win(Some) if valid */
+	def encoding:Tried[String,Option[Charset]]	=
+			peer.getCharacterEncoding.guardNotNull
+			.map { name => HttpUtil charsetByName name mapFail constant(name) }
+			.sequenceTried
 			
+	/** Fail is invalid, Win(None) if missing, Win(Some) if valid */
+	def contentType:Tried[String,Option[MimeType]]	=
+			peer.getContentType.guardNotNull
+			.map { name => MimeType parse name toWin name }
+			.sequenceTried
+	
+	/** see http://www.ietf.org/rfc/rfc2617.txt */
+	def authorizationBasic(encoding:Charset):Option[(String,String)]	=
+			for {
+				header	<- Option(peer getHeader "Authorization")
+				code	<- header cutPrefix "Basic "
+				bytes	<- Base64 read code
+				pair	<- new String(bytes, encoding) splitAroundFirst ':'
+			}
+			yield pair
+	
+	def cookies:CaseParameters	=
+			CaseParameters(
+				for {
+					cookie	<- peer.getCookies.guardNotNull.flattenMany 
+				}
+				yield cookie.getName -> cookie.getValue
+			)
 		
 	//------------------------------------------------------------------------------
-	//## attributes
+	//## content
 	
-	def attribute[T<:AnyRef](name:String):HttpAttribute[T]	=
-			new HttpAttribute[T](
-					()	=> (peer getAttribute name).asInstanceOf[T],
-					t	=> peer setAttribute (name, t),
-					()	=> peer removeAttribute name)
-					
-	//------------------------------------------------------------------------------
-	//## stream
+	// TODO ServletRequest has getReader which uses the supplied encoding!
 	
 	// TODO handle exceptions
 	
@@ -191,5 +173,15 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 	def withInputStream[T](func:InputStream=>T):T	=
 			openInputStream() use func
 			
-	def openInputStream():InputStream	= peer.getInputStream
+	def openInputStream():InputStream	=
+			peer.getInputStream
+	
+	//------------------------------------------------------------------------------
+	//## attributes
+	
+	def attribute[T<:AnyRef](name:String):HttpAttribute[T]	=
+			new HttpAttribute[T](
+					()	=> (peer getAttribute name).asInstanceOf[T],
+					t	=> peer setAttribute (name, t),
+					()	=> peer removeAttribute name)
 }

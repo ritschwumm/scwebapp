@@ -1,6 +1,10 @@
 package scwebapp
 
+import scala.annotation.tailrec
+
 import scutil.lang._
+
+// @see http://tools.ietf.org/html/rfc2045#section-5.1
 // @see http://tools.ietf.org/html/rfc2046
 // @see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.1
 
@@ -8,39 +12,47 @@ import scutil.lang._
 top-level:	text image audio video application multipart message
 */
 
+// TODO parse quoted values
+
 object MimeType {
-	private val	 RE1	= """^([a-z]+|\*)/([a-z*]+|\*)(.*)$""".r
-	def parse(s:String):Option[MimeType]	= {
-		s match {
-			case RE1(major, minor, rest)	=>
-				parseParams(rest) match {
-					case Some(params)	=> Some(MimeType(major, minor, params))
-					case None			=> None
-				}
-			case _							=> None
-		}
-	}
+	val emptyParameters	= NoCaseParameters.empty
 	
-	private val RE2	= """;\s*([^;= ]+)\s*=\s*([^;= ]*)\s*""".r
-	def parseParams(s:String):Option[Map[String,String]]	= {
-		var	out	= Map.empty[String,String]
-		var	ss	= s.trim:CharSequence
-		while (true) {
-			RE2 findPrefixMatchOf ss match {
-				case Some(matched)	=> 
-					out	+= ((matched group 1, matched group 2))
-					if (matched.after != null)	ss	= matched.after 
-					else						ss	= ""
-				case None	=> 
-					if (ss.length == 0)	return Some(out)
-					else				return None
+	private val	fullRE	= """([a-z]+|\*)/([a-z]+|\*)(.*)""".r
+	def parse(s:String):Option[MimeType]	=
+			for {
+				groups					<- fullRE unapplySeq s
+				Seq(major, minor, rest)	= groups
+				params					<- parseParams(rest)
+			}
+			yield MimeType(major, minor, params)
+	
+	private val paramRE	= """;\s*([^;= ]+)\s*=\s*([^;= ]*)\s*""".r
+	def parseParams(s:String):Option[NoCaseParameters]	= {
+		@tailrec
+		def loop(ss:CharSequence, out:NoCaseParameters):Option[NoCaseParameters]	= {
+			if (ss.length == 0)	Some(out)
+			else {
+				paramRE findPrefixMatchOf ss match {
+					case Some(matched)	=>
+						val name	= matched group 1
+						val value	= matched group 2
+						val rest	= Option(matched.after) getOrElse ""
+						loop(rest, out append (name, value))
+					case None	=> 
+						None
+				}
 			}
 		}
-		nothing
+		loop(s.trim, emptyParameters)
 	}
 }
-	
-case class MimeType(major:String, minor:String, parameters:Map[String,String] = Map.empty) {
-	def value:String = major + "/" + minor + (parameters map { case (key,value) => "; " + key + "=" + value } mkString "")
-	def attribute(key:String, value:String):MimeType	= copy(parameters = parameters + (key->value))
+
+case class MimeType(major:String, minor:String, parameters:NoCaseParameters = MimeType.emptyParameters) {
+	def value:String =
+			major + "/" + minor + (
+				parameters.all map { case (key,value) => "; " + key + "=" + value } mkString ""
+			)
+			
+	def addParameter(name:String, value:String):MimeType	=
+			copy(parameters = parameters append (name, value))
 }

@@ -25,26 +25,44 @@ final class PartExtension(peer:Part) {
 	//------------------------------------------------------------------------------
 	//## headers
 	
-	def headers:Parameters	=
-			new Parameters {
-				def caseSensitive:Boolean	= true
-				
-				def all:Seq[(String,String)]	=
-						for {	
-							name	<- names
-							value	<- (peer getHeaders name).asInstanceOf[JCollection[String]].asScala
-						}
-						yield (name, value)
-						
-				def names:Seq[String]	=
-						peer.getHeaderNames.asInstanceOf[JCollection[String]].asScala.toVector
-					
-				def firstString(name:String):Option[String] = 
-						Option(peer getHeader name)
-			}
+	def headers:NoCaseParameters	=
+			NoCaseParameters(
+				for {	
+					name	<- peer.getHeaderNames.asInstanceOf[JCollection[String]].asScala.toVector
+					value	<- (peer getHeaders name).asInstanceOf[JCollection[String]].asScala
+				}
+				yield name	-> value
+			)
 		
 	//------------------------------------------------------------------------------
-	//## stream
+	//## special headers
+	
+	/** Fail is invalid, Win(None) if missing, Win(Some) if valid */
+	def contentType:Tried[String,Option[MimeType]]	=
+			peer.getContentType.guardNotNull
+			.map { name => MimeType parse name toWin name }
+			.sequenceTried
+		
+	def contentDisposition:Option[String]	=
+			headers firstString "Content-Disposition"
+			
+	// TODO real parser, @see MimeType.scala
+	// does not check for "attachment" or "inline"
+	// does not distinguish between missing header and invalid format
+	def fileName:Seq[String]	=
+			for {
+				header			<- contentDisposition.toVector
+				snip			<- header splitAroundChar ';'
+				(name, value)	<- snip.trim splitAroundFirst '='
+				if name == "filename"
+			}
+			// @see http://tools.ietf.org/html/rfc2184 for non-ascii
+			yield value replaceAll ("^\"|\"$", "")
+			
+	//------------------------------------------------------------------------------
+	//## content
+	
+	// TODO Part can have a character encoding, but the API doesn't tell us about it
 	
 	// TODO handle exceptions
 	
@@ -62,26 +80,4 @@ final class PartExtension(peer:Part) {
 			
 	def openInputStream():InputStream	=
 			peer.getInputStream
-			
-	//------------------------------------------------------------------------------
-	//## special headers
-	
-	def contentType:Option[MimeType]	=
-			MimeType parse peer.getContentType
-		
-	def contentDisposition:Option[String]	=
-			headers firstString "Content-Disposition"
-			
-	// TODO real parser
-	// does not check for "attachment" or "inline"
-	// does not distinguish between missing header and invalid format
-	def fileName:Seq[String]	=
-			for {
-				header			<- contentDisposition.toVector
-				snip			<- header splitAroundChar ';'
-				(name, value)	<- snip.trim splitAroundFirst '='
-				if name == "filename"
-			}
-			// @see http://tools.ietf.org/html/rfc2184 for non-ascii
-			yield value replaceAll ("^\"|\"$", "")
 }
