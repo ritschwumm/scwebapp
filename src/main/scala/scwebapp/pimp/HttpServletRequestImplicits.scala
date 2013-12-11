@@ -43,10 +43,10 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 	//## paths
 	
 	// NOTE
-	// requestURI	always contains contextPath, servletPath and pathInfo but is still URL-encoded
-	// mapping /*	causes an empty servletPath
-	// ROOT context causes an empty contextPath
-	// *.foo mapping causes pathInfo to be null and a servletPath containing everything below the context
+	// requestURI		always contains contextPath, servletPath and pathInfo but is still URL-encoded
+	// mapping /*		causes an empty servletPath
+	// ROOT context		causes an empty contextPath
+	// *.foo mapping	auses pathInfo to be null and a servletPath containing everything below the context
 	
 	/** 
 	the full path after the context path, 
@@ -136,6 +136,10 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 			peer.getContentType.guardNotNull
 			.map { name => MimeType parse name toWin name }
 			.sequenceTried
+			
+	// TODO add error when wrong?
+	def contentLength:Option[Long]	=
+			headers firstString "Content-Length" filter { _ matches "\\d+" } flatMap { _.toLongOption }
 	
 	/** see http://www.ietf.org/rfc/rfc2617.txt */
 	def authorizationBasic(encoding:Charset):Option[(String,String)]	=
@@ -156,26 +160,14 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 			)
 		
 	//------------------------------------------------------------------------------
-	//## content
+	//## body
 	
 	// TODO ServletRequest has getReader which uses the supplied encoding!
 	
-	// TODO handle exceptions
-	
-	def asString(encoding:Charset):String	=
-			withReader(encoding) { _.readFully }
-		
-	def asStringUTF8:String	=
-			asString(utf_8)
-		
-	def withReader[T](encoding:Charset)(func:Reader=>T):T	=
-			new InputStreamReader(openInputStream(), encoding) use func
-			
-	def withInputStream[T](func:InputStream=>T):T	=
-			openInputStream() use func
-			
-	def openInputStream():InputStream	=
-			peer.getInputStream
+	def body:HttpBody	=
+			new HttpBody {
+				def inputStream()	= peer.getInputStream
+			}
 	
 	//------------------------------------------------------------------------------
 	//## attributes

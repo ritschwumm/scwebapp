@@ -17,7 +17,7 @@ object HttpUtil {
 	}
 	
 	// @see http://www.w3.org/Protocols/rfc2616/rfc2616-sec2.html
-	def quoteString(s:String):String	=
+	def quote(s:String):String	=
 			"\"" +
 			(
 				s flatMap {
@@ -29,6 +29,32 @@ object HttpUtil {
 				} 
 			) +
 			"\""
+			
+	// @see http://tools.ietf.org/html/rfc2184 for non-ascii
+	def unquote(s:String):String	= {
+		if (s.length >= 2 && (s startsWith "\"") && (s endsWith "\"")) {
+			val b	= new StringBuilder
+			var i	= 1
+			while (i < s.length-1) {
+				s charAt i match {
+					case '\\'	=>
+						// TODO not out of bounds, but still fishy
+						i += 1
+						s charAt i match {
+							case '"'	=> b append '"'
+							case '\\'	=> b append '\\'
+							case 'r'	=> b append '\r'
+							case 'n'	=> b append '\n'
+							case x		=> b append '\\'; b append x
+						}
+					case x		=> b append x
+				}
+				i	+= 1
+			}
+			b.toString
+		}
+		else s
+	}
 			
 	def getCharset(contentType:MimeType):Tried[String,Option[Charset]]	=
 			(contentType.parameters firstString "charset")

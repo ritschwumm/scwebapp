@@ -56,28 +56,15 @@ final class PartExtension(peer:Part) {
 				(name, value)	<- snip.trim splitAroundFirst '='
 				if name == "filename"
 			}
-			// @see http://tools.ietf.org/html/rfc2184 for non-ascii
-			yield value replaceAll ("^\"|\"$", "")
+			yield HttpUtil unquote value
 			
 	//------------------------------------------------------------------------------
-	//## content
+	//## body
 	
 	// TODO Part can have a character encoding, but the API doesn't tell us about it
 	
-	// TODO handle exceptions
-	
-	def asString(encoding:Charset):String	=
-			withReader(encoding) { _.readFully }
-		
-	def asStringUTF8:String	=
-			asString(utf_8)
-		
-	def withReader[T](encoding:Charset)(func:Reader=>T):T	=
-			new InputStreamReader(openInputStream(), encoding) use func
-			
-	def withInputStream[T](func:InputStream=>T):T	=
-			openInputStream() use func
-			
-	def openInputStream():InputStream	=
-			peer.getInputStream
+	def body:HttpBody	=
+			new HttpBody {
+				def inputStream()	= peer.getInputStream
+			}
 }
