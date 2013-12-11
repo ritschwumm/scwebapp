@@ -13,6 +13,7 @@ import scala.collection.JavaConverters._
 import scutil.lang._
 import scutil.implicits._
 import scutil.io.Base64
+import scutil.io.Charsets
 import scutil.io.URIComponent
 import scutil.io.Charsets.utf_8
 import scutil.time.MilliInstant
@@ -127,7 +128,7 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 	/** Fail is invalid, Win(None) if missing, Win(Some) if valid */
 	def encoding:Tried[String,Option[Charset]]	=
 			peer.getCharacterEncoding.guardNotNull
-			.map { name => HttpUtil charsetByName name mapFail constant(name) }
+			.map { name => Charsets byName name mapFail constant(name) }
 			.sequenceTried
 			
 	/** Fail is invalid, Win(None) if missing, Win(Some) if valid */

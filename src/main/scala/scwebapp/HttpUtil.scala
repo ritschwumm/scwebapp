@@ -5,6 +5,7 @@ import java.nio.charset.Charset
 
 import scutil.lang._
 import scutil.implicits._
+import scutil.io.Charsets
 
 object HttpUtil {
 	private val multipartChars	= "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray
@@ -31,10 +32,6 @@ object HttpUtil {
 			
 	def getCharset(contentType:MimeType):Tried[String,Option[Charset]]	=
 			(contentType.parameters firstString "charset")
-			.map { name => charsetByName(name) mapFail constant(name) }
+			.map { name => Charsets byName name mapFail constant(name) }
 			.sequenceTried
-			
-	// TODO lib scutil 0.38.0
-	def charsetByName(name:String):Tried[IllegalArgumentException,Charset]	=
-			Tried.catchSpecific[IllegalArgumentException,Charset](Charset forName name)
 }
