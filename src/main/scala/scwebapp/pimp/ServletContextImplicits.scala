@@ -1,7 +1,7 @@
 package scwebapp
 package pimp
 
-import java.util.{ Set=>JSet }
+import java.util.{  Enumeration=>JEnumeration, Set=>JSet }
 import java.io.InputStream
 import java.net.URL
 
@@ -17,6 +17,14 @@ trait ServletContextImplicits {
 }
 
 final class ServletContextExtension(peer:ServletContext) {
+	def initParameters:CaseParameters	=
+			CaseParameters(
+				for {
+					name	<- peer.getInitParameterNames.asInstanceOf[JEnumeration[String]].asScala.toVector
+				}
+				yield name -> (peer getInitParameter name)
+			)
+			
 	def mimeTypeFor(path:String):Option[MimeType]	=
 			Option(peer getMimeType path) flatMap MimeType.parse 
 		

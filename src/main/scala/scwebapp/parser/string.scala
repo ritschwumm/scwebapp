@@ -5,7 +5,8 @@ import Parser._
 package object string {
 	type CParser[T]	= Parser[Char,T]
 	
-	def cis(c:Char):CParser[Char]	= is(c)
+	def cis(c:Char):CParser[Char]		= is(c)
+	def sis(c:String):CParser[String]	= iss(c.toVector) map { _.mkString }
 	
 	def rng(from:Char, to:Char):CParser[Char]	=
 			any[Char] filter { c => c >= from && c <= to }
@@ -28,5 +29,10 @@ package object string {
 	implicit class RichCharParser[T](peer:Parser[Char,T]) {
 		def parseStringOption(s:String):Option[T]	=
 				peer parse stringInput(s) toOption;
+	}
+	
+	implicit class RichCharSeqParser[T](peer:Parser[T,Seq[Char]]) {
+		def stringfy:Parser[T,String]	=
+				peer map { _.toString }
 	}
 }

@@ -60,7 +60,17 @@ final class FileServlet extends HttpServlet {
 					return
 				}
 				
-		new SourceHandler(source) apply request apply response
+		val enableGZIP	=
+				source.mimeType.major == "text"
+			
+		val handler	=
+				new SourceHandler(
+					source			= source,
+					enableInline	= source.mimeType.major == "image",
+					enableGZIP		= source.mimeType.major == "text"
+				)
+				
+		handler apply request apply response
 	}
 	
 	private def fileSource(path:String):Option[FileSource] =

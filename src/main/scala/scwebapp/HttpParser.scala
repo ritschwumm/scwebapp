@@ -3,21 +3,23 @@ package scwebapp
 import scutil.lang._
 
 import scwebapp.parser._
+import scwebapp.parser.Parser._
 import scwebapp.parser.string._
 
-/*
-@see http://www.ietf.org/rfc/rfc2045.txt
-@see http://www.ietf.org/rfc/rfc2046.txt
-@see http://www.ietf.org/rfc/rfc2047.txt
-@see http://www.ietf.org/rfc/rfc2183.txt
-@see http://www.ietf.org/rfc/rfc2184.txt for non-ascii
-@see http://www.ietf.org/rfc/rfc2616.txt
-*/
-	
 object HttpParser {
-	import Parser._
+	def parseContentDisposition(it:String):Option[(String,NoCaseParameters)]	=
+			(contentDisposition parseStringOption it)
+			.map { case (kind, params) => (kind, NoCaseParameters(params)) }
 		
-	//------------------------------------------------------------------------------
+	def parseContentType(it:String):Option[MimeType]	=
+			(contentType parseStringOption it)
+			.map { case ((major, minor), params) => MimeType(major, minor, NoCaseParameters(params)) }
+		
+	def parseCookie(it:String):Option[CaseParameters]	=
+			(cookieHeader parseStringOption it)
+			.map (CaseParameters.apply)
+			
+	//==============================================================================
 	
 	val OCTET:CParser[Char]		= rng(0, 255)
 	val CHAR:CParser[Char]		= rng(0, 127)
@@ -40,7 +42,8 @@ object HttpParser {
 	val WSP:CParser[Char]		= SP orElse HT
 	val OWS:CParser[Unit]		= (CRLF.option next WSP).seq tag ()
 	
-	def symbol(c:Char):CParser[Char]	= is(c) token LWS
+	def symbol(c:Char):CParser[Char]		= is(c) token LWS
+	def symbolN(s:String):CParser[String]	= sis(s) token LWS
 	
 	// NOTE separator ist tspecials und "{} \t"
 	val separator:CParser[Char]	= in("()<>@,;:\\\"/[]?={} \t")
@@ -92,12 +95,15 @@ object HttpParser {
 	
 	//------------------------------------------------------------------------------
 	
+	val bytesUnit:CParser[String]	= symbolN("bytes")
 	val bytePos:CParser[Long]										= DIGIT.nes map { _.toVector.mkString.toLong } token LWS
 	val byteRangeSpec:CParser[(Long,Option[Long])]					= bytePos left symbol('-') next bytePos.option
 	val suffixByteRangeSpec:CParser[Long]							= symbol('-') right bytePos
 	val byteRangeOne:CParser[Either[(Long,Option[Long]),Long]]		= byteRangeSpec either suffixByteRangeSpec
-	
 	val byteRangeSet:CParser[Nes[Either[(Long,Option[Long]),Long]]]	= hash1(byteRangeOne) finish LWS
+	
+	val rangeHeader:CParser[Nes[Either[(Long,Option[Long]),Long]]]	= 
+			bytesUnit right symbol('=') right byteRangeSet
 	
 	//------------------------------------------------------------------------------
 	

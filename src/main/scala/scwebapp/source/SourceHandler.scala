@@ -22,7 +22,7 @@ object SourceHandler {
 }
 
 // @see https://github.com/apache/tomcat/blob/trunk/java/org/apache/catalina/servlets/DefaultServlet.java
-final class SourceHandler(source:Source) extends HttpHandler {
+final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolean) extends HttpHandler {
 	def apply(request:HttpServletRequest):HttpResponder	=
 			request.method match {
 				case GET	=> respond(request, true)
@@ -84,16 +84,14 @@ final class SourceHandler(source:Source) extends HttpHandler {
 									
 				}
 		
-		// TODO questionable major checks
-		
 		val acceptEncoding		= requestHeaders firstString "Accept-Encoding"
 		val acceptsGzip:Boolean	=
-				contentType.major == "text" &&
+				enableGZIP &&
 				(acceptEncoding exists (Matchers acceptEncoding "gzip"))
 		
 		val accept	= requestHeaders firstString "Accept"
 		val inline	=
-				contentType.major != "image" &&
+				enableInline &&
 				(accept exists (Matchers accept contentType))
 			
 		val disposition	=
@@ -243,7 +241,7 @@ final class SourceHandler(source:Source) extends HttpHandler {
 					case Right(count)				if count > 0 && count <= total	=> Range(total - count,	last,			total)
 				}
 		
-		(HttpParser.byteRangeSet parseStringOption rangeHeader) 
+		(HttpParser.rangeHeader parseStringOption rangeHeader) 
 		.map	{ _.toVector flatMap mkRange }
 		.filter	{ _.nonEmpty }
 	}

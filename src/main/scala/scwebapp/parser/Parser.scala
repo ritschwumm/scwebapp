@@ -25,6 +25,18 @@ object Parser {
 	def is[S](c:S):Parser[S,S]	=
 			sat(_ == c)
 		
+	def iss[S](cs:Seq[S]):Parser[S,Seq[S]]	=
+			Parser { i =>
+				@tailrec
+				def loop(ii:Input[S], look:Seq[S]):Result[S,Seq[S]]	=
+						if (look.isEmpty)	Success(ii, cs)
+						else ii.next match {
+							case Some((rest, item)) if item == look.head	=> loop(rest, look.tail)
+							case _											=> Failure(ii)
+						}
+				loop(i, cs)
+			}
+		
 	def end[S]:Parser[S,Unit]	=
 			any[S].prevent
 }

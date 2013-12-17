@@ -67,7 +67,7 @@ final class PartExtension(peer:Part) {
 	def fileName:Tried[String,Option[String]]	=
 			contentDisposition
 			.map { it:String =>
-				(HttpUtil parseContentDisposition it)
+				(HttpParser parseContentDisposition it)
 				.flatMap	{ _._2 firstString "filename" }
 				.toWin		(s"invalid content disposition ${it}")
 			}

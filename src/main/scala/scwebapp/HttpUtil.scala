@@ -7,6 +7,8 @@ import scutil.lang._
 import scutil.implicits._
 import scutil.io.Charsets
 
+import scwebapp.parser.string._
+
 object HttpUtil {
 	private val multipartChars	= "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray
 	
@@ -32,44 +34,4 @@ object HttpUtil {
 				} 
 			) +
 			"\""
-			
-	/*
-	def unquote(s:String):String	= {
-		if (s.length >= 2 && (s startsWith "\"") && (s endsWith "\"")) {
-			val b	= new StringBuilder
-			var i	= 1
-			while (i < s.length-1) {
-				s charAt i match {
-					case '\\'	=>
-						// TODO not out of bounds, but still fishy
-						i += 1
-						s charAt i match {
-							case '"'	=> b append '"'
-							case '\\'	=> b append '\\'
-							case 'r'	=> b append '\r'
-							case 'n'	=> b append '\n'
-							case x		=> b append '\\'; b append x
-						}
-					case x		=> b append x
-				}
-				i	+= 1
-			}
-			b.toString
-		}
-		else s
-	}
-	*/
-	
-	//------------------------------------------------------------------------------
-	
-	import scwebapp.parser.string._
-	
-	def parseContentDisposition(it:String):Option[(String,NoCaseParameters)]	=
-			HttpParser.contentDisposition parseStringOption it map { case (kind, params) => (kind, NoCaseParameters(params)) }
-		
-	def parseContentType(it:String):Option[((String,String),NoCaseParameters)]	=
-			HttpParser.contentType parseStringOption it map { case (kind, params) => (kind, NoCaseParameters(params)) }
-		
-	def parseCookie(it:String):Option[CaseParameters]	=
-			HttpParser.cookieHeader parseStringOption it map CaseParameters.apply
 }

@@ -13,6 +13,7 @@ trait mimeType {
 	val application_json			= MimeType("application",	"json")
 	val application_octetStream		= MimeType("application",	"octet-stream")
 	val application_forceDownload	= MimeType("application",	"force-download")
+	val application_form			= MimeType("application", "x-www-form-urlencoded")
 	val audio_mpeg					= MimeType("audio",			"mpeg")
 	val image_jpeg					= MimeType("image",			"jpeg")
 	

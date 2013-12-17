@@ -145,7 +145,7 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 	
 	def cookies:CaseParameters	=
 			(headers firstString "Cookie")
-			.flatMap	(HttpUtil.parseCookie)
+			.flatMap	(HttpParser.parseCookie)
 			.getOrElse	(CaseParameters.empty)
 	
 	/*
