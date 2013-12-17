@@ -11,7 +11,7 @@ import scala.collection.JavaConverters._
 
 import scutil.lang._
 import scutil.implicits._
-import scutil.io.Charsets.utf_8
+import scutil.io.Charsets
 import scutil.time.MilliInstant
 
 object PartImplicits extends PartImplicits
@@ -40,28 +40,39 @@ final class PartExtension(peer:Part) {
 	/** Fail is invalid, Win(None) if missing, Win(Some) if valid */
 	def contentType:Tried[String,Option[MimeType]]	=
 			peer.getContentType.guardNotNull
-			.map { name => MimeType parse name toWin name }
+			.map { it =>
+				MimeType parse it toWin s"invalid content type ${it}" 
+			}
 			.sequenceTried
+			
+	/** Fail is invalid, Win(None) if missing, Win(Some) if valid */
+	def encoding:Tried[String,Option[Charset]]	=
+			contentType.toOption.flatten cata (
+				Win(None),
+				contentType => {
+					(contentType.parameters firstString "charset")
+					.map { it => 
+						Charsets byName it mapFail constant(s"invalid charset ${it}") 
+					}
+					.sequenceTried
+				}
+			)
 		
 	def contentDisposition:Option[String]	=
 			headers firstString "Content-Disposition"
-			
-	// TODO real parser, @see MimeType.scala
-	// does not check for "attachment" or "inline"
-	// does not distinguish between missing header and invalid format
-	def fileName:Seq[String]	=
-			for {
-				header			<- contentDisposition.toVector
-				snip			<- header splitAroundChar ';'
-				(name, value)	<- snip.trim splitAroundFirst '='
-				if name == "filename"
+	
+	// @see https://www.ietf.org/rfc/rfc2047.txt
+	def fileName:Tried[String,Option[String]]	=
+			contentDisposition
+			.map { it:String =>
+				(HttpUtil parseContentDisposition it)
+				.flatMap	{ _._2 firstString "filename" }
+				.toWin		(s"invalid content disposition ${it}")
 			}
-			yield HttpUtil unquote value
+			.sequenceTried
 			
 	//------------------------------------------------------------------------------
 	//## body
-	
-	// TODO Part can have a character encoding, but the API doesn't tell us about it
 	
 	def body:HttpBody	=
 			new HttpBody {

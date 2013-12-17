@@ -78,37 +78,6 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 			
 	def pathInfoUTF8:Option[String]	=
 			pathInfoRaw map URIComponent.decode
-
-	//------------------------------------------------------------------------------
-	//## multipart
-	
-	def part(name:String):Tried[HttpPartsProblem,Option[Part]]	=
-			catchHttpPartsProblem(Option(peer getPart name))
-    
-	def parts:Tried[HttpPartsProblem,Seq[Part]]	=
-			catchHttpPartsProblem(peer.getParts.asScala.toVector)
-			
-	private def catchHttpPartsProblem[T](it: =>T):Tried[HttpPartsProblem,T]	=
-			try {
-				Win(it)
-			}
-			catch {
-				case e:ServletException			=> Fail(NotMultipart(e))
-				case e:IOException				=> Fail(InputOutputFailed(e))
-				case e:IllegalStateException	=> Fail(SizeLimitExceeded(e))
-			}
-			
-	//------------------------------------------------------------------------------
-	//## parameters
-	
-	def parameters:CaseParameters	=
-			CaseParameters(
-				for {	
-					name	<- peer.getParameterNames.asInstanceOf[JEnumeration[String]].asScala.toVector
-					value	<- peer getParameterValues name
-				}
-				yield name -> value
-			)
 	
 	//------------------------------------------------------------------------------
 	//## headers
@@ -126,30 +95,51 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 	//## special headers
 	
 	/** Fail is invalid, Win(None) if missing, Win(Some) if valid */
-	def encoding:Tried[String,Option[Charset]]	=
-			peer.getCharacterEncoding.guardNotNull
-			.map { name => Charsets byName name mapFail constant(name) }
+	def contentLength:Tried[String,Option[Long]]	=
+			(headers firstString "Content-Length")
+			.map { it =>
+				it guardBy { _ matches "\\d+" } flatMap { _.toLongOption } toWin s"invalid content length ${it}"
+			}
 			.sequenceTried
 			
 	/** Fail is invalid, Win(None) if missing, Win(Some) if valid */
 	def contentType:Tried[String,Option[MimeType]]	=
-			peer.getContentType.guardNotNull
-			.map { name => MimeType parse name toWin name }
+			(headers firstString "Content-Type")
+			.map { it => 
+				MimeType parse it toWin s"invalid content type ${it}" 
+			}
 			.sequenceTried
 			
-	// TODO add error when wrong?
-	def contentLength:Option[Long]	=
-			headers firstString "Content-Length" filter { _ matches "\\d+" } flatMap { _.toLongOption }
-	
-	/** see http://www.ietf.org/rfc/rfc2617.txt */
-	def authorizationBasic(encoding:Charset):Option[(String,String)]	=
-			for {
-				header	<- Option(peer getHeader "Authorization")
-				code	<- header cutPrefix "Basic "
-				bytes	<- Base64 read code
-				pair	<- new String(bytes, encoding) splitAroundFirst ':'
+	/** Fail is invalid, Win(None) if missing, Win(Some) if valid */
+	def encoding:Tried[String,Option[Charset]]	=
+			contentType.toOption.flatten cata (
+				Win(None),
+				contentType => {
+					(contentType.parameters firstString "charset")
+					.map { it => 
+						Charsets byName it mapFail constant(s"invalid charset ${it}") 
+					}
+					.sequenceTried
+				}
+			)
+			
+	// TODO use the request's encoding here?
+	/** 
+	Fail is invalid, Win(None) if missing, Win(Some) if valid
+	@see http://www.ietf.org/rfc/rfc2617.txt 
+	*/
+	def authorizationBasic(encoding:Charset):Tried[String,Option[(String,String)]]	=
+			(headers firstString "Authorization")
+			.map { header =>
+				for {
+					code	<- header cutPrefix "Basic "						toWin	s"missing Basic prefix in ${header}"
+					bytes	<- Base64 read code									toWin	s"invalid base64 code in ${code}"
+					str		<- Catch.exception in (new String(bytes, encoding)) mapFail	constant("invalid string bytes")
+					pair	<- new String(bytes, encoding) splitAroundFirst ':'	toWin	s"missing colon separator in ${str}"
+				}
+				yield pair
 			}
-			yield pair
+			.sequenceTried
 	
 	def cookies:CaseParameters	=
 			CaseParameters(
@@ -158,7 +148,19 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 				}
 				yield cookie.getName -> cookie.getValue
 			)
-		
+
+	//------------------------------------------------------------------------------
+	//## parameters
+	
+	def parameters:CaseParameters	=
+			CaseParameters(
+				for {	
+					name	<- peer.getParameterNames.asInstanceOf[JEnumeration[String]].asScala.toVector
+					value	<- peer getParameterValues name
+				}
+				yield name -> value
+			)
+			
 	//------------------------------------------------------------------------------
 	//## body
 	
@@ -169,7 +171,21 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 				def inputStream()	= peer.getInputStream
 			}
 	
-	//------------------------------------------------------------------------------
+	def part(name:String):Tried[HttpPartsProblem,Option[Part]]	=
+			catchHttpPartsProblem(Option(peer getPart name))
+    
+	def parts:Tried[HttpPartsProblem,Seq[Part]]	=
+			catchHttpPartsProblem(peer.getParts.asScala.toVector)
+			
+	private def catchHttpPartsProblem[T](it: =>T):Tried[HttpPartsProblem,T]	=
+			try {
+				Win(it)
+			}
+			catch {
+				case e:ServletException			=> Fail(NotMultipart(e))
+				case e:IOException				=> Fail(InputOutputFailed(e))
+				case e:IllegalStateException	=> Fail(SizeLimitExceeded(e))
+			}
 	//## attributes
 	
 	def attribute[T<:AnyRef](name:String):HttpAttribute[T]	=

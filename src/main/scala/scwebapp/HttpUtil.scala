@@ -16,7 +16,10 @@ object HttpUtil {
 		0 until size map { _ => multipartChars(random nextInt multipartChars.length) } mkString ""
 	}
 	
-	// @see http://www.w3.org/Protocols/rfc2616/rfc2616-sec2.html
+	//------------------------------------------------------------------------------
+	
+	// TODO check
+	// @see http://www.ietf.org/rfc/rfc2616.txt
 	def quote(s:String):String	=
 			"\"" +
 			(
@@ -30,7 +33,7 @@ object HttpUtil {
 			) +
 			"\""
 			
-	// @see http://tools.ietf.org/html/rfc2184 for non-ascii
+	/*
 	def unquote(s:String):String	= {
 		if (s.length >= 2 && (s startsWith "\"") && (s endsWith "\"")) {
 			val b	= new StringBuilder
@@ -55,9 +58,15 @@ object HttpUtil {
 		}
 		else s
 	}
-			
-	def getCharset(contentType:MimeType):Tried[String,Option[Charset]]	=
-			(contentType.parameters firstString "charset")
-			.map { name => Charsets byName name mapFail constant(name) }
-			.sequenceTried
+	*/
+	
+	//------------------------------------------------------------------------------
+	
+	import scwebapp.parser.string._
+	
+	def parseContentDisposition(it:String):Option[(String,NoCaseParameters)]	=
+			HttpParser.contentDisposition parseStringOption it map { case (kind, params) => (kind, NoCaseParameters(params)) }
+		
+	def parseContentType(it:String):Option[((String,String),NoCaseParameters)]	=
+			HttpParser.contentType parseStringOption it map { case (kind, params) => (kind, NoCaseParameters(params)) }
 }

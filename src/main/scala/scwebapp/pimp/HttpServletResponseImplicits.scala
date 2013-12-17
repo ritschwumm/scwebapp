@@ -26,7 +26,7 @@ final class HttpServletResponseExtension(peer:HttpServletResponse) {
 		peer addHeader ("Expires",			"1 Jan 1971")
 	}
 	
-	/** see http://www.ietf.org/rfc/rfc2617.txt */
+	/** @see http://www.ietf.org/rfc/rfc2617.txt */
 	def unauthorized(realm:String) {
 		peer setHeader ("WWW-Authenticate", "Basic realm=\"" + realm + "\"")
 		setStatus(UNAUTHORIZED)
