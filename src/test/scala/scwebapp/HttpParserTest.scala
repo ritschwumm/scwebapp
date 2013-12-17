@@ -2,6 +2,8 @@ package scwebapp
 
 import org.specs2.mutable._
 
+import scutil.lang.Nes
+
 import scwebapp.parser._
 import scwebapp.parser.string._
 
@@ -54,6 +56,24 @@ class HttpParserTest extends Specification {
 		}
 		"work with multiple parameters" in {
 			HttpParser.contentType parseStringOption "text/plain; name=foo; filename=\"bar\"" mustEqual Some((("text", "plain"), Vector("name" -> "foo", "filename" -> "bar")))
+		}
+	}
+	
+	"parsing range headers" should {
+		"work for a simple range" in {
+			HttpParser.byteRangeSet parseStringOption "1-2" mustEqual Some(Nes multi Left(1L, Some(2L)))
+		}
+		"work for two simple ranges" in {
+			HttpParser.byteRangeSet parseStringOption "1-2,3-4" mustEqual Some(Nes multi (Left(1L, Some(2L)), Left(3L, Some(4L))))
+		}
+		"work for a prefix range" in {
+			HttpParser.byteRangeSet parseStringOption "1-" mustEqual Some(Nes multi Left(1L, None))
+		}
+		"work for a suffix range" in {
+			HttpParser.byteRangeSet parseStringOption "-2" mustEqual Some(Nes multi Right(2L))
+		}
+		"allow whitespace" in {
+			HttpParser.byteRangeSet parseStringOption " 1 - 2 " mustEqual Some(Nes multi Left(1L, Some(2L)))
 		}
 	}
 }

@@ -4,7 +4,7 @@ import scala.annotation.tailrec
 
 import scutil.lang._
 
-sealed trait Result[S,+T] {
+sealed trait Result[+S,+T] {
 	def map[U](func:T=>U):Result[S,U]	=
 			this match {
 				case Success(i, t)	=> Success(i, func(t))
@@ -18,7 +18,7 @@ sealed trait Result[S,+T] {
 				case Failure(i)					=> Failure(i)
 			}
 			
-	def orElse[U>:T](that:Result[S,U]):Result[S,U]	=
+	def orElse[SS>:S,TT>:T](that:Result[SS,TT]):Result[SS,TT]	=
 			(this, that) match {
 				case (Failure(i1),		Failure(i2))	=> Failure(i1)	// TODO Failure(i1 max i2)
 				case (Success(i, t),	Failure(_))		=> Success(i, t)
