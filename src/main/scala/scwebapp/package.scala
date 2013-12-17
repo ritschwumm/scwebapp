@@ -5,11 +5,26 @@ import scutil.lang._
 import scwebapp.method._
 
 package object scwebapp {
+	//------------------------------------------------------------------------------
+	//## base types
+	
 	type HttpPredicate	= Predicate[HttpServletRequest]
 	type HttpResponder	= Effect[HttpServletResponse]
 	
 	type HttpHandler	= HttpServletRequest => HttpResponder
 	type HttpPHandler	= PFunction[HttpServletRequest,HttpResponder]
+	
+	//------------------------------------------------------------------------------
+	//## type helpers
+	
+	def HttpPredicate(it:HttpPredicate):HttpPredicate	= it
+	def HttpResponder(it:HttpResponder):HttpResponder	= it
+	
+	def HttpHandler(it:HttpHandler):HttpHandler			= it
+	def HttpPHandler(it:HttpPHandler):HttpPHandler		= it
+	
+	//------------------------------------------------------------------------------
+	
 	
 	/*
 	import scutil.lang._

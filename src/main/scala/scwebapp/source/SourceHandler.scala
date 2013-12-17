@@ -32,9 +32,9 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 			
 	private def respond(request:HttpServletRequest, content:Boolean):HttpResponder	= {
 		var contentType		= source.mimeType
-		val lastModified	= HttpDate fromMilliInstant source.modified
+		val lastModified	= HttpDate fromMilliInstant source.lastModified
 		// with URL-encoding we're safe with whitespace and line separators
-		val eTag			= HttpUtil quote s"${URIComponent encode source.name}_${source.size.toString}_${source.modified.millis.toString}"
+		val eTag			= HttpUtil quote s"${URIComponent encode source.fileName}_${source.size.toString}_${source.lastModified.millis.toString}"
 		val expires			= HttpDate.now + SourceHandler.DEFAULT_EXPIRE_TIME
 
 		val requestHeaders	= request.headers
@@ -96,11 +96,9 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 			
 		val disposition	=
 				(inline cata ("attachment", "inline")) + 
-				s";filename=${HttpUtil quote source.name}"
+				s";filename=${HttpUtil quote source.fileName}"
 
-		// TODO is this necessary?
-		({ _ reset ()											}:HttpResponder)	~>
-		({ _ setBufferSize SourceHandler.DEFAULT_BUFFER_SIZE	}:HttpResponder)	~>
+		HttpResponder { _ setBufferSize SourceHandler.DEFAULT_BUFFER_SIZE }			~>
 		AddHeader("Content-Disposition",	disposition)							~>
 		AddHeader("Accept-Ranges",			"bytes")								~>
 		AddHeader("ETag",					eTag)									~>
@@ -140,7 +138,7 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 					SetStatus(PARTIAL_CONTENT)	~> (
 						if (content) {
 							streamResponder { output =>
-								// TODO ugly
+								// TODO ugly to rely in ServletOutputStream
 								ranges foreach { r =>
 									output println ()
 									output println (s"--${boundary}")

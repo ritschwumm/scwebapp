@@ -76,6 +76,6 @@ final class FileServlet extends HttpServlet {
 	private def fileSource(path:String):Option[FileSource] =
 			baseDir / (URIComponent decode path) guardBy { _.exists } map { file =>
 				val mimeType	= getServletContext mimeTypeFor file.getName getOrElse application_octetStream
-				new FileSource(file, mimeType)
+				FileSource simple (file, mimeType)
 			}
 }
