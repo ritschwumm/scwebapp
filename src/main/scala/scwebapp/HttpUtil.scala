@@ -69,4 +69,7 @@ object HttpUtil {
 		
 	def parseContentType(it:String):Option[((String,String),NoCaseParameters)]	=
 			HttpParser.contentType parseStringOption it map { case (kind, params) => (kind, NoCaseParameters(params)) }
+		
+	def parseCookie(it:String):Option[CaseParameters]	=
+			HttpParser.cookieHeader parseStringOption it map CaseParameters.apply
 }

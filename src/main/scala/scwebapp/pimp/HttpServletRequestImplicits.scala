@@ -18,6 +18,8 @@ import scutil.io.URIComponent
 import scutil.io.Charsets.utf_8
 import scutil.time.MilliInstant
 
+import scwebapp.HttpInput
+
 object HttpServletRequestImplicits extends HttpServletRequestImplicits
 
 trait HttpServletRequestImplicits {
@@ -142,12 +144,19 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 			.sequenceTried
 	
 	def cookies:CaseParameters	=
+			(headers firstString "Cookie")
+			.flatMap	(HttpUtil.parseCookie)
+			.getOrElse	(CaseParameters.empty)
+	
+	/*
+	def cookies:CaseParameters	=
 			CaseParameters(
 				for {
 					cookie	<- peer.getCookies.guardNotNull.flattenMany 
 				}
 				yield cookie.getName -> cookie.getValue
 			)
+	*/
 
 	//------------------------------------------------------------------------------
 	//## parameters
@@ -166,9 +175,9 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 	
 	// TODO ServletRequest has getReader which uses the supplied encoding!
 	
-	def body:HttpBody	=
-			new HttpBody {
-				def inputStream()	= peer.getInputStream
+	def body:HttpInput	=
+			new HttpInput {
+				def inputStream[T](handler:InputStream=>T):T	= handler(peer.getInputStream)
 			}
 	
 	def part(name:String):Tried[HttpPartsProblem,Option[Part]]	=

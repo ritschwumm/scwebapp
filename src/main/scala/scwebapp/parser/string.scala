@@ -5,6 +5,8 @@ import Parser._
 package object string {
 	type CParser[T]	= Parser[Char,T]
 	
+	def cis(c:Char):CParser[Char]	= is(c)
+	
 	def rng(from:Char, to:Char):CParser[Char]	=
 			any[Char] filter { c => c >= from && c <= to }
 		

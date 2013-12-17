@@ -76,4 +76,16 @@ class HttpParserTest extends Specification {
 			HttpParser.byteRangeSet parseStringOption " 1 - 2 " mustEqual Some(Nes multi Left(1L, Some(2L)))
 		}
 	}
+	
+	"parsing cookie headers" should {
+		"work for a simple cookie" in {
+			HttpParser.cookieHeader parseStringOption "foo=bar" mustEqual Some(Seq("foo" -> "bar"))
+		}
+		"work for two simple cookies" in {
+			HttpParser.cookieHeader parseStringOption "foo=bar; quux=wibble" mustEqual Some(Seq("foo" -> "bar", "quux" -> "wibble"))
+		}
+		"work for a cookie with whitespace" in {
+			HttpParser.cookieHeader parseStringOption " foo=bar " mustEqual Some(Seq("foo" -> "bar"))
+		}
+	}
 }

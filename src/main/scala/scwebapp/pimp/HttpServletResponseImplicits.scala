@@ -11,6 +11,7 @@ import scutil.lang._
 import scutil.implicits._
 import scutil.time._
 
+import scwebapp.HttpOutput
 import scwebapp.status._
 
 object HttpServletResponseImplicits extends HttpServletResponseImplicits
@@ -74,6 +75,10 @@ final class HttpServletResponseExtension(peer:HttpServletResponse) {
 	
 	//------------------------------------------------------------------------------
 	//## content
+	
+	def send(output:HttpOutput) {
+		output transferTo peer.getOutputStream
+	}
 	
 	// TODO getWriter is too much magic
 	

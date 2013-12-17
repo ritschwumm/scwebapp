@@ -14,6 +14,8 @@ import scutil.implicits._
 import scutil.io.Charsets
 import scutil.time.MilliInstant
 
+import scwebapp.HttpInput
+
 object PartImplicits extends PartImplicits
 
 trait PartImplicits {
@@ -74,8 +76,8 @@ final class PartExtension(peer:Part) {
 	//------------------------------------------------------------------------------
 	//## body
 	
-	def body:HttpBody	=
-			new HttpBody {
-				def inputStream()	= peer.getInputStream
+	def body:HttpInput	=
+			new HttpInput {
+				def inputStream[T](handler:InputStream=>T):T	= handler(peer.getInputStream)
 			}
 }

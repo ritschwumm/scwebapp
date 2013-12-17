@@ -78,6 +78,9 @@ case class Parser[S,+T](parse:Input[S]=>Result[S,T]) { self =>
 		
 	def right[U](that:Parser[S,U]):Parser[S,U]	=
 			self next that map { _._2 }
+		
+	def inside(quote:Parser[S,Any]):Parser[S,T]	=
+			quote right self left quote
 			
 	def option:Parser[S,Option[T]]	=
 			Parser { i => 

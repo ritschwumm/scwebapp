@@ -53,8 +53,6 @@ trait responder {
 	
 	def AddHeader(name:String, value:String):HttpResponder		= _ addHeader			(name, value)
 	// SendError
-	// SendRedirect
-	// SetStatus
 	
 	// response extension
 	
@@ -65,6 +63,8 @@ trait responder {
 	def SetEncoding(encoding:Charset):HttpResponder				= _ setEncoding			encoding
 	def SetContentType(contentType:MimeType):HttpResponder		= _ setContentType		contentType
 	def SetContentLength(contentLength:Long):HttpResponder		= _ setContentLength	contentLength
+	
+	def Send(data:HttpOutput):HttpResponder						= _ send data
 	
 	def StreamFrom(in:Thunk[InputStream]):HttpResponder			= _ streamFrom			in
 	def WriteFrom(in:Thunk[Reader]):HttpResponder				= _ writeFrom			in
