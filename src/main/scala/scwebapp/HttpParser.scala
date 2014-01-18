@@ -47,10 +47,10 @@ object HttpParser {
 	
 	// NOTE separator ist tspecials und "{} \t"
 	val separator:CParser[Char]	= in("()<>@,;:\\\"/[]?={} \t")
-	val token:CParser[String]	= ((separator orElse CTL).prevent right CHAR).nes map { _.toSeq mkString "" } token LWS
+	val token:CParser[String]	= ((separator orElse CTL).prevent right CHAR).nes.stringify token LWS
 	
 	// val ctext:Parser[Char]		= (sat('(') orElse sat(')')).prevent right TEXT
-	// val comment:Parser[String]	= '(' ~> (quoted_pair_string | comment | ctext_string).* <~ ')' map { _.mkString }
+	// val comment:Parser[String]	= '(' ~> (quoted_pair_string | comment | ctext_string).* <~ ')' stringify
 	
 	// TODO check, @see HttpUtil.quote
 	val quotedPair:CParser[Char]	=
@@ -64,7 +64,7 @@ object HttpParser {
 	
 	val dqText:CParser[Char]			= DQ.prevent right TEXT
 	val quotedChar:CParser[Char]		= quotedPair orElse dqText
-	val quotedString:CParser[String]	= DQ right quotedChar.seq left DQ map { _.mkString } token LWS
+	val quotedString:CParser[String]	= (DQ right quotedChar.seq left DQ).stringify token LWS
                      
 	val hashSepa:CParser[Char]	= symbol(',')
 	def hash[T](sub:CParser[T]):CParser[Seq[T]]		= sub sepSeq hashSepa
@@ -95,8 +95,8 @@ object HttpParser {
 	
 	//------------------------------------------------------------------------------
 	
-	val bytesUnit:CParser[String]	= symbolN("bytes")
-	val bytePos:CParser[Long]										= DIGIT.nes map { _.toVector.mkString.toLong } token LWS
+	val bytesUnit:CParser[String]									= symbolN("bytes")
+	val bytePos:CParser[Long]										= DIGIT.nes.stringify map { _.toLong } token LWS
 	val byteRangeSpec:CParser[(Long,Option[Long])]					= bytePos left symbol('-') next bytePos.option
 	val suffixByteRangeSpec:CParser[Long]							= symbol('-') right bytePos
 	val byteRangeOne:CParser[Either[(Long,Option[Long]),Long]]		= byteRangeSpec either suffixByteRangeSpec
@@ -114,9 +114,9 @@ object HttpParser {
 			rng(0x2d, 0x3a)	orElse
 			rng(0x3c, 0x5b)	orElse
 			rng(0x5d, 0x7e)
-	val cookieValueRaw:CParser[String]		= cookieOctet.seq map { _.mkString }
-	val cookieValueQuoted:CParser[String]	= cookieValueRaw inside DQ
-	val cookieValue:CParser[String]			= cookieValueRaw orElse cookieValueQuoted
+	val cookieValueRaw:CParser[String]				= cookieOctet.seq.stringify
+	val cookieValueQuoted:CParser[String]			= cookieValueRaw inside DQ
+	val cookieValue:CParser[String]					= cookieValueRaw orElse cookieValueQuoted
 	val cookiePair:CParser[(String,String)]			= cookieName left is('=') next cookieValue
 	val cookieString:CParser[Seq[(String,String)]]	= cookiePair sepSeq (is(';') next SP)
 	

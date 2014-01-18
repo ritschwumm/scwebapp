@@ -5,10 +5,10 @@ import scala.annotation.tailrec
 import scutil.lang._
 
 object Parser {
-	def succeed[S,T](t:T):Parser[S,T]	=
+	def success[S,T](t:T):Parser[S,T]	=
 			Parser { i:Input[S] => Success(i, t) }
 		
-	def fail[S]:Parser[S,Unit]	=
+	def failure[S]:Parser[S,Unit]	=
 			Parser { i => Failure(i) }
 	
 	def any[S]:Parser[S,S]	= 
@@ -75,12 +75,11 @@ case class Parser[S,+T](parse:Input[S]=>Result[S,T]) { self =>
 	def collect[U](pfunc:PartialFunction[T,U]):Parser[S,U]	=
 			filterMap(pfunc.lift)
 		
+	def ap[U,V](that:Parser[S,U])(implicit ev:T=>(U=>V)):Parser[S,V]	=
+			for { a	<- self; b	<- that } yield a(b)
+			
 	def next[U](that:Parser[S,U]):Parser[S,(T,U)]	=
-			for {
-				a	<- self
-				b	<- that
-			}
-			yield (a, b)
+			for { a	<- self; b	<- that } yield (a, b)
 			
 	def tag[U](it:U):Parser[S,U]	=
 			self map constant(it)
@@ -94,6 +93,10 @@ case class Parser[S,+T](parse:Input[S]=>Result[S,T]) { self =>
 	def inside(quote:Parser[S,Any]):Parser[S,T]	=
 			quote right self left quote
 			
+	def either[U](that:Parser[S,U]):Parser[S,Either[T,U]]	=
+			(self map Left.apply)	orElse
+			(that map Right.apply)
+			
 	def option:Parser[S,Option[T]]	=
 			Parser { i => 
 				self parse i match { 
@@ -102,10 +105,6 @@ case class Parser[S,+T](parse:Input[S]=>Result[S,T]) { self =>
 				} 
 			}
 			
-	def either[U](that:Parser[S,U]):Parser[S,Either[T,U]]	=
-			(self map Left.apply)	orElse
-			(that map Right.apply)
-	
 	def seq:Parser[S,Seq[T]]	=
 			Parser { i =>
 				@tailrec
@@ -121,18 +120,13 @@ case class Parser[S,+T](parse:Input[S]=>Result[S,T]) { self =>
 			self next self.seq map { case (x, xs) => Nes(x, xs) }
 		
 	def sepSeq(sepa:Parser[S,Any]):Parser[S,Seq[T]]	=
-			sepNes(sepa) map { _.toVector } orElse (Parser succeed Vector.empty)
+			sepNes(sepa) map { _.toVector } orElse (Parser success Vector.empty)
 		
 	def sepNes(sepa:Parser[S,Any]):Parser[S,Nes[T]]	=
 			self next (sepa right self).seq map { case (x, xs) => Nes(x, xs) }
 		
 	def guard:Parser[S,Unit]	=
-			Parser { i =>
-				self parse i match {
-					case Success(_, _)	=> Success(i, ())
-					case Failure(_)		=> Failure(i)
-				}
-			}
+			prevent.prevent
 			
 	def prevent:Parser[S,Unit]	=
 			Parser { i =>
