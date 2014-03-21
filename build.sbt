@@ -2,12 +2,12 @@ name			:= "scwebapp"
 
 organization	:= "de.djini"
 
-version			:= "0.47.0"
+version			:= "0.48.0"
 
 scalaVersion	:= "2.10.3"
 
 libraryDependencies	++= Seq(
-	"de.djini"		%%	"scutil"			% "0.40.0"	% "compile",
+	"de.djini"		%%	"scutil-core"		% "0.41.0"	% "compile",
 	"javax.servlet"	%	"javax.servlet-api"	% "3.0.1"	% "provided",
 	"org.specs2"	%%	"specs2"			% "2.3.7"	% "test"	exclude("org.scala-lang", "scala-library")
 )
