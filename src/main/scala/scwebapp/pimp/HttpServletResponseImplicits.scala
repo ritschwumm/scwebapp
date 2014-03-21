@@ -23,8 +23,9 @@ trait HttpServletResponseImplicits {
 
 final class HttpServletResponseExtension(peer:HttpServletResponse) {
 	def noCache() {
-		peer addHeader ("Cache-Control",	"no-cache, must-revalidate")
-		peer addHeader ("Expires",			"1 Jan 1971")
+		peer addHeader ("Cache-Control",	"no-cache, no-store, must-revalidate")
+		peer addHeader ("Pragma",			"no-cache")
+		peer addHeader ("Expires",			"0")
 	}
 	
 	/** @see http://www.ietf.org/rfc/rfc2617.txt */

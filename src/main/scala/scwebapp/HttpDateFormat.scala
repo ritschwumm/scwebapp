@@ -32,8 +32,8 @@ object HttpDateFormat {
 			
 	//------------------------------------------------------------------------------
 	
-	val marshaller:Marshaller[HttpDate,String]	=
-			Marshaller(unparse, parse)
+	val prism:Prism[String,HttpDate]	=
+			Prism(parse, unparse)
 	
 	def unparse(date:HttpDate):String	=
 			synchronized {
