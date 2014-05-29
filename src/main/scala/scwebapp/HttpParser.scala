@@ -40,7 +40,7 @@ object HttpParser {
 	val TEXT:CParser[Char]		= LWS orElse (CTL.prevent right OCTET)
 	
 	val WSP:CParser[Char]		= SP orElse HT
-	val OWS:CParser[Unit]		= (CRLF.option next WSP).seq tag ()
+	val OWS:CParser[Unit]		= (CRLF.option next WSP).seq tag (())
 	
 	def symbol(c:Char):CParser[Char]		= is(c) token LWS
 	def symbolN(s:String):CParser[String]	= sis(s) token LWS
