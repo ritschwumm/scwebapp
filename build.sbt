@@ -2,14 +2,14 @@ name			:= "scwebapp"
 
 organization	:= "de.djini"
 
-version			:= "0.49.0"
+version			:= "0.50.0"
 
-scalaVersion	:= "2.10.3"
+scalaVersion	:= "2.10.4"
 
 libraryDependencies	++= Seq(
-	"de.djini"		%%	"scutil-core"		% "0.42.0"	% "compile",
+	"de.djini"		%%	"scutil-core"		% "0.43.0"	% "compile",
 	"javax.servlet"	%	"javax.servlet-api"	% "3.0.1"	% "provided",
-	"org.specs2"	%%	"specs2"			% "2.3.10"	% "test"	exclude("org.scala-lang", "scala-library")
+	"org.specs2"	%%	"specs2"			% "2.3.10"	% "test"	exclude("org.scala-lang", "scala-library")	exclude("org.scala-lang", "scala-reflect")
 )
 
 scalacOptions	++= Seq(
