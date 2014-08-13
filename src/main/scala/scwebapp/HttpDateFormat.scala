@@ -21,7 +21,7 @@ object HttpDateFormat {
 			// RFC 822, updated by RFC 1123
 			mkFormat("EEE, dd MMM yyyy HH:mm:ss zzz")
 		
-	private val allFormats:Seq[DateFormat]	=
+	private val allFormats:ISeq[DateFormat]	=
 			Vector(
 				standardFormat,
 				// RFC 850, obsoleted by RFC 1036

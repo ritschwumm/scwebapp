@@ -56,7 +56,7 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 	this is not influenced by setCharacterEncoding or setEncoding 
 	*/
 	def fullPathServlet:String	=
-			Seq(peer.getServletPath, peer.getPathInfo) filter { _ != null } mkString ""
+			ISeq(peer.getServletPath, peer.getPathInfo) filter { _ != null } mkString ""
 	
 	/** the full path after the context path, not yet url-decoded */
 	def fullPathRaw:String	= 
@@ -183,7 +183,7 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 	def part(name:String):Tried[HttpPartsProblem,Option[Part]]	=
 			catchHttpPartsProblem(Option(peer getPart name))
     
-	def parts:Tried[HttpPartsProblem,Seq[Part]]	=
+	def parts:Tried[HttpPartsProblem,ISeq[Part]]	=
 			catchHttpPartsProblem(peer.getParts.asScala.toVector)
 			
 	private def catchHttpPartsProblem[T](it: =>T):Tried[HttpPartsProblem,T]	=

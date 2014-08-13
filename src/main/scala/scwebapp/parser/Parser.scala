@@ -25,10 +25,10 @@ object Parser {
 	def is[S](c:S):Parser[S,S]	=
 			sat(_ == c)
 		
-	def iss[S](cs:Seq[S]):Parser[S,Seq[S]]	=
+	def iss[S](cs:ISeq[S]):Parser[S,ISeq[S]]	=
 			Parser { i =>
 				@tailrec
-				def loop(ii:Input[S], look:Seq[S]):Result[S,Seq[S]]	=
+				def loop(ii:Input[S], look:ISeq[S]):Result[S,ISeq[S]]	=
 						if (look.isEmpty)	Success(ii, cs)
 						else ii.next match {
 							case Some((rest, item)) if item == look.head	=> loop(rest, look.tail)
@@ -105,10 +105,10 @@ case class Parser[S,+T](parse:Input[S]=>Result[S,T]) { self =>
 				} 
 			}
 			
-	def seq:Parser[S,Seq[T]]	=
+	def seq:Parser[S,ISeq[T]]	=
 			Parser { i =>
 				@tailrec
-				def loop(ii:Input[S], accu:Seq[T]):Result[S,Seq[T]]	=
+				def loop(ii:Input[S], accu:ISeq[T]):Result[S,ISeq[T]]	=
 						self parse ii match {
 							case Success(i1, t)	=> loop(i1, accu :+ t)
 							case Failure(_)		=> Success(ii, accu)
@@ -119,7 +119,7 @@ case class Parser[S,+T](parse:Input[S]=>Result[S,T]) { self =>
 	def nes:Parser[S,Nes[T]]	=
 			self next self.seq map { case (x, xs) => Nes(x, xs) }
 		
-	def sepSeq(sepa:Parser[S,Any]):Parser[S,Seq[T]]	=
+	def sepSeq(sepa:Parser[S,Any]):Parser[S,ISeq[T]]	=
 			sepNes(sepa) map { _.toVector } orElse (Parser success Vector.empty)
 		
 	def sepNes(sepa:Parser[S,Any]):Parser[S,Nes[T]]	=

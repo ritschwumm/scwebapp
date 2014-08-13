@@ -73,7 +73,7 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 		
 		// TODO should we fail when needsFull but range headers are invalid?
 		val full:Range	= Range full source.size
-		val ranges:Seq[Range]	=
+		val ranges:ISeq[Range]	=
 				(needsFull, rangesRaw) match {
 					case (true,		_)					=> Vector(full)
 					case (false,	None)				=> Vector(full)
@@ -121,7 +121,7 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 						}
 						else Pass
 					)
-				case Seq(r)	=>
+				case ISeq(r)	=>
 					SetContentType(contentType)					~>
 					AddHeader("Content-Range", formatRange(r))	~>
 					SetContentLength(r.length)					~>
@@ -202,10 +202,10 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 					)
 				}
 						
-		private def splitList(s:String):Seq[String]	=
+		private def splitList(s:String):ISeq[String]	=
 				s splitAroundChar ',' map { _.trim } filter { _.nonEmpty }
 			
-		private def splitListParameterless(s:String):Seq[String]	=
+		private def splitListParameterless(s:String):ISeq[String]	=
 				splitList(s) flatMap stripParam
 			
 		private def stripParam(s:String):Option[String]	=
@@ -227,7 +227,7 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 	private def formatRange(r:Range):String	=
 			s"bytes ${r.start}-${r.end}/${r.total}"
 	
-	private def parseRangeHeader(total:Long)(rangeHeader:String):Option[Seq[Range]]	= {
+	private def parseRangeHeader(total:Long)(rangeHeader:String):Option[ISeq[Range]]	= {
 		import scwebapp.parser.string._
 		
 		val last	= total - 1

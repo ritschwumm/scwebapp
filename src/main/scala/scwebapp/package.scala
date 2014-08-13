@@ -37,7 +37,7 @@ package object scwebapp {
 	implicit def StatusToResponder(status:HttpStatus):HttpResponder			= SetStatus(status)
 	*/
 	
-	val HttpMethods:Seq[HttpMethod]	= 
+	val HttpMethods:ISeq[HttpMethod]	= 
 			Vector (
 				OPTIONS, HEAD, GET, POST, PUT, DELETE, TRACE, CONNECT,
 				PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, LOCK, UNLOCK

@@ -1,6 +1,6 @@
 package scwebapp.parser
 
-import scutil.lang.Nes
+import scutil.lang._
 
 import Parser._
 
@@ -33,13 +33,13 @@ package object string {
 				(peer parse stringInput(s)).toOption
 	}
 	
-	implicit class RichCharSeqParser[T](peer:Parser[T,Seq[Char]]) {
+	implicit class RichCharISeqParser[T](peer:Parser[T,ISeq[Char]]) {
 		def stringify:Parser[T,String]	=
 				peer map { _.mkString }
 	}
 	
 	implicit class RichCharNesParser[T](peer:Parser[T,Nes[Char]]) {
 		def stringify:Parser[T,String]	=
-				peer map { _.toSeq.mkString }
+				peer map { _.toISeq.mkString }
 	}
 }

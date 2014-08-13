@@ -1,11 +1,12 @@
 package scwebapp
 
+import scutil.lang._
 import scutil.implicits._
 
 sealed trait Parameters {
-	def all:Seq[(String,String)]
+	def all:ISeq[(String,String)]
 	def names:Set[String]
-	def get(name:String):Seq[String]
+	def get(name:String):ISeq[String]
 	
 	//------------------------------------------------------------------------------
 	
@@ -27,19 +28,19 @@ sealed trait Parameters {
 object CaseParameters {
 	val empty	= CaseParameters(Vector.empty)
 	
-	def apply(values:Seq[(String,String)]):CaseParameters	= 
+	def apply(values:ISeq[(String,String)]):CaseParameters	= 
 			new CaseParameters(values)
 }
 
 /** case sensitive */
-final class CaseParameters(values:Seq[(String,String)]) extends Parameters {
-	def all:Seq[(String,String)]	=
+final class CaseParameters(values:ISeq[(String,String)]) extends Parameters {
+	def all:ISeq[(String,String)]	=
 			values
 		
 	def names:Set[String]	=
 			(values map { _._1 }).toSet
 		
-	def get(name:String):Seq[String]	=
+	def get(name:String):ISeq[String]	=
 			values collect { case (`name`, value) => value }
 			
 	def append(name:String, value:String):CaseParameters	=
@@ -60,19 +61,19 @@ final class CaseParameters(values:Seq[(String,String)]) extends Parameters {
 object NoCaseParameters {
 	val empty	= NoCaseParameters(Vector.empty)
 	
-	def apply(values:Seq[(String,String)]):NoCaseParameters	= 
+	def apply(values:ISeq[(String,String)]):NoCaseParameters	= 
 			new NoCaseParameters(values)
 }
 
 /** case insensitive */
-final class NoCaseParameters(values:Seq[(String,String)]) extends Parameters {
-	def all:Seq[(String,String)]	=
+final class NoCaseParameters(values:ISeq[(String,String)]) extends Parameters {
+	def all:ISeq[(String,String)]	=
 			values map { case (k,v) => (k.toLowerCase, v) }
 		
 	def names:Set[String]	=
 			(values map { _._1.toLowerCase }).toSet
 		
-	def get(name:String):Seq[String]	=
+	def get(name:String):ISeq[String]	=
 			values flatMap { case (k, v) =>
 				if (k equalsIgnoreCase name)	Vector(v)
 				else							Vector.empty

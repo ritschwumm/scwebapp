@@ -67,8 +67,8 @@ object HttpParser {
 	val quotedString:CParser[String]	= (DQ right quotedChar.seq left DQ).stringify token LWS
                      
 	val hashSepa:CParser[Char]	= symbol(',')
-	def hash[T](sub:CParser[T]):CParser[Seq[T]]		= sub sepSeq hashSepa
-	def hash1[T](sub:CParser[T]):CParser[Nes[T]]	= sub sepNes hashSepa
+	def hash[T](sub:CParser[T]):CParser[ISeq[T]]	= sub sepSeq	hashSepa
+	def hash1[T](sub:CParser[T]):CParser[Nes[T]]	= sub sepNes	hashSepa
 	
 	//------------------------------------------------------------------------------
 		
@@ -81,7 +81,7 @@ object HttpParser {
 	
 	val kind:CParser[String]	= token
 	
-	val contentDisposition:CParser[(String,Seq[(String,String)])]	= 
+	val contentDisposition:CParser[(String,ISeq[(String,String)])]	= 
 			kind next nextParameter.seq finish LWS
 		
 	//------------------------------------------------------------------------------
@@ -90,7 +90,7 @@ object HttpParser {
 	val minor:CParser[String]			= token
 	val typ:CParser[(String,String)]	= major left symbol('/') next minor 
 	
-	val contentType:CParser[((String,String),Seq[(String,String)])]	=
+	val contentType:CParser[((String,String),ISeq[(String,String)])]	=
 			typ next nextParameter.seq finish LWS
 	
 	//------------------------------------------------------------------------------
@@ -118,7 +118,7 @@ object HttpParser {
 	val cookieValueQuoted:CParser[String]			= cookieValueRaw inside DQ
 	val cookieValue:CParser[String]					= cookieValueRaw orElse cookieValueQuoted
 	val cookiePair:CParser[(String,String)]			= cookieName left is('=') next cookieValue
-	val cookieString:CParser[Seq[(String,String)]]	= cookiePair sepSeq (is(';') next SP)
+	val cookieString:CParser[ISeq[(String,String)]]	= cookiePair sepSeq (is(';') next SP)
 	
-	val cookieHeader:CParser[Seq[(String,String)]]	= OWS right cookieString left OWS
+	val cookieHeader:CParser[ISeq[(String,String)]]	= OWS right cookieString left OWS
 }
