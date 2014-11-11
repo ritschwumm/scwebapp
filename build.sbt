@@ -2,7 +2,7 @@ name			:= "scwebapp"
 
 organization	:= "de.djini"
 
-version			:= "0.62.0"
+version			:= "0.63.0"
 
 scalaVersion	:= "2.11.4"
 
@@ -24,7 +24,7 @@ conflictManager	:= ConflictManager.strict
 resolvers		+= "Scalaz Bintray Repo" at "http://dl.bintray.com/scalaz/releases"
 
 libraryDependencies	++= Seq(
-	"de.djini"		%%	"scutil-core"		% "0.55.0"	% "compile",
+	"de.djini"		%%	"scutil-core"		% "0.56.0"	% "compile",
 	"javax.servlet"	%	"javax.servlet-api"	% "3.0.1"	% "provided",
 	"org.specs2"	%%	"specs2"			% "2.4.9"	% "test"
 )
