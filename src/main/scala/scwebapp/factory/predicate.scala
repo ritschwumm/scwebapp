@@ -6,7 +6,6 @@ import java.nio.charset.Charset
 import scutil.implicits._
 
 import scwebapp.implicits._
-import scwebapp.method._
 
 object predicate extends predicate 
 

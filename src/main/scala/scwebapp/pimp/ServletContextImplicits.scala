@@ -7,7 +7,7 @@ import java.net.URL
 
 import javax.servlet._
 
-import scala.collection.JavaConverters._
+import scutil.implicits._
 
 object ServletContextImplicits extends ServletContextImplicits
 
@@ -20,7 +20,7 @@ final class ServletContextExtension(peer:ServletContext) {
 	def initParameters:CaseParameters	=
 			CaseParameters(
 				for {
-					name	<- peer.getInitParameterNames.asInstanceOf[JEnumeration[String]].asScala.toVector
+					name	<- (EnumerationUtil toIterator peer.getInitParameterNames.asInstanceOf[JEnumeration[String]]).toVector
 				}
 				yield name -> (peer getInitParameter name)
 			)
@@ -38,7 +38,7 @@ final class ServletContextExtension(peer:ServletContext) {
 			Option(peer getResourceAsStream path)
 			
 	def resourcePaths(base:String):Option[Set[String]]	=
-			Option(peer getResourcePaths base) map { _.asInstanceOf[JSet[String]].asScala.toSet }
+			Option(peer getResourcePaths base) map { _.asInstanceOf[JSet[String]].toSet }
 		
 	def attribute[T<:AnyRef](name:String):HttpAttribute[T]	=
 		 	new HttpAttribute[T](

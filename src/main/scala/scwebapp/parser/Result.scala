@@ -1,7 +1,5 @@
 package scwebapp.parser
 
-import scala.annotation.tailrec
-
 import scutil.lang._
 
 sealed trait Result[+S,+T] {

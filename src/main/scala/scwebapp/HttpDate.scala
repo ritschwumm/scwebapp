@@ -2,8 +2,6 @@ package scwebapp
 
 import java.util.Date
 
-import scutil.lang._
-import scutil.implicits._
 import scutil.time.MilliInstant
 
 object HttpDate {

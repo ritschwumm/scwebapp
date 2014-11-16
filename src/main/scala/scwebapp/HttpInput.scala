@@ -3,7 +3,6 @@ package scwebapp
 import java.io._
 import java.nio.charset.Charset
 
-import scutil.lang._
 import scutil.implicits._
 
 trait HttpInput {

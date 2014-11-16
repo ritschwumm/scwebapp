@@ -6,11 +6,9 @@ import java.util.zip.GZIPOutputStream
 import javax.servlet._
 import javax.servlet.http._
 
-import scutil.lang._
 import scutil.implicits._
 import scutil.io.URIComponent
 
-import scwebapp._
 import scwebapp.implicits._
 import scwebapp.factory.mimeType._
 import scwebapp.source._

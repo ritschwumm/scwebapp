@@ -8,8 +8,6 @@ import java.nio.charset.Charset
 import javax.servlet.ServletException
 import javax.servlet.http._
 
-import scala.collection.JavaConverters._
-
 import scutil.lang._
 import scutil.implicits._
 import scutil.io.Base64
@@ -87,8 +85,8 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 	def headers:NoCaseParameters	=
 			NoCaseParameters(
 				for {	
-					name	<- peer.getHeaderNames.asInstanceOf[JEnumeration[String]].asScala.toVector
-					value	<- (peer getHeaders name).asInstanceOf[JEnumeration[String]].asScala
+					name	<- (EnumerationUtil toIterator peer.getHeaderNames.asInstanceOf[JEnumeration[String]]).toVector
+					value	<- (EnumerationUtil toIterator (peer getHeaders name).asInstanceOf[JEnumeration[String]]).toVector
 				}
 				yield name -> value
 			)
@@ -164,7 +162,7 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 	def parameters:CaseParameters	=
 			CaseParameters(
 				for {	
-					name	<- peer.getParameterNames.asInstanceOf[JEnumeration[String]].asScala.toVector
+					name	<- (EnumerationUtil toIterator peer.getParameterNames.asInstanceOf[JEnumeration[String]]).toVector
 					value	<- peer getParameterValues name
 				}
 				yield name -> value
@@ -184,7 +182,7 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 			catchHttpPartsProblem(Option(peer getPart name))
     
 	def parts:Tried[HttpPartsProblem,ISeq[Part]]	=
-			catchHttpPartsProblem(peer.getParts.asScala.toVector)
+			catchHttpPartsProblem(peer.getParts.toIterable.toVector)
 			
 	private def catchHttpPartsProblem[T](it: =>T):Tried[HttpPartsProblem,T]	=
 			try {

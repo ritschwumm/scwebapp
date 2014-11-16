@@ -1,7 +1,6 @@
 package scwebapp.filter
 
 import javax.servlet._
-import javax.servlet.http._
 
 /**sets request and response character encodings to the value of the init-parameter "charset" */
 final class CharsetFilter extends Filter {

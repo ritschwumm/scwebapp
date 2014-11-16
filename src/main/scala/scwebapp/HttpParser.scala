@@ -2,7 +2,6 @@ package scwebapp
 
 import scutil.lang._
 
-import scwebapp.parser._
 import scwebapp.parser.Parser._
 import scwebapp.parser.string._
 

@@ -2,8 +2,6 @@ package scwebapp
 
 import scala.annotation.tailrec
 
-import scutil.lang._
-
 // top-level:	text image audio video application multipart message
 
 object MimeType {

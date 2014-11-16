@@ -7,8 +7,6 @@ import java.nio.charset.Charset
 
 import javax.servlet.http.Part
 
-import scala.collection.JavaConverters._
-
 import scutil.lang._
 import scutil.implicits._
 import scutil.io.Charsets
@@ -30,8 +28,8 @@ final class PartExtension(peer:Part) {
 	def headers:NoCaseParameters	=
 			NoCaseParameters(
 				for {	
-					name	<- peer.getHeaderNames.asInstanceOf[JCollection[String]].asScala.toVector
-					value	<- (peer getHeaders name).asInstanceOf[JCollection[String]].asScala
+					name	<- peer.getHeaderNames.asInstanceOf[JCollection[String]].toIterable.toVector
+					value	<- (peer getHeaders name).asInstanceOf[JCollection[String]].toIterable
 				}
 				yield name	-> value
 			)

@@ -3,11 +3,7 @@ package scwebapp
 import java.util.Random
 import java.nio.charset.Charset
 
-import scutil.lang._
-import scutil.implicits._
 import scutil.io.Charsets
-
-import scwebapp.parser.string._
 
 object HttpUtil {
 	private val multipartChars	= "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray
