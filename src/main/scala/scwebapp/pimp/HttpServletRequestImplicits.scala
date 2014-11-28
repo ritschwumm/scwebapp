@@ -132,10 +132,10 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 			(headers firstString "Authorization")
 			.map { header =>
 				for {
-					code	<- header cutPrefix "Basic "						toWin	s"missing Basic prefix in ${header}"
-					bytes	<- Base64 decode code								toWin	s"invalid base64 code in ${code}"
-					str		<- Catch.exception in (new String(bytes, encoding)) mapFail	constant("invalid string bytes")
-					pair	<- new String(bytes, encoding) splitAroundFirst ':'	toWin	s"missing colon separator in ${str}"
+					code	<- header cutPrefix "Basic "							toWin	s"missing Basic prefix in ${header}"
+					bytes	<- Base64 decode code									toWin	s"invalid base64 code in ${code}"
+					str		<- Catch.exception in (new String(bytes, encoding))	mapFail		constant("invalid string bytes")
+					pair	<- new String(bytes, encoding) splitAroundFirstChar ':'	toWin	s"missing colon separator in ${str}"
 				}
 				yield pair
 			}
