@@ -16,7 +16,7 @@ import scwebapp.status._
 object HttpServletResponseImplicits extends HttpServletResponseImplicits
 	
 trait HttpServletResponseImplicits {
-	implicit def extendHttpServletResponse(peer:HttpServletResponse):HttpServletResponseExtension	= 
+	implicit def extendHttpServletResponse(peer:HttpServletResponse):HttpServletResponseExtension	=
 			new HttpServletResponseExtension(peer)
 }
 
@@ -159,7 +159,7 @@ final class HttpServletResponseExtension(peer:HttpServletResponse) {
 	// /** write a string to the response writer, if possible (and sensible) with gzip-encoding */
 	// protected def writeGzip(text:String) { // throws IOException
 	// 	val encodings	= request getHeader "Accept-Encoding"
-	// 	val useGzip		= 
+	// 	val useGzip		=
 	// 			encodings != null 			&&
 	// 			(encodings contains "gzip")	&&
 	// 			text.length >= MIN_GZIP_LENGTH

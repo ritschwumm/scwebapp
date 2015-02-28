@@ -38,7 +38,7 @@ trait responder {
 		maxAge:Option[MilliDuration]	= None,	// None deletes on browser exit, zero deletes immediately
 		secure:Boolean					= false,
 		version:Int						= 0		// 0=netscape, 1=RFC
-	):HttpResponder = { it	=> 
+	):HttpResponder = { it	=>
 		val cookie	= new Cookie(name, value)
 		path	foreach cookie.setPath
 		domain	foreach cookie.setDomain

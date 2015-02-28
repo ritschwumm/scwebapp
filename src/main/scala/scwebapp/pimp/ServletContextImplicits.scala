@@ -12,7 +12,7 @@ import scutil.implicits._
 object ServletContextImplicits extends ServletContextImplicits
 
 trait ServletContextImplicits {
-	implicit def extendServletContext(peer:ServletContext):ServletContextExtension		= 
+	implicit def extendServletContext(peer:ServletContext):ServletContextExtension		=
 			new ServletContextExtension(peer)
 }
 
@@ -26,7 +26,7 @@ final class ServletContextExtension(peer:ServletContext) {
 			)
 			
 	def mimeTypeFor(path:String):Option[MimeType]	=
-			Option(peer getMimeType path) flatMap MimeType.parse 
+			Option(peer getMimeType path) flatMap MimeType.parse
 		
 	def realPath(path:String):Option[String]	=
 			Option(peer getRealPath path)

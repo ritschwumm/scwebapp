@@ -13,7 +13,7 @@ object HttpOutput {
 			}
 			
 	def byteArray(data:Thunk[Array[Byte]]):HttpOutput	=
-			outputStream { ost => 
+			outputStream { ost =>
 				val bytes	= data()
 				ost write (bytes, 0, bytes.length)
 			}
@@ -24,7 +24,7 @@ object HttpOutput {
 	def encoded(encoding:Charset):HttpStringOutput	=
 			new HttpStringOutput {
 				def writer(effect:Effect[Writer]):HttpOutput	=
-						outputStream { ost => 
+						outputStream { ost =>
 							effect(new OutputStreamWriter(ost, encoding))
 						}
 			}
@@ -35,15 +35,15 @@ object HttpOutput {
 			outputStream { ost =>
 				val file	= data()
 				new FileInputStream(file) use { ist =>
-					ist transferTo ost 
+					ist transferTo ost
 				}
 			}
 	
 	def fromInputStream(data:Thunk[InputStream]):HttpOutput	=
 			outputStream { ost =>
 				val input	= data()
-				input use { ist => 
-					ist transferTo ost 
+				input use { ist =>
+					ist transferTo ost
 				}
 			}
 }
@@ -69,8 +69,8 @@ trait HttpStringOutput {
 	final def fromReader(data:Thunk[Reader]):HttpOutput	=
 			writer { wr =>
 				val input	= data()
-				input use { rd => 
-					rd transferTo wr 
+				input use { rd =>
+					rd transferTo wr
 				}
 			}
 }

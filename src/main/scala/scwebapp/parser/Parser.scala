@@ -11,7 +11,7 @@ object Parser {
 	def failure[S]:Parser[S,Unit]	=
 			Parser { i => Failure(i) }
 	
-	def any[S]:Parser[S,S]	= 
+	def any[S]:Parser[S,S]	=
 			Parser { i =>
 				i.next match {
 					case Some((rest, item))	=> Success(rest, item)
@@ -98,11 +98,11 @@ case class Parser[S,+T](parse:Input[S]=>Result[S,T]) { self =>
 			(that map Right.apply)
 			
 	def option:Parser[S,Option[T]]	=
-			Parser { i => 
-				self parse i match { 
+			Parser { i =>
+				self parse i match {
 					case Success(i1, t)	=> Success(i1,	Some(t))
 					case Failure(_)		=> Success(i,	None)
-				} 
+				}
 			}
 			
 	def seq:Parser[S,ISeq[T]]	=

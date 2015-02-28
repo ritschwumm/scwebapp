@@ -28,7 +28,7 @@ sealed trait Parameters {
 object CaseParameters {
 	val empty	= CaseParameters(Vector.empty)
 	
-	def apply(values:ISeq[(String,String)]):CaseParameters	= 
+	def apply(values:ISeq[(String,String)]):CaseParameters	=
 			new CaseParameters(values)
 }
 
@@ -61,7 +61,7 @@ final class CaseParameters(values:ISeq[(String,String)]) extends Parameters {
 object NoCaseParameters {
 	val empty	= NoCaseParameters(Vector.empty)
 	
-	def apply(values:ISeq[(String,String)]):NoCaseParameters	= 
+	def apply(values:ISeq[(String,String)]):NoCaseParameters	=
 			new NoCaseParameters(values)
 }
 

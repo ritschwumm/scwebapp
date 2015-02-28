@@ -27,7 +27,7 @@ object HttpUtil {
 					case '\r'	=> " "
 					case '\n'	=> " "
 					case x		=> x.toString
-				} 
+				}
 			) +
 			"\""
 }

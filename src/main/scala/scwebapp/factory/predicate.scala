@@ -7,7 +7,7 @@ import scutil.implicits._
 
 import scwebapp.implicits._
 
-object predicate extends predicate 
+object predicate extends predicate
 
 trait predicate {
 	def Method(method:HttpMethod):HttpPredicate	=

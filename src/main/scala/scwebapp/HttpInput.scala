@@ -18,7 +18,7 @@ trait HttpInput {
 			new HttpStringInput {
 				def reader[T](handler:Reader=>T):T	=
 						inputStream { ist =>
-							handler(new InputStreamReader(ist, encoding)) 
+							handler(new InputStreamReader(ist, encoding))
 						}
 			}
 }

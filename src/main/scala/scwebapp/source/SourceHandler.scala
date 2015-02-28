@@ -46,11 +46,11 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 				ifNoneMatch.isEmpty &&
 				(ifModifiedSince	exists (Matchers lastModified lastModified))
 		if (notModified) {
-			return	SetStatus(NOT_MODIFIED) ~> 
-					AddHeader("ETag",		eTag) ~> 
-					AddHeader("Expires",	HttpDateFormat unparse expires) 
+			return	SetStatus(NOT_MODIFIED) ~>
+					AddHeader("ETag",		eTag) ~>
+					AddHeader("Expires",	HttpDateFormat unparse expires)
 		}
- 
+
 		val ifMatch				= requestHeaders firstString	"If-Match"
 		val ifUnmodifiedSince	= requestHeaders firstDate		"If-Unmodified-Since"
 		val preconditionFailed	=
@@ -95,7 +95,7 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 				(accept exists (Matchers accept contentType))
 			
 		val disposition	=
-				(inline cata ("attachment", "inline")) + 
+				(inline cata ("attachment", "inline")) +
 				s";filename=${HttpUtil quote source.fileName}"
 
 		HttpResponder { _ setBufferSize SourceHandler.DEFAULT_BUFFER_SIZE }			~>
@@ -178,7 +178,7 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 		// TODO eTag is quoted and may be prefixed with W/
 		def xmatch(requirement:String):Predicate[String]	=
 				header	=>
-						splitList(header).toSet	containsAny 
+						splitList(header).toSet	containsAny
 						Set(requirement, "*")
 				
 		def lastModified(requirement:HttpDate):Predicate[HttpDate]	=
@@ -239,7 +239,7 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 					case Right(count)				if count > 0 && count <= total	=> Range(total - count,	last,			total)
 				}
 		
-		(HttpParser.rangeHeader parseStringOption rangeHeader) 
+		(HttpParser.rangeHeader parseStringOption rangeHeader)
 		.map	{ _.toVector flatMap mkRange }
 		.filter	{ _.nonEmpty }
 	}

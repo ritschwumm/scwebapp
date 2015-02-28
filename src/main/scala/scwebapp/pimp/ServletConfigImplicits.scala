@@ -8,7 +8,7 @@ import javax.servlet._
 object ServletConfigImplicits extends ServletConfigImplicits
 
 trait ServletConfigImplicits {
-	implicit def extendServletConfig(peer:ServletConfig):ServletConfigExtension		= 
+	implicit def extendServletConfig(peer:ServletConfig):ServletConfigExtension		=
 			new ServletConfigExtension(peer)
 }
 

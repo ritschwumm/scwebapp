@@ -64,7 +64,7 @@ object HttpParser {
 	val dqText:CParser[Char]			= DQ.prevent right TEXT
 	val quotedChar:CParser[Char]		= quotedPair orElse dqText
 	val quotedString:CParser[String]	= (DQ right quotedChar.seq left DQ).stringify token LWS
-                     
+
 	val hashSepa:CParser[Char]	= symbol(',')
 	def hash[T](sub:CParser[T]):CParser[ISeq[T]]	= sub sepSeq	hashSepa
 	def hash1[T](sub:CParser[T]):CParser[Nes[T]]	= sub sepNes	hashSepa
@@ -80,14 +80,14 @@ object HttpParser {
 	
 	val kind:CParser[String]	= token
 	
-	val contentDisposition:CParser[(String,ISeq[(String,String)])]	= 
+	val contentDisposition:CParser[(String,ISeq[(String,String)])]	=
 			kind next nextParameter.seq finish LWS
 		
 	//------------------------------------------------------------------------------
 	
 	val major:CParser[String]			= token
 	val minor:CParser[String]			= token
-	val typ:CParser[(String,String)]	= major left symbol('/') next minor 
+	val typ:CParser[(String,String)]	= major left symbol('/') next minor
 	
 	val contentType:CParser[((String,String),ISeq[(String,String)])]	=
 			typ next nextParameter.seq finish LWS
@@ -101,15 +101,15 @@ object HttpParser {
 	val byteRangeOne:CParser[Either[(Long,Option[Long]),Long]]		= byteRangeSpec either suffixByteRangeSpec
 	val byteRangeSet:CParser[Nes[Either[(Long,Option[Long]),Long]]]	= hash1(byteRangeOne) finish LWS
 	
-	val rangeHeader:CParser[Nes[Either[(Long,Option[Long]),Long]]]	= 
+	val rangeHeader:CParser[Nes[Either[(Long,Option[Long]),Long]]]	=
 			bytesUnit right symbol('=') right byteRangeSet
 	
 	//------------------------------------------------------------------------------
 	
 	val cookieName:CParser[String]	= token
-	val cookieOctet:CParser[Char]	= 
-			cis(0x21)		orElse 
-			rng(0x23, 0x2b)	orElse 
+	val cookieOctet:CParser[Char]	=
+			cis(0x21)		orElse
+			rng(0x23, 0x2b)	orElse
 			rng(0x2d, 0x3a)	orElse
 			rng(0x3c, 0x5b)	orElse
 			rng(0x5d, 0x7e)

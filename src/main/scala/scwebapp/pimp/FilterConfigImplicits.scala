@@ -8,7 +8,7 @@ import javax.servlet._
 object FilterConfigImplicits extends FilterConfigImplicits
 
 trait FilterConfigImplicits {
-	implicit def extendFilterConfig(peer:FilterConfig):FilterConfigExtension		= 
+	implicit def extendFilterConfig(peer:FilterConfig):FilterConfigExtension		=
 			new FilterConfigExtension(peer)
 }
 

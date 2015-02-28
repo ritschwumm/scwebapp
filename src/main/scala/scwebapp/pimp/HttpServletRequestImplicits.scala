@@ -21,7 +21,7 @@ import scwebapp.HttpInput
 object HttpServletRequestImplicits extends HttpServletRequestImplicits
 
 trait HttpServletRequestImplicits {
-	implicit def extendHttpServletRequest(peer:HttpServletRequest):HttpServletRequestExtension	= 
+	implicit def extendHttpServletRequest(peer:HttpServletRequest):HttpServletRequestExtension	=
 			new HttpServletRequestExtension(peer)
 }
 
@@ -32,7 +32,7 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 	}
 	
 	def method:HttpMethod	=
-			HttpMethods 
+			HttpMethods
 			.find		{ _.id == peer.getMethod.toUpperCase }
 			.getOrError (s"unexpected method ${peer.getMethod}")
 	
@@ -48,22 +48,22 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 	// ROOT context		causes an empty contextPath
 	// *.foo mapping	auses pathInfo to be null and a servletPath containing everything below the context
 	
-	/** 
-	the full path after the context path, 
+	/**
+	the full path after the context path,
 	decoded according to server settings which by default (in tomcat) is ISO-8859-1.
-	this is not influenced by setCharacterEncoding or setEncoding 
+	this is not influenced by setCharacterEncoding or setEncoding
 	*/
 	def fullPathServlet:String	=
 			ISeq(peer.getServletPath, peer.getPathInfo) filter { _ != null } mkString ""
 	
 	/** the full path after the context path, not yet url-decoded */
-	def fullPathRaw:String	= 
-			peer.getRequestURI	cutPrefix 
-			peer.getContextPath	getOrError 
+	def fullPathRaw:String	=
+			peer.getRequestURI	cutPrefix
+			peer.getContextPath	getOrError
 			s"expected RequestURI ${peer.getRequestURI} to start with context path ${peer.getContextPath}"
 			
 	/** the full path after the context path, URL-decoded with the given Charset */
-	def fullPathUTF8:String	= 
+	def fullPathUTF8:String	=
 			URIComponent decode fullPathRaw
 		
 	def pathInfoServlet:Option[String]	=
@@ -72,7 +72,7 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 	def pathInfoRaw:Option[String]	=
 			pathInfoServlet.isDefined guard {
 				fullPathRaw			cutPrefix
-				peer.getServletPath	getOrError 
+				peer.getServletPath	getOrError
 				s"expected RequestURI ${peer.getRequestURI} to start with context path ${peer.getContextPath} and servlet path ${peer.getServletPath}"
 			}
 			
@@ -105,8 +105,8 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 	/** Fail is invalid, Win(None) if missing, Win(Some) if valid */
 	def contentType:Tried[String,Option[MimeType]]	=
 			(headers firstString "Content-Type")
-			.map { it => 
-				MimeType parse it toWin s"invalid content type ${it}" 
+			.map { it =>
+				MimeType parse it toWin s"invalid content type ${it}"
 			}
 			.sequenceTried
 			
@@ -116,17 +116,17 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 				Win(None),
 				contentType => {
 					(contentType.parameters firstString "charset")
-					.map { it => 
-						Charsets byName it mapFail constant(s"invalid charset ${it}") 
+					.map { it =>
+						Charsets byName it mapFail constant(s"invalid charset ${it}")
 					}
 					.sequenceTried
 				}
 			)
 			
 	// TODO use the request's encoding here?
-	/** 
+	/**
 	Fail is invalid, Win(None) if missing, Win(Some) if valid
-	@see http://www.ietf.org/rfc/rfc2617.txt 
+	@see http://www.ietf.org/rfc/rfc2617.txt
 	*/
 	def authorizationBasic(encoding:Charset):Tried[String,Option[(String,String)]]	=
 			(headers firstString "Authorization")
@@ -150,7 +150,7 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 	def cookies:CaseParameters	=
 			CaseParameters(
 				for {
-					cookie	<- peer.getCookies.guardNotNull.flattenMany 
+					cookie	<- peer.getCookies.guardNotNull.flattenMany
 				}
 				yield cookie.getName -> cookie.getValue
 			)
@@ -180,7 +180,7 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 	
 	def part(name:String):Tried[HttpPartsProblem,Option[Part]]	=
 			catchHttpPartsProblem(Option(peer getPart name))
-    
+
 	def parts:Tried[HttpPartsProblem,ISeq[Part]]	=
 			catchHttpPartsProblem(peer.getParts.toIterable.toVector)
 			

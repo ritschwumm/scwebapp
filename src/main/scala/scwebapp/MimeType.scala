@@ -12,7 +12,7 @@ object MimeType {
 		
 	def unparse(it:MimeType):String	=
 			it.major + "/" + it.minor + (
-				it.parameters.all 
+				it.parameters.all
 				.map		{ case (key, value) => s"; ${key}=${value}" }
 				.mkString	("")
 			)

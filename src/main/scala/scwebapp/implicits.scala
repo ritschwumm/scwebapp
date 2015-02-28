@@ -6,7 +6,7 @@ object implicits extends implicits
 
 trait implicits
 		extends	FilterConfigImplicits
-		with	HttpServletRequestImplicits 
+		with	HttpServletRequestImplicits
 		with	HttpServletResponseImplicits
 		with	HttpSessionImplicits
 		with	ServletContextImplicits

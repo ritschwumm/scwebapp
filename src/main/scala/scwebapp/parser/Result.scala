@@ -26,7 +26,7 @@ sealed trait Result[+S,+T] {
 			
 	def filterMap[U](pfunc:PFunction[T,U]):Result[S,U]	=
 			this map pfunc match {
-				case Success(i, Some(u))	=> Success(i, u)                
+				case Success(i, Some(u))	=> Success(i, u)
 				case Success(i, None)		=> Failure(i)
 				case Failure(i)				=> Failure(i)
 			}

@@ -9,7 +9,7 @@ import scala.collection.mutable
 
 import scutil.log._
 
-/** 
+/**
 replaces "$$codebase" with the parent of the JNLP file itself
 to allow deploying the application to different servers without changing
 the original jnlp file
@@ -62,8 +62,8 @@ final class JnlpFilter extends Filter with Logging {
 	private final class ResponseWrapper(response:HttpServletResponse) extends HttpServletResponseWrapper(response) with Logging {
 		private val buffer			= new mutable.ArrayBuffer[Byte]
 		private val outputStream	= new ServletOutputStream {
-			def write(byt:Int) { 
-				buffer += byt.toByte 
+			def write(byt:Int) {
+				buffer += byt.toByte
 			}
 		}
 		private val writer	= new PrintWriter(new OutputStreamWriter(outputStream, charset))

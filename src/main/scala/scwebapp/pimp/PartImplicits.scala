@@ -17,7 +17,7 @@ import scwebapp.HttpInput
 object PartImplicits extends PartImplicits
 
 trait PartImplicits {
-	implicit def extendPart(peer:Part):PartExtension	= 
+	implicit def extendPart(peer:Part):PartExtension	=
 			new PartExtension(peer)
 }
 
@@ -41,7 +41,7 @@ final class PartExtension(peer:Part) {
 	def contentType:Tried[String,Option[MimeType]]	=
 			peer.getContentType.guardNotNull
 			.map { it =>
-				MimeType parse it toWin s"invalid content type ${it}" 
+				MimeType parse it toWin s"invalid content type ${it}"
 			}
 			.sequenceTried
 			
@@ -51,8 +51,8 @@ final class PartExtension(peer:Part) {
 				Win(None),
 				contentType => {
 					(contentType.parameters firstString "charset")
-					.map { it => 
-						Charsets byName it mapFail constant(s"invalid charset ${it}") 
+					.map { it =>
+						Charsets byName it mapFail constant(s"invalid charset ${it}")
 					}
 					.sequenceTried
 				}
