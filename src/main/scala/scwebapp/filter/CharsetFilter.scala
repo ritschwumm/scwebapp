@@ -2,7 +2,7 @@ package scwebapp.filter
 
 import javax.servlet._
 
-/**sets request and response character encodings to the value of the init-parameter "charset" */
+/** sets request and response character encodings to the value of the init-parameter "charset" */
 final class CharsetFilter extends Filter {
 	@volatile private var filterConfig:Option[FilterConfig] 	= None
 	
