@@ -99,6 +99,7 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 				s";filename=${HttpUtil quote source.fileName}"
 
 		HttpResponder { _ setBufferSize SourceHandler.DEFAULT_BUFFER_SIZE }			~>
+		AddHeader("X-Content-Type-Options",	"nosniff")								~>
 		AddHeader("Content-Disposition",	disposition)							~>
 		AddHeader("Accept-Ranges",			"bytes")								~>
 		AddHeader("ETag",					eTag)									~>

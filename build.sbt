@@ -1,6 +1,6 @@
 name			:= "scwebapp"
 organization	:= "de.djini"
-version			:= "0.74.0"
+version			:= "0.75.0"
 
 scalaVersion	:= "2.11.6"
 scalacOptions	++= Seq(
