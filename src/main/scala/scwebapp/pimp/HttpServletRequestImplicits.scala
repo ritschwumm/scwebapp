@@ -46,7 +46,7 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 	// requestURI		always contains contextPath, servletPath and pathInfo but is still URL-encoded
 	// mapping /*		causes an empty servletPath
 	// ROOT context		causes an empty contextPath
-	// *.foo mapping	auses pathInfo to be null and a servletPath containing everything below the context
+	// *.foo mapping	causes pathInfo to be null and a servletPath containing everything below the context
 	
 	/**
 	the full path after the context path,

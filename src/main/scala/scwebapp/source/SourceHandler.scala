@@ -139,7 +139,7 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 					SetStatus(PARTIAL_CONTENT)	~> (
 						if (content) {
 							streamResponder { output =>
-								// TODO ugly to rely in ServletOutputStream
+								// TODO ugly to rely on ServletOutputStream
 								ranges foreach { r =>
 									output println ()
 									output println (s"--${boundary}")

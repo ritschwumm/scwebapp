@@ -10,10 +10,11 @@ trait mimeType {
 	val text_html					= MimeType("text",			"html")
 	val text_javascript				= MimeType("text",			"javascript")
 	val text_css					= MimeType("text",			"css")
+	val application_javascript		= MimeType("application",	"javascript")
 	val application_json			= MimeType("application",	"json")
 	val application_octetStream		= MimeType("application",	"octet-stream")
 	val application_forceDownload	= MimeType("application",	"force-download")
-	val application_form			= MimeType("application", "x-www-form-urlencoded")
+	val application_form			= MimeType("application",	"x-www-form-urlencoded")
 	val audio_mpeg					= MimeType("audio",			"mpeg")
 	val image_jpeg					= MimeType("image",			"jpeg")
 	
