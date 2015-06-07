@@ -5,6 +5,8 @@ import java.util.{ Enumeration=>JEnumeration }
 
 import javax.servlet._
 
+import scutil.implicits._
+
 object FilterConfigImplicits extends FilterConfigImplicits
 
 trait FilterConfigImplicits {
@@ -16,7 +18,7 @@ final class FilterConfigExtension(peer:FilterConfig) {
 	def initParameters:CaseParameters	=
 			CaseParameters(
 				for {
-					name	<- (EnumerationUtil toIterator peer.getInitParameterNames.asInstanceOf[JEnumeration[String]]).toVector
+					name	<- peer.getInitParameterNames.asInstanceOf[JEnumeration[String]].toIterator.toVector
 				}
 				yield name	-> (peer getInitParameter name)
 			)

@@ -150,34 +150,4 @@ final class HttpServletResponseExtension(peer:HttpServletResponse) {
 		func(stream)
 		stream.finish()
 	}
-	
-	//------------------------------------------------------------------------------
-	
-	// /** never gzip-compress texts with less than this characters */
-	// private val MIN_GZIP_LENGTH	= 2048
-	
-	// /** write a string to the response writer, if possible (and sensible) with gzip-encoding */
-	// protected def writeGzip(text:String) { // throws IOException
-	// 	val encodings	= request getHeader "Accept-Encoding"
-	// 	val useGzip		=
-	// 			encodings != null 			&&
-	// 			(encodings contains "gzip")	&&
-	// 			text.length >= MIN_GZIP_LENGTH
-	// 	if (useGzip) {
-	// 		response setHeader	("Content-Encoding",	"gzip")
-	// 		response setHeader	("Vary", 				"Accept-Encoding")
-			
-	// 		val encoding	= response.getCharacterEncoding
-	// 		if (encoding == null)	sys error "response.CharacterEncoding must not be null"
-			
-	// 		val stream	= new GZIPOutputStream(response.getOutputStream)
-	// 		val writer	= new OutputStreamWriter(stream, encoding)
-	// 		writer write text
-	// 		writer.flush()
-	// 		stream.finish()
-	// 	}
-	// 	else {
-	// 		write(text)
-	// 	}
-	// }
 }

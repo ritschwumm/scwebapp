@@ -85,8 +85,8 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 	def headers:NoCaseParameters	=
 			NoCaseParameters(
 				for {	
-					name	<- (EnumerationUtil toIterator peer.getHeaderNames.asInstanceOf[JEnumeration[String]]).toVector
-					value	<- (EnumerationUtil toIterator (peer getHeaders name).asInstanceOf[JEnumeration[String]]).toVector
+					name	<- peer.getHeaderNames.asInstanceOf[JEnumeration[String]].toIterator.toVector
+					value	<- (peer getHeaders name).asInstanceOf[JEnumeration[String]].toIterator.toVector
 				}
 				yield name -> value
 			)
@@ -162,7 +162,7 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 	def parameters:CaseParameters	=
 			CaseParameters(
 				for {	
-					name	<- (EnumerationUtil toIterator peer.getParameterNames.asInstanceOf[JEnumeration[String]]).toVector
+					name	<- peer.getParameterNames.asInstanceOf[JEnumeration[String]].toIterator.toVector
 					value	<- peer getParameterValues name
 				}
 				yield name -> value
@@ -171,7 +171,7 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 	//------------------------------------------------------------------------------
 	//## body
 	
-	// TODO ServletRequest has getReader which uses the supplied encoding!
+	// NOTE ServletRequest has getReader which uses the supplied encoding!
 	
 	def body:HttpInput	=
 			new HttpInput {
@@ -193,6 +193,8 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 				case e:IOException				=> Fail(InputOutputFailed(e))
 				case e:IllegalStateException	=> Fail(SizeLimitExceeded(e))
 			}
+		
+	//------------------------------------------------------------------------------
 	//## attributes
 	
 	def attribute[T<:AnyRef](name:String):HttpAttribute[T]	=
