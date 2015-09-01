@@ -34,7 +34,7 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 		var contentType		= source.mimeType
 		val lastModified	= HttpDate fromMilliInstant source.lastModified
 		// with URL-encoding we're safe with whitespace and line separators
-		val eTag			= HttpUtil quote s"${URIComponent encode source.fileName}_${source.size.toString}_${source.lastModified.millis.toString}"
+		val eTag			= HttpUtil quoteSimple s"${URIComponent encode source.fileName}_${source.size.toString}_${source.lastModified.millis.toString}"
 		val expires			= HttpDate.now + SourceHandler.DEFAULT_EXPIRE_TIME
 
 		val requestHeaders	= request.headers
@@ -94,9 +94,12 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 				enableInline &&
 				(accept exists (Matchers accept contentType))
 			
-		val disposition	=
-				(inline cata ("attachment", "inline")) +
-				s";filename=${HttpUtil quote source.fileName}"
+		val disposition		= {
+			val dispositionType	= inline cata ("attachment", "inline")
+			val fileName		= HttpUtil quoteSimple	source.fileName
+			val fileNameStar	= HttpUtil quoteStar	source.fileName
+			 s"${dispositionType};filename=${fileName};filename*=${fileNameStar}"
+		}
 
 		HttpResponder { _ setBufferSize SourceHandler.DEFAULT_BUFFER_SIZE }			~>
 		AddHeader("X-Content-Type-Options",	"nosniff")								~>

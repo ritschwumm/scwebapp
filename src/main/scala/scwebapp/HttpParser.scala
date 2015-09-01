@@ -44,7 +44,7 @@ object HttpParser {
 	def symbol(c:Char):CParser[Char]		= is(c) token LWS
 	def symbolN(s:String):CParser[String]	= sis(s) token LWS
 	
-	// NOTE separator ist tspecials und "{} \t"
+	// NOTE separator is tspecials and "{} \t"
 	val separator:CParser[Char]	= in("()<>@,;:\\\"/[]?={} \t")
 	val token:CParser[String]	= ((separator orElse CTL).prevent right CHAR).nes.stringify token LWS
 	
