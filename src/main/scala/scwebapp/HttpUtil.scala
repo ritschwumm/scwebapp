@@ -3,16 +3,19 @@ package scwebapp
 import java.util.Random
 import java.nio.charset.Charset
 
+import scutil.implicits._
 import scutil.io.Charsets
 
 object HttpUtil {
-	private val multipartChars	= "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray
+	private val multipartChars	= "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	
-	def multipartBoundary():String	= {
-		val random	= new Random
-		val size	= 30 + (random nextInt 10)
-		0 until size map { _ => multipartChars(random nextInt multipartChars.length) } mkString ""
-	}
+	private val random	= new Random
+	
+	def multipartBoundary():String	=
+			random string (
+				multipartChars,
+				30 + (random nextInt 10)
+			)
 	
 	//------------------------------------------------------------------------------
 	

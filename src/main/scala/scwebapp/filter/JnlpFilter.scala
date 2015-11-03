@@ -65,6 +65,8 @@ final class JnlpFilter extends Filter with Logging {
 			def write(byt:Int) {
 				buffer += byt.toByte
 			}
+			def isReady:Boolean								= false
+			def setWriteListener(it:WriteListener): Unit	= ()
 		}
 		private val writer	= new PrintWriter(new OutputStreamWriter(outputStream, charset))
 	
