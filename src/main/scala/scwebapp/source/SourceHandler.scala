@@ -138,6 +138,7 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 				case ranges	=>
 					val boundary	= HttpUtil.multipartBoundary()
 					val ct			= MimeType("multipart", "byteranges") addParameter ("boundary", boundary)
+					// TODO send ContentLength here, too?
 					SetContentType(ct)			~>
 					SetStatus(PARTIAL_CONTENT)	~> (
 						if (content) {

@@ -4,6 +4,7 @@ import scala.annotation.tailrec
 
 // top-level:	text image audio video application multipart message
 
+// TODO handle trees
 object MimeType {
 	val emptyParameters	= NoCaseParameters.empty
 	
