@@ -1,6 +1,6 @@
 name			:= "scwebapp"
 organization	:= "de.djini"
-version			:= "0.82.0"
+version			:= "0.83.0"
 
 scalaVersion	:= "2.11.7"
 scalacOptions	++= Seq(
@@ -23,7 +23,7 @@ resolvers		+= "Scalaz Bintray Repo" at "http://dl.bintray.com/scalaz/releases"
 libraryDependencies	++= Seq(
 	"de.djini"		%%	"scutil-core"		% "0.74.0"	% "compile",
 	"javax.servlet"	%	"javax.servlet-api"	% "3.1.0"	% "provided",
-	"org.specs2"	%%	"specs2-core"		% "3.6.5"	% "test"
+	"org.specs2"	%%	"specs2-core"		% "3.6.6"	% "test"
 )
 dependencyOverrides	++= Set(
 	"org.scala-lang"	% "scala-library"	% scalaVersion.value,
