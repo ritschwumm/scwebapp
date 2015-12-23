@@ -4,6 +4,8 @@ import scala.annotation.tailrec
 
 // top-level:	text image audio video application multipart message
 
+import scutil.implicits._
+
 // TODO handle trees
 object MimeType {
 	val emptyParameters	= NoCaseParameters.empty
@@ -14,7 +16,7 @@ object MimeType {
 	def unparse(it:MimeType):String	=
 			it.major + "/" + it.minor + (
 				it.parameters.all
-				.map		{ case (key, value) => s"; ${key}=${value}" }
+				.map		{ case (key, value) => so"; ${key}=${value}" }
 				.mkString	("")
 			)
 }

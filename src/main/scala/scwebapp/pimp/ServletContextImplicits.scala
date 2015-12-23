@@ -42,7 +42,8 @@ final class ServletContextExtension(peer:ServletContext) {
 		
 	def attribute[T<:AnyRef](name:String):HttpAttribute[T]	=
 		 	new HttpAttribute[T](
-					()	=> (peer getAttribute name).asInstanceOf[T],
-					t	=> peer setAttribute (name, t),
-					()	=> peer removeAttribute name)
+				getter	= ()	=> (peer getAttribute name).asInstanceOf[T],
+				setter	= t		=> peer setAttribute (name, t),
+				remover	= ()	=> peer removeAttribute name
+			)
 }

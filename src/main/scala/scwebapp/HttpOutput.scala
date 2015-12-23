@@ -51,26 +51,3 @@ object HttpOutput {
 trait HttpOutput {
 	def transferTo(ost:OutputStream)	
 }
-
-trait HttpStringOutput {
-	def writer(effect:Effect[Writer]):HttpOutput
-	
-	final def string(data:Thunk[String]):HttpOutput	=
-			writer { wr =>
-				val string	= data()
-				wr write string
-			}
-			
-	def fullString(data:String):HttpOutput	=
-			string(thunk(data))
-			
-	//------------------------------------------------------------------------------
-	
-	final def fromReader(data:Thunk[Reader]):HttpOutput	=
-			writer { wr =>
-				val input	= data()
-				input use { rd =>
-					rd transferTo wr
-				}
-			}
-}

@@ -34,7 +34,7 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 		var contentType		= source.mimeType
 		val lastModified	= HttpDate fromMilliInstant source.lastModified
 		// with URL-encoding we're safe with whitespace and line separators
-		val eTag			= HttpUtil quoteSimple s"${URIComponent encode source.fileName}_${source.size.toString}_${source.lastModified.millis.toString}"
+		val eTag			= HttpUtil quoteSimple so"${URIComponent encode source.fileName}_${source.size.toString}_${source.lastModified.millis.toString}"
 		val expires			= HttpDate.now + SourceHandler.DEFAULT_EXPIRE_TIME
 
 		val requestHeaders	= request.headers
@@ -80,7 +80,7 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 					case (false,	Some(Some(ranges)))	=> ranges
 					case _	=>
 							return	SetStatus(REQUESTED_RANGE_NOT_SATISFIABLE)	~>
-									AddHeader("Content-Range", s"bytes */${source.size}")
+									AddHeader("Content-Range", so"bytes */${source.size.toString}")
 									
 				}
 		
@@ -98,7 +98,7 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 			val dispositionType	= inline cata ("attachment", "inline")
 			val fileName		= HttpUtil quoteSimple	source.fileName
 			val fileNameStar	= HttpUtil quoteStar	source.fileName
-			 s"${dispositionType};filename=${fileName};filename*=${fileNameStar}"
+			 so"${dispositionType};filename=${fileName};filename*=${fileNameStar}"
 		}
 
 		HttpResponder { _ setBufferSize SourceHandler.DEFAULT_BUFFER_SIZE }			~>
@@ -146,13 +146,13 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 								// TODO ugly to rely on ServletOutputStream
 								ranges foreach { r =>
 									output println ()
-									output println (s"--${boundary}")
-									output println (s"Content-Type: ${contentType.value}")
-									output println (s"Content-Range: ${formatRange(r)}")
+									output println (so"--${boundary}")
+									output println (so"Content-Type: ${contentType.value}")
+									output println (so"Content-Range: ${formatRange(r)}")
 									source range (r.start, r.length) transferTo output
 								}
 								output println ()
-								output println (s"--${boundary}--")
+								output println (so"--${boundary}--")
 							}
 						}
 						else Pass
@@ -201,9 +201,9 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 					// TODO should this match mime type parameters, too?
 					splitListParameterless(header).toSet containsAny
 					Set(
-						s"${contentType.major}/${contentType.minor}",
-						s"${contentType.major}/*",
-						s"*/*"
+						so"${contentType.major}/${contentType.minor}",
+						so"${contentType.major}/*",
+						so"*/*"
 					)
 				}
 						
@@ -230,7 +230,7 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 	}
 	
 	private def formatRange(r:Range):String	=
-			s"bytes ${r.start}-${r.end}/${r.total}"
+			so"bytes ${r.start.toString}-${r.end.toString}/${r.total.toString}"
 	
 	private def parseRangeHeader(total:Long)(rangeHeader:String):Option[ISeq[Range]]	= {
 		import scwebapp.parser.string._

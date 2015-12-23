@@ -34,7 +34,7 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 	def method:HttpMethod	=
 			HttpMethods
 			.find		{ _.id == peer.getMethod.toUpperCase }
-			.getOrError (s"unexpected method ${peer.getMethod}")
+			.getOrError (so"unexpected method ${peer.getMethod}")
 	
 	def remoteUser:Option[String]	=
 			Option(peer.getRemoteUser)
@@ -60,7 +60,7 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 	def fullPathRaw:String	=
 			peer.getRequestURI	cutPrefix
 			peer.getContextPath	getOrError
-			s"expected RequestURI ${peer.getRequestURI} to start with context path ${peer.getContextPath}"
+			so"expected RequestURI ${peer.getRequestURI} to start with context path ${peer.getContextPath}"
 			
 	/** the full path after the context path, URL-decoded with the given Charset */
 	def fullPathUTF8:String	=
@@ -73,7 +73,7 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 			pathInfoServlet.isDefined guard {
 				fullPathRaw			cutPrefix
 				peer.getServletPath	getOrError
-				s"expected RequestURI ${peer.getRequestURI} to start with context path ${peer.getContextPath} and servlet path ${peer.getServletPath}"
+				so"expected RequestURI ${peer.getRequestURI} to start with context path ${peer.getContextPath} and servlet path ${peer.getServletPath}"
 			}
 			
 	def pathInfoUTF8:Option[String]	=
@@ -98,7 +98,7 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 	def contentLength:Tried[String,Option[Long]]	=
 			(headers firstString "Content-Length")
 			.map { it =>
-				it guardBy { _ matches "\\d+" } flatMap { _.toLongOption } toWin s"invalid content length ${it}"
+				it guardBy { _ matches "\\d+" } flatMap { _.toLongOption } toWin so"invalid content length ${it}"
 			}
 			.sequenceTried
 			
@@ -106,7 +106,7 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 	def contentType:Tried[String,Option[MimeType]]	=
 			(headers firstString "Content-Type")
 			.map { it =>
-				MimeType parse it toWin s"invalid content type ${it}"
+				MimeType parse it toWin so"invalid content type ${it}"
 			}
 			.sequenceTried
 			
@@ -117,13 +117,12 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 				contentType => {
 					(contentType.parameters firstString "charset")
 					.map { it =>
-						Charsets byName it mapFail constant(s"invalid charset ${it}")
+						Charsets byName it mapFail constant(so"invalid charset ${it}")
 					}
 					.sequenceTried
 				}
 			)
 			
-	// TODO use the request's encoding here?
 	/**
 	Fail is invalid, Win(None) if missing, Win(Some) if valid
 	@see http://www.ietf.org/rfc/rfc2617.txt
@@ -132,10 +131,10 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 			(headers firstString "Authorization")
 			.map { header =>
 				for {
-					code	<- header cutPrefix "Basic "							toWin	s"missing Basic prefix in ${header}"
-					bytes	<- Base64 decode code									toWin	s"invalid base64 code in ${code}"
+					code	<- header cutPrefix "Basic "							toWin	so"missing Basic prefix in ${header}"
+					bytes	<- Base64 decode code									toWin	so"invalid base64 code in ${code}"
 					str		<- Catch.exception in (new String(bytes, encoding))	mapFail		constant("invalid string bytes")
-					pair	<- new String(bytes, encoding) splitAroundFirstChar ':'	toWin	s"missing colon separator in ${str}"
+					pair	<- new String(bytes, encoding) splitAroundFirstChar ':'	toWin	so"missing colon separator in ${str}"
 				}
 				yield pair
 			}
@@ -146,16 +145,6 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 			.flatMap	(HttpParser.parseCookie)
 			.getOrElse	(CaseParameters.empty)
 	
-	/*
-	def cookies:CaseParameters	=
-			CaseParameters(
-				for {
-					cookie	<- peer.getCookies.guardNotNull.flattenMany
-				}
-				yield cookie.getName -> cookie.getValue
-			)
-	*/
-
 	//------------------------------------------------------------------------------
 	//## parameters
 	
@@ -172,7 +161,6 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 	//## body
 	
 	// NOTE ServletRequest has getReader which uses the supplied encoding!
-	
 	def body:HttpInput	=
 			new HttpInput {
 				def inputStream[T](handler:InputStream=>T):T	= handler(peer.getInputStream)
@@ -199,7 +187,8 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 	
 	def attribute[T<:AnyRef](name:String):HttpAttribute[T]	=
 			new HttpAttribute[T](
-					()	=> (peer getAttribute name).asInstanceOf[T],
-					t	=> peer setAttribute (name, t),
-					()	=> peer removeAttribute name)
+				getter	= ()	=> (peer getAttribute name).asInstanceOf[T],
+				setter	= t		=> peer setAttribute (name, t),
+				remover	= ()	=> peer removeAttribute name
+			)
 }

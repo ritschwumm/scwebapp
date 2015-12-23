@@ -30,9 +30,8 @@ final class FileServlet extends HttpServlet {
 				}
 			
 		baseDir	= new File(basePath)
-		if (!baseDir.exists)		throw new ServletException(s"FileServlet init param 'basePath' value '${basePath}' does actually not exist in file system.")
-		if (!baseDir.isDirectory) 	throw new ServletException(s"FileServlet init param 'basePath' value '${basePath}' is actually not a directory in file system.")
-		if (!baseDir.canRead)		throw new ServletException(s"FileServlet init param 'basePath' value '${basePath}'  is actually not readable in file system.")
+		if (!(baseDir.exists && baseDir.isDirectory && baseDir.canRead))
+				throw new ServletException(so"FileServlet init param basePath's value '${basePath}' does not specify an existing, readable directory.")
 	}
 
 	override protected def doHead(request:HttpServletRequest, response:HttpServletResponse) {

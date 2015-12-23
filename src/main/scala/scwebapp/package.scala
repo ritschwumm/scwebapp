@@ -25,7 +25,6 @@ package object scwebapp {
 	
 	//------------------------------------------------------------------------------
 	
-	
 	/*
 	import scutil.lang._
 	import implicits._

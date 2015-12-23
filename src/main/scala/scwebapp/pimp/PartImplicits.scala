@@ -41,7 +41,7 @@ final class PartExtension(peer:Part) {
 	def contentType:Tried[String,Option[MimeType]]	=
 			peer.getContentType.guardNotNull
 			.map { it =>
-				MimeType parse it toWin s"invalid content type ${it}"
+				MimeType parse it toWin so"invalid content type ${it}"
 			}
 			.sequenceTried
 			
@@ -52,7 +52,7 @@ final class PartExtension(peer:Part) {
 				contentType => {
 					(contentType.parameters firstString "charset")
 					.map { it =>
-						Charsets byName it mapFail constant(s"invalid charset ${it}")
+						Charsets byName it mapFail constant(so"invalid charset ${it}")
 					}
 					.sequenceTried
 				}
@@ -67,7 +67,7 @@ final class PartExtension(peer:Part) {
 			.map { it:String =>
 				(HttpParser parseContentDisposition it)
 				.flatMap	{ _._2 firstString "filename" }
-				.toWin		(s"invalid content disposition ${it}")
+				.toWin		(so"invalid content disposition ${it}")
 			}
 			.sequenceTried
 			
