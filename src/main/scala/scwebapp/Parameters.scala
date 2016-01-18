@@ -3,25 +3,26 @@ package scwebapp
 import scutil.lang._
 import scutil.implicits._
 
+import scwebapp.format.CaseUtil
+
 sealed trait Parameters {
 	def all:ISeq[(String,String)]
 	def names:Set[String]
 	def get(name:String):ISeq[String]
-	def first(name:String):Option[String]
 	
 	//------------------------------------------------------------------------------
 	
 	def firstString(name:String):Option[String]	=
-			first(name)
+			get(name).headOption
 	
 	def firstInt(name:String):Option[Int]	=
-			first(name) flatMap { _.toIntOption }
+			firstString(name) flatMap { _.toIntOption }
 		
 	def firstLong(name:String):Option[Long]	=
-			first(name) flatMap { _.toLongOption }
+			firstString(name) flatMap { _.toLongOption }
 		
 	def firstDate(name:String):Option[HttpDate]	=
-			first(name) flatMap HttpDate.parse
+			firstString(name) flatMap HttpDate.parse
 }
 
 //------------------------------------------------------------------------------
@@ -42,10 +43,7 @@ final class CaseParameters(values:ISeq[(String,String)]) extends Parameters {
 			(values map { _._1 }).toSet
 		
 	def get(name:String):ISeq[String]	=
-			values collect		{ case (`name`, value) => value }
-			
-	def first(name:String):Option[String]	=
-			values collectFirst	{ case (`name`, value) => value }
+			values collect	{ case (`name`, value) => value }
 			
 	def append(name:String, value:String):CaseParameters	=
 			new CaseParameters(values :+ (name -> value))
@@ -72,16 +70,15 @@ object NoCaseParameters {
 /** case insensitive */
 final class NoCaseParameters(values:ISeq[(String,String)]) extends Parameters {
 	def all:ISeq[(String,String)]	=
-			values map { case (k,v) => (k.toLowerCase, v) }
+			values map { case (k,v) => (CaseUtil lowerCase k, v) }
 		
 	def names:Set[String]	=
-			(values map { _._1.toLowerCase }).toSet
+			(values map { it => CaseUtil lowerCase it._1 }).toSet
 		
 	def get(name:String):ISeq[String]	=
-			values collect		{ case (k, v) if (k equalsIgnoreCase name)	=> v }
-			
-	def first(name:String):Option[String]	=
-			values collectFirst	{ case (k, v) if (k equalsIgnoreCase name)	=> v }
+			values collect	{
+				case (k, v) if (CaseUtil lowerCase k) == (CaseUtil lowerCase name)	=> v
+			}
 			
 	def append(name:String, value:String):NoCaseParameters	=
 			new NoCaseParameters(values :+ (name -> value))

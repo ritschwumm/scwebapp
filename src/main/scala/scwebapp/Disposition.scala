@@ -6,10 +6,10 @@ import scwebapp.format._
 
 object Disposition {
 	def unparse(it:Disposition):String	= {
-		// TODO use parameters for this?
+		// TODO filter out bad characters in quoteSimple
 		val typ				= DispositionType unparse it.typ
-		val fileName		= it.fileName 		map { it => so"filename=${Quoting quoteSimple it}"	}
-		val fileNameStar	= it.fileNameStar	map { it => so"filename*=${Quoting quoteStar it}"	}
+		val fileName		= it.fileName 	map { it => so"filename=${Quoting quoteSimple it}"	}
+		val fileNameStar	= it.fileName	map { it => so"filename*=${Quoting quoteStar_UTF8 it}"	}
 		val parts			= Vector(typ) ++ fileName.toVector ++ fileNameStar.toVector
 		parts mkString ";"
 	}
@@ -17,9 +17,5 @@ object Disposition {
 
 case class Disposition(
 	typ:DispositionType,
-	fileName:Option[String],
-	fileNameStar:Option[String]
-) {
-	def preferredFileName:Option[String]	=
-			fileNameStar orElse fileName
-}
+	fileName:Option[String]
+)

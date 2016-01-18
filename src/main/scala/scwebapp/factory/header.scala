@@ -22,12 +22,12 @@ trait header {
 	def ContentLength(it:Long)								= Header("Content-Length",			it.toString)
 	def ContentRange(it:ResponseRange)						= Header("Content-Range",			ResponseRange unparse it)
 	
+	def AcceptRanges(it:RangeType):Header					= Header("Accept-Ranges",			RangeType unparse it)
+	
 	// "nosniff"
 	def XContentTypeOptions(it:String):Header				= Header("X-Content-Type-Options",	it)
 	// "IE=edge"
 	def XUACompatible(it:String):Header						= Header("X-UA-Compatible",			it)
-	// "bytes"
-	def AcceptRanges(it:String):Header						= Header("Accept-Ranges",			it)
 	
 	// TODO proper types
 	def Pragma(it:String):Header							= Header("Pragma",					it)

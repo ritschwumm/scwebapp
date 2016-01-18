@@ -87,7 +87,7 @@ trait HttpRequest {
 	final def encoding:Tried[String,Option[Charset]]	=
 			HeaderParser encoding headers
 	
-	final def authorizationBasic(encoding:Charset):Tried[String,Option[BasicAuthentication]]	=
+	final def authorizationBasic(encoding:Charset):Tried[String,Option[BasicCredentials]]	=
 			HeaderParser authorizationBasic (headers, encoding)
 			
 	//------------------------------------------------------------------------------

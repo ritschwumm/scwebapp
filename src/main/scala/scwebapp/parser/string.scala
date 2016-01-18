@@ -28,9 +28,17 @@ package object string {
 	
 	//------------------------------------------------------------------------------
 
+	implicit class RichStringNest[S](peer:Parser[S,String]) {
+		def nestString[T](inner:Parser[Char,T]):Parser[S,T]	=
+				peer nest (stringInput, inner)	
+	}
+	
 	implicit class RichCharParser[T](peer:Parser[Char,T]) {
 		def parseStringOption(s:String):Option[T]	=
-				(peer parse stringInput(s)).toOption
+				parseString(s).toOption
+			
+		def parseString(s:String):Result[Char,T]	=
+				peer parse stringInput(s)
 	}
 	
 	implicit class RichCharISeqParser[T](peer:Parser[T,ISeq[Char]]) {

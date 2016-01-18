@@ -106,7 +106,6 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 		val disposition		=
 				Disposition(
 					inline cata (DispositionAttachment, DispositionInline),
-					Some(source.fileName),
 					Some(source.fileName)
 				)
 
@@ -114,7 +113,7 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 				Vector(
 					XContentTypeOptions("nosniff"),
 					ContentDisposition(disposition),
-					AcceptRanges("bytes"),
+					AcceptRanges(RangeTypeBytes),
 					ETag(eTag),
 					LastModified(lastModified),
 					Expires(expires)
@@ -131,10 +130,9 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 					standardHeaders ++
 					Vector(
 						ContentType(contentType),
-						ContentRange(r.toResponseRange)
-					) ++ (
-						if (acceptsGzip)		Vector(ContentEncoding(ContentEncodingGzip))
-						else					Vector(ContentLength(r.length))
+						ContentRange(r.toResponseRange),
+						if (acceptsGzip)		ContentEncoding(ContentEncodingGzip)
+						else					ContentLength(r.length)
 					),
 						 if (!includeContent)	HttpOutput.empty
 					else if (acceptsGzip)		rangeOutput(r.range) gzip SourceHandler.gzipBufferSize

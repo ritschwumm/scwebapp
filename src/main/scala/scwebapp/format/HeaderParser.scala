@@ -42,10 +42,10 @@ object HeaderParser {
 			.sequenceTried
 			
 	// @see http://www.ietf.org/rfc/rfc2617.txt
-	def authorizationBasic(headers:Parameters, encoding:Charset):Tried[String,Option[BasicAuthentication]]	=
+	def authorizationBasic(headers:Parameters, encoding:Charset):Tried[String,Option[BasicCredentials]]	=
 			(headers firstString "Authorization")
 			.map	{ it =>
-				HttpParser parseBasicAuthentication (it, encoding)
+				HttpParser parseBasicAuthentication (it, encoding) toWin so"invalid header ${it}"
 			}
 			.sequenceTried
 			
@@ -67,7 +67,7 @@ object HeaderParser {
 	def fileName(headers:Parameters):Tried[String,Option[String]]	=
 			contentDisposition(headers)
 			.map {
-				_ map { _.preferredFileName }
+				_ map { _.fileName }
 			}
 			match {
 				case Fail(x)	=> Fail(x)

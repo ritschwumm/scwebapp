@@ -13,8 +13,8 @@ class HeaderUnparserTest extends Specification {
 	
 	"Disposition" should {
 		"unparse" in {
-			Disposition unparse Disposition(DispositionAttachment, Some("a"), Some("ä")) mustEqual
-			"attachment;filename=\"a\";filename*=UTF-8''%c3%a4"
+			Disposition unparse Disposition(DispositionAttachment, Some("ä")) mustEqual
+			"attachment;filename=\"ä\";filename*=UTF-8''%c3%a4"
 		}
 	}
 }

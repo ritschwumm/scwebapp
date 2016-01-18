@@ -72,6 +72,9 @@ case class Parser[S,+T](parse:Input[S]=>Result[S,T]) { self =>
 	def filterMap[U](pfunc:PFunction[T,U]):Parser[S,U]	=
 			Parser { i => self parse i filterMap pfunc }
 		
+	def filterSome[U](implicit ev:PFunction[T,U]):Parser[S,U]	=
+			filterMap(ev)
+		
 	def collect[U](pfunc:PartialFunction[T,U]):Parser[S,U]	=
 			filterMap(pfunc.lift)
 		
@@ -144,4 +147,16 @@ case class Parser[S,+T](parse:Input[S]=>Result[S,T]) { self =>
 		
 	def phrase:Parser[S,T]	=
 			self left Parser.end
+		
+	def nest[U,V](mkInput:T=>Input[U], inner:Parser[U,V]):Parser[S,V]	=
+			Parser { selfInput =>
+				self parse selfInput match {
+					case Success(selfRemainder, selfValue)	=>
+						inner.phrase parse mkInput(selfValue) match {
+							case Success(innerRemainder, innerValue)	=> Success(selfRemainder, innerValue)
+							case Failure(innerRemainder)				=> Failure(selfInput)
+						}
+					case Failure(selfRemainder)	=> Failure(selfRemainder)
+				}
+			}
 }

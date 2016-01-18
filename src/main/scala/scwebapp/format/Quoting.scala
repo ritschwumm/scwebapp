@@ -19,8 +19,11 @@ object Quoting {
 		
 	// used for content-disposition's filename*, @see RFC6266
 	// about the encoding, @see RFC5987
-	def quoteStar(s:String):String	=
+	def quoteStar_UTF8(s:String):String	=
 			"UTF-8''" + (s getBytes "UTF-8" map quoteStar1 mkString "")
+	
+	def quoteStar_ISO_8859_1(s:String):String	=
+			"ISO-8859-1''" + (s getBytes "ISO-8859-1" map quoteStar1 mkString "")
 	
 	private def quoteStar1(c:Byte):String	=
 			c match {

@@ -18,7 +18,8 @@ sealed trait Result[+S,+T] {
 			
 	def orElse[SS>:S,TT>:T](that:Result[SS,TT]):Result[SS,TT]	=
 			(this, that) match {
-				case (Failure(i1),		Failure(i2))	=> Failure(i1)	// TODO Failure(i1 max i2)
+				// TODO Failure(i1 max i2)
+				case (Failure(i1),		Failure(i2))	=> Failure(i1)
 				case (Success(i, t),	Failure(_))		=> Success(i, t)
 				case (Failure(_),		Success(i, t))	=> Success(i, t)
 				case (Success(i, t),	Success(_, _))	=> Success(i, t)
