@@ -5,7 +5,7 @@ import org.specs2.mutable._
 class HeaderUnparsersTest extends Specification {
 	"setCookieHeader" should {
 		"do at least something" in {
-			HeaderUnparsers setCookieHeader ("foo", "bar") mustEqual "foo=bar;Version=1"
+			HeaderUnparsers setCookieHeader ("foo", "bar") mustEqual "foo=bar"
 		}
 	}
 		

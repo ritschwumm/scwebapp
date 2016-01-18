@@ -9,8 +9,10 @@ import scutil.lang._
 import scutil.implicits._
 
 object HeaderUnparsers {
-	// forbidden in name and value: [ ] ( ) = , " / ? @ : ;
 	// TODO make sure responses with a cookie are not cached
+	
+	// NOTE this always compiles to version 0 and does no quotiong at ass
+	// forbidden in name and value: space, [ ] ( ) = , " / ? @ : ;
 	def setCookieHeader(
 		name:String,
 		value:String,
@@ -30,7 +32,7 @@ object HeaderUnparsers {
 		def alwaysValue(name:String, value:String):Option[ISeq[String]]	=
 				Some(Vector(name, value))
 		def simpleValue(name:String, value:Option[String]):Option[ISeq[String]]	=
-				value	map { it => Vector(name,	quoteMaybe(it)) }
+				value	map { it => Vector(name,	it) }
 		def simpleFlag(name:String, value:Boolean):Option[ISeq[String]]	=
 				value	guard Vector(name)
 			
@@ -47,8 +49,7 @@ object HeaderUnparsers {
 			
 		val values	=
 				Vector(
-					alwaysValue(quoteMaybe(name),	quoteMaybe(value)),
-					alwaysValue("Version",	"1"),
+					alwaysValue(name,		value),
 					simpleValue("Path",		path),
 					simpleValue("Domain",	domain),
 					simpleValue("Expires",	expiresValue),
@@ -60,16 +61,6 @@ object HeaderUnparsers {
 				
 		values.collapse map { _ mkString "=" } mkString ";"
 	}
-	
-	// NOTE < 20 or > 7f are illegal so it's not a problem when quoteSimple kills line feeds
-	private val quoteRequiringChars	= "\",;\\ \t"
-	
-	private def quoteMaybe(s:String):String	=
-			if (quoteNeeded(s))	quoteSimple(s)
-			else				s
-			
-	private def quoteNeeded(s:String):Boolean	=
-			s exists { c => quoteRequiringChars contains c }
 
 	//------------------------------------------------------------------------------
 	

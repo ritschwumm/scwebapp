@@ -113,13 +113,13 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 						val r:HttpRange	= full
 						SetContentType(contentType)									~>
 						AddHeader("Content-Range", HeaderUnparsers formatRange r)	~>
+						(if (acceptsGzip) Pass else	SetContentLength(r.length))		~>
 						contentOrPass {
 							if (acceptsGzip) {
 								AddHeader("Content-Encoding", "gzip")	~>
 								streamResponderGZIP(rangeTransfer(r))
 							}
 							else {
-								SetContentLength(r.length)	~>
 								streamResponder(rangeTransfer(r))
 							}
 						}
