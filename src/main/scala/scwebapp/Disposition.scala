@@ -1,13 +1,17 @@
 package scwebapp
 
+import scutil.implicits._
+
 import scwebapp.format._
 
 object Disposition {
 	def unparse(it:Disposition):String	= {
-		val typ				= Vector(DispositionType unparse it.typ)
-		val fileName		= it.fileName map Quoting.quoteSimple
-		val fileNameStar	= it.fileName map Quoting.quoteStar
-		(typ ++ fileName ++ fileNameStar).flatten mkString ";"
+		// TODO use parameters for this?
+		val typ				= DispositionType unparse it.typ
+		val fileName		= it.fileName 		map { it => so"filename=${Quoting quoteSimple it}"	}
+		val fileNameStar	= it.fileNameStar	map { it => so"filename*=${Quoting quoteStar it}"	}
+		val parts			= Vector(typ) ++ fileName.toVector ++ fileNameStar.toVector
+		parts mkString ";"
 	}
 }
 
