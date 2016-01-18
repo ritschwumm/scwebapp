@@ -9,8 +9,6 @@ import javax.servlet.http.Part
 
 import scutil.lang._
 import scutil.implicits._
-import scutil.io.Charsets
-import scutil.time.MilliInstant
 
 import scwebapp.HttpInput
 
@@ -34,42 +32,18 @@ final class PartExtension(peer:Part) {
 				yield name	-> value
 			)
 		
-	//------------------------------------------------------------------------------
-	//## special headers
-	
-	/** Fail is invalid, Win(None) if missing, Win(Some) if valid */
 	def contentType:Tried[String,Option[MimeType]]	=
-			peer.getContentType.guardNotNull
-			.map { it =>
-				MimeType parse it toWin so"invalid content type ${it}"
-			}
-			.sequenceTried
+			// NOTE this used peer.getContentType.guardNotNull
+			HeaderParsers contentType headers
 			
-	/** Fail is invalid, Win(None) if missing, Win(Some) if valid */
 	def encoding:Tried[String,Option[Charset]]	=
-			contentType.toOption.flatten cata (
-				Win(None),
-				contentType => {
-					(contentType.parameters firstString "charset")
-					.map { it =>
-						Charsets byName it mapFail constant(so"invalid charset ${it}")
-					}
-					.sequenceTried
-				}
-			)
-		
+			HeaderParsers encoding headers
+			
 	def contentDisposition:Option[String]	=
-			headers firstString "Content-Disposition"
+			HeaderParsers contentDisposition headers
 	
-	// @see https://www.ietf.org/rfc/rfc2047.txt
 	def fileName:Tried[String,Option[String]]	=
-			contentDisposition
-			.map { it:String =>
-				(HttpParser parseContentDisposition it)
-				.flatMap	{ _._2 firstString "filename" }
-				.toWin		(so"invalid content disposition ${it}")
-			}
-			.sequenceTried
+			HeaderParsers fileName headers
 			
 	//------------------------------------------------------------------------------
 	//## body

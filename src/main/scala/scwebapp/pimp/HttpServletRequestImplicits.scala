@@ -10,11 +10,7 @@ import javax.servlet.http._
 
 import scutil.lang._
 import scutil.implicits._
-import scutil.io.Base64
-import scutil.io.Charsets
 import scutil.io.URIComponent
-import scutil.io.Charsets.utf_8
-import scutil.time.MilliInstant
 
 import scwebapp.HttpInput
 
@@ -91,59 +87,20 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 				yield name -> value
 			)
 		
-	//------------------------------------------------------------------------------
-	//## special headers
-	
-	/** Fail is invalid, Win(None) if missing, Win(Some) if valid */
 	def contentLength:Tried[String,Option[Long]]	=
-			(headers firstString "Content-Length")
-			.map { it =>
-				it guardBy { _ matches "\\d+" } flatMap { _.toLongOption } toWin so"invalid content length ${it}"
-			}
-			.sequenceTried
+			HeaderParsers contentLength headers
 			
-	/** Fail is invalid, Win(None) if missing, Win(Some) if valid */
 	def contentType:Tried[String,Option[MimeType]]	=
-			(headers firstString "Content-Type")
-			.map { it =>
-				MimeType parse it toWin so"invalid content type ${it}"
-			}
-			.sequenceTried
+			HeaderParsers contentType headers
 			
-	/** Fail is invalid, Win(None) if missing, Win(Some) if valid */
 	def encoding:Tried[String,Option[Charset]]	=
-			contentType.toOption.flatten cata (
-				Win(None),
-				contentType => {
-					(contentType.parameters firstString "charset")
-					.map { it =>
-						Charsets byName it mapFail constant(so"invalid charset ${it}")
-					}
-					.sequenceTried
-				}
-			)
+			HeaderParsers encoding headers
 			
-	/**
-	Fail is invalid, Win(None) if missing, Win(Some) if valid
-	@see http://www.ietf.org/rfc/rfc2617.txt
-	*/
 	def authorizationBasic(encoding:Charset):Tried[String,Option[(String,String)]]	=
-			(headers firstString "Authorization")
-			.map { header =>
-				for {
-					code	<- header cutPrefix "Basic "							toWin	so"missing Basic prefix in ${header}"
-					bytes	<- Base64 decode code									toWin	so"invalid base64 code in ${code}"
-					str		<- Catch.exception in (new String(bytes, encoding))	mapFail		constant("invalid string bytes")
-					pair	<- new String(bytes, encoding) splitAroundFirstChar ':'	toWin	so"missing colon separator in ${str}"
-				}
-				yield pair
-			}
-			.sequenceTried
-	
+			HeaderParsers authorizationBasic (headers, encoding)
+			
 	def cookies:CaseParameters	=
-			(headers firstString "Cookie")
-			.flatMap	(HttpParser.parseCookie)
-			.getOrElse	(CaseParameters.empty)
+			HeaderParsers cookies headers
 	
 	//------------------------------------------------------------------------------
 	//## parameters
