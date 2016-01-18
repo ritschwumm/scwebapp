@@ -35,5 +35,4 @@ case class MimeType(major:String, minor:String, parameters:NoCaseParameters = No
 	def sameMajorAndMinor(that:MimeType):Boolean	=
 			this.major == that.major &&
 			this.minor == that.minor
-		
 }

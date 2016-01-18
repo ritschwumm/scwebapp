@@ -49,19 +49,18 @@ object HttpParser {
 			}
 			yield BasicAuthentication tupled pair
 			
-	def parseRangeHeader(total:Long)(rangeHeader:String):Option[ISeq[HttpRange]]	= {
+	// NOTE this only includes valid ranges
+	def parseRangeHeader(total:Long)(value:String):Option[ISeq[RequestRange]]	=
+			(rangeHeader parseStringOption value)
+			.map	{ _.toVector flatMap parseHttpRange(total) }
+	
+	private def parseHttpRange(total:Long)(it:OneOrTwo[Long,Long]):Option[RequestRange]	= {
 		val last	= total - 1
-		
-		def mkRange(it:Either[(Long,Option[Long]),Long]):Option[HttpRange]	=
-				it matchOption {
-					case Left((start, Some(end)))	if start <= (end min last)		=> HttpRange(start,			end min last,	total)
-					case Left((start, None))		if start <= last				=> HttpRange(start,			last,			total)
-					case Right(count)				if count > 0 && count <= total	=> HttpRange(total - count,	last,			total)
-				}
-		
-		(HttpParser.rangeHeader parseStringOption rangeHeader)
-		.map	{ _.toVector flatMap mkRange }
-		.filter	{ _.nonEmpty }
+		it matchOption {
+			case OneAndTwo(start, end)	if start >= 0 && start <= last && end < last	=> RequestRange(InclusiveRange(start,			end),	total)
+			case One(start)				if start >= 0 && start <= last					=> RequestRange(InclusiveRange(start,			last),	total)
+			case Two(count)				if count > 0  && count <= total					=> RequestRange(InclusiveRange(total - count,	last),	total)
+		}
 	}
 			
 	//==============================================================================
@@ -140,14 +139,21 @@ object HttpParser {
 	
 	//------------------------------------------------------------------------------
 	
-	private[format] val bytesUnit:CParser[String]									= symbolN("bytes")
-	private[format] val bytePos:CParser[Long]										= DIGIT.nes.stringify map { _.toLong } token LWS
-	private[format] val byteRangeSpec:CParser[(Long,Option[Long])]					= bytePos left symbol('-') next bytePos.option
-	private[format] val suffixByteRangeSpec:CParser[Long]							= symbol('-') right bytePos
-	private[format] val byteRangeOne:CParser[Either[(Long,Option[Long]),Long]]		= byteRangeSpec either suffixByteRangeSpec
-	private[format] val byteRangeSet:CParser[Nes[Either[(Long,Option[Long]),Long]]]	= hash1(byteRangeOne) finish LWS
+	private def oneOrTwo[A,B](it:Either[(A,Option[B]),B]):OneOrTwo[A,B]	=
+			it match {
+				case Left((a, None))	=> One(a)
+				case Left((a, Some(b)))	=> OneAndTwo(a, b)
+				case Right(b)			=> Two(b)
+			}
+			
+	private[format] val bytesUnit:CParser[String]						= symbolN("bytes")
+	private[format] val bytePos:CParser[Long]							= DIGIT.nes.stringify map { _.toLong } token LWS
+	private[format] val byteRangeSpec:CParser[(Long,Option[Long])]		= bytePos left symbol('-') next bytePos.option
+	private[format] val suffixByteRangeSpec:CParser[Long]				= symbol('-') right bytePos
+	private[format] val byteRangeOne:CParser[OneOrTwo[Long,Long]]		= byteRangeSpec either suffixByteRangeSpec map oneOrTwo
+	private[format] val byteRangeSet:CParser[Nes[OneOrTwo[Long,Long]]]	= hash1(byteRangeOne) finish LWS
 	
-	private[format] val rangeHeader:CParser[Nes[Either[(Long,Option[Long]),Long]]]	=
+	private[format] val rangeHeader:CParser[Nes[OneOrTwo[Long,Long]]]	=
 			bytesUnit right symbol('=') right byteRangeSet
 	
 	//------------------------------------------------------------------------------

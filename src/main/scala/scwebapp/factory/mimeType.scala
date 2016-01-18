@@ -17,6 +17,7 @@ trait mimeType {
 	val application_form			= MimeType("application",	"x-www-form-urlencoded")
 	val audio_mpeg					= MimeType("audio",			"mpeg")
 	val image_jpeg					= MimeType("image",			"jpeg")
+	val multipart_byteranges		= MimeType("multipart",		"byteranges")
 	
 	def text_plain_charset(encoding:Charset):MimeType	=
 			addCharset(text_plain, encoding)
@@ -32,4 +33,7 @@ trait mimeType {
 		
 	private def addCharset(mimeType:MimeType, encoding:Charset):MimeType	=
 			mimeType addParameter ("charset", encoding.name)
+		
+	def multipart_byteranges_boundary(boundary:String):MimeType	=
+			multipart_byteranges addParameter ("boundary", boundary)
 }

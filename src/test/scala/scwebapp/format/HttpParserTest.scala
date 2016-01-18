@@ -61,19 +61,19 @@ class HttpParserTest extends Specification {
 	
 	"parsing range headers" should {
 		"work for a simple range" in {
-			HttpParser.rangeHeader parseStringOption "bytes=1-2" mustEqual Some(Nes multi Left(1L, Some(2L)))
+			HttpParser.rangeHeader parseStringOption "bytes=1-2" mustEqual Some(Nes multi OneAndTwo(1L, 2L))
 		}
 		"work for two simple ranges" in {
-			HttpParser.rangeHeader parseStringOption "bytes=1-2,3-4" mustEqual Some(Nes multi (Left(1L, Some(2L)), Left(3L, Some(4L))))
+			HttpParser.rangeHeader parseStringOption "bytes=1-2,3-4" mustEqual Some(Nes multi (OneAndTwo(1L, 2L), OneAndTwo(3L, 4L)))
 		}
 		"work for a prefix range" in {
-			HttpParser.rangeHeader parseStringOption "bytes=1-" mustEqual Some(Nes multi Left(1L, None))
+			HttpParser.rangeHeader parseStringOption "bytes=1-" mustEqual Some(Nes multi One(1L))
 		}
 		"work for a suffix range" in {
-			HttpParser.rangeHeader parseStringOption "bytes=-2" mustEqual Some(Nes multi Right(2L))
+			HttpParser.rangeHeader parseStringOption "bytes=-2" mustEqual Some(Nes multi Two(2L))
 		}
 		"allow whitespace" in {
-			HttpParser.rangeHeader parseStringOption " bytes = 1 - 2 " mustEqual Some(Nes multi Left(1L, Some(2L)))
+			HttpParser.rangeHeader parseStringOption " bytes = 1 - 2 " mustEqual Some(Nes multi OneAndTwo(1L, 2L))
 		}
 	}
 	

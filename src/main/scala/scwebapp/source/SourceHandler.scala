@@ -73,16 +73,17 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 		val rangesRaw	= range map (HttpParser parseRangeHeader source.size)
 		
 		// TODO should we fail when needsFull but range headers are invalid?
-		val full:HttpRange	= HttpRange full source.size
-		val ranges:ISeq[HttpRange]	=
+		// TODO should we return full when there is a range header, but without any valid range?
+		val full:RequestRange			= RequestRange full source.size
+		val ranges:ISeq[RequestRange]	=
 				(needsFull, rangesRaw) match {
-					case (true,		_)					=> Vector(full)
-					case (false,	None)				=> Vector(full)
-					case (false,	Some(Some(ranges)))	=> ranges
+					case (true,		_)										=> Vector(full)
+					case (false,	None)									=> Vector(full)
+					case (false,	Some(Some(ranges)))	if ranges.nonEmpty	=> ranges
 					case _	=>
-						val outRange	= HttpOutRangeTotal(source.size)
+						val outRange	= ResponseRange total source.size
 						return	SetStatus(REQUESTED_RANGE_NOT_SATISFIABLE)	~>
-								AddHeader("Content-Range", HttpOutRange unparse outRange)
+								AddHeader("Content-Range", ResponseRange unparse outRange)
 				}
 		
 		val acceptEncoding		= requestHeaders firstString "Accept-Encoding"
@@ -112,44 +113,44 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 		val rangeResponder	=
 				ranges match {
 					case x if x forall { _ == full }	=>
-						val r:HttpRange	= full
-						val outRange	= r.toHttpOutRange
+						val r:RequestRange	= full
+						val outRange	= r.toResponseRange
 						SetContentType(contentType)									~>
-						AddHeader("Content-Range", HttpOutRange unparse outRange)	~>
+						AddHeader("Content-Range", ResponseRange unparse outRange)	~>
 						(if (acceptsGzip) Pass else	SetContentLength(r.length))		~>
 						contentOrPass {
 							if (acceptsGzip) {
 								AddHeader("Content-Encoding", ContentEncodingValue unparse ContentEncodingGzip)	~>
-								streamResponderGZIP(rangeTransfer(r))
+								streamResponderGZIP(rangeTransfer(r.range))
 							}
 							else {
-								streamResponder(rangeTransfer(r))
+								streamResponder(rangeTransfer(r.range))
 							}
 						}
 					case ISeq(r)	=>
-						val outRange	= r.toHttpOutRange
+						val outRange	= r.toResponseRange
 						SetContentType(contentType)									~>
-						AddHeader("Content-Range", HttpOutRange unparse outRange)	~>
+						AddHeader("Content-Range", ResponseRange unparse outRange)	~>
 						SetContentLength(r.length)									~>
 						SetStatus(PARTIAL_CONTENT)									~>
 						contentOrPass {
-							streamResponder(rangeTransfer(r))
+							streamResponder(rangeTransfer(r.range))
 						}
 					case ranges	=>
 						val boundary	= MultipartUtil.multipartBoundary()
-						val ct			= MimeType("multipart", "byteranges") addParameter ("boundary", boundary)
+						val ct			= multipart_byteranges_boundary(boundary)
 						SetContentType(ct)			~>
 						SetStatus(PARTIAL_CONTENT)	~>
 						contentOrPass {
 							def crlfResponder(ss:String*):HttpResponder	=
 									SendString(Charsets.us_ascii, ss map (_ + "\r\n") mkString "")
 							
-							def boundaryResponder(or:HttpOutRange):HttpResponder	=
+							def boundaryResponder(or:ResponseRange):HttpResponder	=
 									crlfResponder(
 										"",
 										so"--${boundary}",
 										so"Content-Type: ${contentType.value}",
-										so"Content-Range: ${HttpOutRange unparse or}"
+										so"Content-Range: ${ResponseRange unparse or}"
 									)
 							
 							def finishResponder:HttpResponder	=
@@ -158,11 +159,11 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 										so"--${boundary}--"
 									)
 									
-							def contentResponder(r:HttpRange):HttpResponder	=
+							def contentResponder(r:InclusiveRange):HttpResponder	=
 									streamResponder(rangeTransfer(r))
 								
 							ranges
-							.flatMap	{ r => Vector(boundaryResponder(r.toHttpOutRange), contentResponder(r)) }
+							.flatMap	{ r => Vector(boundaryResponder(r.toResponseRange), contentResponder(r.range)) }
 							.append		(finishResponder)
 							.into		(concat)
 						}
@@ -187,7 +188,7 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 	private def streamResponderGZIP(effect:Effect[OutputStream]):HttpResponder	=
 			Body(HttpOutput withOutputStream effect gzip gzipBufferSize)
 			
-	private def rangeTransfer(range:HttpRange):Effect[OutputStream]	=
+	private def rangeTransfer(range:InclusiveRange):Effect[OutputStream]	=
 			source range (range.start, range.length) transferTo _
 	
 	//------------------------------------------------------------------------------
