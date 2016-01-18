@@ -70,7 +70,7 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 		val ifRange		= requestHeaders firstString	"If-Range"
 		val ifRangeTime	= requestHeaders firstDate		"If-Range"
 		val needsFull	=
-				(ifRange		exists { _ != eTag	}) &&
+				(ifRange		exists { _ != eTag	}) ||
 				(ifRangeTime	exists { _ + HttpDuration.second < lastModified	})
 				
 		val range		= requestHeaders firstString "Range"

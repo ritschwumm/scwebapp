@@ -95,6 +95,14 @@ case class Parser[S,+T](parse:Input[S]=>Result[S,T]) { self =>
 		
 	def inside(quote:Parser[S,Any]):Parser[S,T]	=
 			quote right self left quote
+		
+	def flag:Parser[S,Boolean]	=
+			Parser { i =>
+				self parse i match {
+					case Success(i1, _)	=> Success(i1,	true)
+					case Failure(_)		=> Success(i,	false)
+				}
+			}
 			
 	def either[U](that:Parser[S,U]):Parser[S,Either[T,U]]	=
 			(self map Left.apply)	orElse

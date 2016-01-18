@@ -185,7 +185,7 @@ private[format] object HttpParsers {
 	
 	//------------------------------------------------------------------------------
 	
-	val bytesUnit:CParser[String]					= symbolN(RangeTypeBytes.key)
+	val bytesUnit:CParser[String]					= symbolN(RangeType unparse RangeTypeBytes)
 	val bytePos:CParser[Long]						= DIGIT.nes.stringify map { _.toLong } token LWS
 	val byteRangeSpec:CParser[(Long,Option[Long])]	= bytePos left symbol('-') next bytePos.option
 	val suffixByteRangeSpec:CParser[Long]			= symbol('-') right bytePos

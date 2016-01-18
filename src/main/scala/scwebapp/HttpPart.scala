@@ -15,16 +15,16 @@ trait HttpPart {
 	
 	//------------------------------------------------------------------------------
 	
-	def contentType:Tried[String,Option[MimeType]]	=
+	final def contentType:Tried[String,Option[MimeType]]	=
 			HeaderParser contentType headers
 			
-	def encoding:Tried[String,Option[Charset]]	=
+	final def encoding:Tried[String,Option[Charset]]	=
 			HeaderParser encoding headers
 		
-	def contentDisposition:Tried[String,Option[Disposition]]	=
+	final def contentDisposition:Tried[String,Option[Disposition]]	=
 			HeaderParser contentDisposition headers
 			
 	// @see https://www.ietf.org/rfc/rfc2047.txt
-	def fileName:Tried[String,Option[String]]	=
+	final def fileName:Tried[String,Option[String]]	=
 			HeaderParser fileName headers
 }

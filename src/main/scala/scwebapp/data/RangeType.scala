@@ -5,16 +5,17 @@ import scutil.implicits._
 object RangeType {
 	def parse(it:String):Option[RangeType]	=
 			it matchOption {
-				case RangeTypeBytes.key	=> RangeTypeBytes
+				case "none"		=> RangeTypeNone
+				case "bytes"	=> RangeTypeBytes
 			}
 			
 	def unparse(it:RangeType):String	=
-			it.key
+			it match {
+				case RangeTypeNone	=> "none"
+				case RangeTypeBytes	=> "bytes"
+			}
 }
 
-sealed trait RangeType {
-	def key:String
-}
-case object RangeTypeBytes	extends RangeType {
-	val key	= "bytes"
-}
+sealed trait RangeType
+case object RangeTypeNone	extends RangeType
+case object RangeTypeBytes	extends RangeType
