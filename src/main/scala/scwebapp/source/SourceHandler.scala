@@ -178,10 +178,10 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 	//------------------------------------------------------------------------------
 	
 	private def streamResponder(effect:Effect[OutputStream]):HttpResponder	=
-			_ body (HttpOutput withOutputStream effect)
+			Body(HttpOutput withOutputStream effect)
 		
 	private def streamResponderGZIP(effect:Effect[OutputStream]):HttpResponder	=
-			_ body (HttpOutput withOutputStream effect gzip gzipBufferSize)
+			Body(HttpOutput withOutputStream effect gzip gzipBufferSize)
 			
 	private def rangeTransfer(range:Range):Effect[OutputStream]	=
 			source range (range.start, range.length) transferTo _

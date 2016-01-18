@@ -40,19 +40,19 @@ object HeaderParsers {
 			.sequenceTried
 			
 	// @see http://www.ietf.org/rfc/rfc2617.txt
-	def authorizationBasic(headers:Parameters, encoding:Charset):Tried[String,Option[(String,String)]]	=
+	def authorizationBasic(headers:Parameters, encoding:Charset):Tried[String,Option[BasicAuthentication]]	=
 			(headers firstString "Authorization")
 			.map	{ parseBasic(_, encoding) }
 			.sequenceTried
 			
-	private def parseBasic(header:String, encoding:Charset):Tried[String,(String,String)]	=
+	private def parseBasic(header:String, encoding:Charset):Tried[String,BasicAuthentication]	=
 			for {
 				code	<- header cutPrefix "Basic "						toWin	so"missing Basic prefix in ${header}"
 				bytes	<- Base64 decode code								toWin	so"invalid base64 code in ${code}"
 				str		<- Catch.exception in (new String(bytes, encoding))	mapFail	constant("invalid string bytes")
 				pair	<- str splitAroundFirstChar ':'						toWin	so"missing colon separator in ${str}"
 			}
-			yield pair
+			yield BasicAuthentication tupled pair
 			
 	def cookies(headers:Parameters):CaseParameters	=
 			(headers firstString "Cookie")

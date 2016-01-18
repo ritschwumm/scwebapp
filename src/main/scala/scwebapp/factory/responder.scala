@@ -41,20 +41,22 @@ trait responder {
 	def AddCookie(
 		name:String,
 		value:String,
-		path:Option[String]				= None,	
 		domain:Option[String]			= None,
+		path:Option[String]				= None,	
 		comment:Option[String]			= None,
 		maxAge:Option[MilliDuration]	= None,	// None deletes on browser exit, zero deletes immediately
 		secure:Boolean					= false,
+		httpOnly:Boolean				= false,
 		version:Int						= 0		// 0=netscape, 1=RFC
 	):HttpResponder = {
 		val cookie	= new Cookie(name, value)
-		path	foreach cookie.setPath
 		domain	foreach cookie.setDomain
+		path	foreach cookie.setPath
 		comment	foreach	cookie.setComment
 		val	age	= maxAge cata (-1, it => ((it.millis + 1000 - 1) / 1000).toInt)
 		cookie	setMaxAge	age
 		cookie	setSecure	secure
+		cookie	setHttpOnly	httpOnly
 		cookie	setVersion	version	
 		_ addCookie cookie
 	}

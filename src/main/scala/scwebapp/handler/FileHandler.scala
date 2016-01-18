@@ -20,13 +20,13 @@ final class FileHandler(baseDir:File) extends HttpHandler {
 		val mimeTypeFor	= request.getServletContext mimeTypeFor _
 		val responder	=
 				for {
-					path		<- request.pathInfoUTF8				toWin	SetStatus(NOT_FOUND)
+					path		<- request.pathInfoUTF8	toWin	SetStatus(NOT_FOUND)
 					file		= baseDir / (URIComponent decode path)
-					safeFile	<- file guardBy safeToDeliver		toWin	SetStatus(NOT_FOUND)
-					mimeType	= mimeTypeFor(safeFile.getName) getOrElse application_octetStream
+					_			<- safeToDeliver(file)	trueWin	SetStatus(NOT_FOUND)
+					mimeType	= mimeTypeFor(file.getName) getOrElse application_octetStream
 					handler		=
 							new SourceHandler(
-								source			= FileSource simple (safeFile, mimeType),
+								source			= FileSource simple (file, mimeType),
 								enableInline	= mimeType.major ==== "image",
 								enableGZIP		= mimeType.major ==== "text"
 							)

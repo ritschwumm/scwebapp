@@ -8,6 +8,9 @@ import scutil.lang._
 import scutil.implicits._
 
 object HttpOutput {
+	val empty:HttpOutput	=
+			withOutputStream(constant(()))
+		
 	def withOutputStream(handler:Effect[OutputStream]):HttpOutput	=
 			new HttpOutput {
 				def intoOutputStream(ost:OutputStream):Unit	= handler(ost)

@@ -96,7 +96,7 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 	def encoding:Tried[String,Option[Charset]]	=
 			HeaderParsers encoding headers
 			
-	def authorizationBasic(encoding:Charset):Tried[String,Option[(String,String)]]	=
+	def authorizationBasic(encoding:Charset):Tried[String,Option[BasicAuthentication]]	=
 			HeaderParsers authorizationBasic (headers, encoding)
 			
 	def cookies:CaseParameters	=

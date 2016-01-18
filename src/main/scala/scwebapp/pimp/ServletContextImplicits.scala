@@ -7,6 +7,7 @@ import java.net.URL
 
 import javax.servlet._
 
+import scutil.lang._
 import scutil.implicits._
 
 object ServletContextImplicits extends ServletContextImplicits
@@ -17,6 +18,21 @@ trait ServletContextImplicits {
 }
 
 final class ServletContextExtension(peer:ServletContext) {
+	def mount(
+		name:String,
+		handler:HttpHandler,
+		mappings:ISeq[String],
+		loadOnStartup:Option[Int],
+		asyncSupported:Boolean
+	):ServletRegistration.Dynamic	= {
+		val servlet	= new HttpHandlerServlet(handler)
+		val dynamic	= peer addServlet (name, servlet)
+		dynamic addMapping (mappings:_*)
+		loadOnStartup foreach dynamic.setLoadOnStartup
+		dynamic	setAsyncSupported asyncSupported
+		dynamic
+	}
+	
 	def mimeTypeFor(path:String):Option[MimeType]	=
 			Option(peer getMimeType path) flatMap MimeType.parse
 		
