@@ -15,7 +15,7 @@ trait HttpStringOutput {
 				wr write string
 			}
 			
-	def fullString(data:String):HttpOutput	=
+	final def fullString(data:String):HttpOutput	=
 			string(thunk(data))
 			
 	//------------------------------------------------------------------------------

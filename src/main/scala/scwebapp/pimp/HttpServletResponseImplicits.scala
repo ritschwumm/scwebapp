@@ -29,7 +29,7 @@ final class HttpServletResponseExtension(peer:HttpServletResponse) {
 	
 	/** @see http://www.ietf.org/rfc/rfc2617.txt */
 	def unauthorized(realm:String) {
-		peer setHeader ("WWW-Authenticate", "Basic realm=\"" + realm + "\"")
+		peer setHeader ("WWW-Authenticate", so"""Basic realm="${realm}"""")
 		setStatus(UNAUTHORIZED)
 	}
 
@@ -63,6 +63,10 @@ final class HttpServletResponseExtension(peer:HttpServletResponse) {
 	
 	def setStatus(status:HttpStatus) {
 		peer setStatus status.id
+	}
+	
+	def sendError(status:HttpStatus, reason:String) {
+		peer sendError (status.id, reason)
 	}
 	
 	def addLongHeader(name:String, value:Long) {

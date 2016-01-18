@@ -7,20 +7,21 @@ sealed trait Parameters {
 	def all:ISeq[(String,String)]
 	def names:Set[String]
 	def get(name:String):ISeq[String]
+	def first(name:String):Option[String]
 	
 	//------------------------------------------------------------------------------
 	
 	def firstString(name:String):Option[String]	=
-			get(name).headOption
+			first(name)
 	
 	def firstInt(name:String):Option[Int]	=
-			firstString(name) flatMap { _.toIntOption }
+			first(name) flatMap { _.toIntOption }
 		
 	def firstLong(name:String):Option[Long]	=
-			firstString(name) flatMap { _.toLongOption }
+			first(name) flatMap { _.toLongOption }
 		
 	def firstDate(name:String):Option[HttpDate]	=
-			firstString(name) flatMap HttpDateFormat.parse
+			first(name) flatMap HttpDateFormat.parse
 }
 
 //------------------------------------------------------------------------------
@@ -41,7 +42,10 @@ final class CaseParameters(values:ISeq[(String,String)]) extends Parameters {
 			(values map { _._1 }).toSet
 		
 	def get(name:String):ISeq[String]	=
-			values collect { case (`name`, value) => value }
+			values collect		{ case (`name`, value) => value }
+			
+	def first(name:String):Option[String]	=
+			values collectFirst	{ case (`name`, value) => value }
 			
 	def append(name:String, value:String):CaseParameters	=
 			new CaseParameters(values :+ (name -> value))
@@ -74,10 +78,10 @@ final class NoCaseParameters(values:ISeq[(String,String)]) extends Parameters {
 			(values map { _._1.toLowerCase }).toSet
 		
 	def get(name:String):ISeq[String]	=
-			values flatMap { case (k, v) =>
-				if (k equalsIgnoreCase name)	Vector(v)
-				else							Vector.empty
-			}
+			values collect		{ case (k, v) if (k equalsIgnoreCase name)	=> v }
+			
+	def first(name:String):Option[String]	=
+			values collectFirst	{ case (k, v) if (k equalsIgnoreCase name)	=> v }
 			
 	def append(name:String, value:String):NoCaseParameters	=
 			new NoCaseParameters(values :+ (name -> value))

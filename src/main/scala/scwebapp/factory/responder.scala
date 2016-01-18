@@ -15,7 +15,10 @@ import scwebapp.implicits._
 object responder extends responder
 
 trait responder {
-	// base servlet
+	def concat(responders:ISeq[HttpResponder]):HttpResponder	=
+			(responders foldLeft Pass)(_ ~> _)
+	
+	//## base servlet
 	
 	// FlushBuffer
 	// Reset
@@ -26,7 +29,7 @@ trait responder {
 	// SetContentType
 	// SetLocale
 	
-	// http servlet
+	//## http servlet
 	
 	// forbidden in name and value: [ ] ( ) = , " / ? @ : ;
 	def AddCookie(
@@ -38,46 +41,46 @@ trait responder {
 		maxAge:Option[MilliDuration]	= None,	// None deletes on browser exit, zero deletes immediately
 		secure:Boolean					= false,
 		version:Int						= 0		// 0=netscape, 1=RFC
-	):HttpResponder = { it	=>
+	):HttpResponder = {
 		val cookie	= new Cookie(name, value)
 		path	foreach cookie.setPath
 		domain	foreach cookie.setDomain
 		comment	foreach	cookie.setComment
-		val	age	= maxAge cata (-1, it => (it.millis / 1000).toInt)
+		val	age	= maxAge cata (-1, it => ((it.millis + 1000 - 1) / 1000).toInt)
 		cookie	setMaxAge	age
 		cookie	setSecure	secure
 		cookie	setVersion	version	
-		it addCookie cookie
+		_ addCookie cookie
 	}
 	
-	def AddHeader(name:String, value:String):HttpResponder		= _ addHeader			(name, value)
-	// SendError
+	def AddHeader(name:String, value:String):HttpResponder			= _ addHeader			(name, value)
 	
-	// response extension
+	//## response extension
 	
-	val NoCache:HttpResponder									= _ noCache				()
-	def Unauthorized(realm:String):HttpResponder				= _ unauthorized		realm
-	def Redirect(path:String):HttpResponder						= _ redirect			path
-	def SetStatus(status:HttpStatus):HttpResponder				= _ setStatus			status
-	def SetEncoding(encoding:Charset):HttpResponder				= _ setEncoding			encoding
-	def SetContentType(contentType:MimeType):HttpResponder		= _ setContentType		contentType
-	def SetContentLength(contentLength:Long):HttpResponder		= _ setContentLength	contentLength
+	val NoCache:HttpResponder										= _ noCache				()
+	def Unauthorized(realm:String):HttpResponder					= _ unauthorized		realm
+	def Redirect(path:String):HttpResponder							= _ redirect			path
+	def SendError(status:HttpStatus, reason:String):HttpResponder	= _ sendError			(status, reason)
+	def SetStatus(status:HttpStatus):HttpResponder					= _ setStatus			status
+	def SetEncoding(encoding:Charset):HttpResponder					= _ setEncoding			encoding
+	def SetContentType(contentType:MimeType):HttpResponder			= _ setContentType		contentType
+	def SetContentLength(contentLength:Long):HttpResponder			= _ setContentLength	contentLength
 	
-	def Send(data:HttpOutput):HttpResponder						= _ send data
+	def Send(data:HttpOutput):HttpResponder							= _ send data
 	
-	def StreamFrom(in:Thunk[InputStream]):HttpResponder			= _ streamFrom			in
-	def WriteFrom(in:Thunk[Reader]):HttpResponder				= _ writeFrom			in
+	def StreamFrom(in:Thunk[InputStream]):HttpResponder				= _ streamFrom			in
+	def WriteFrom(in:Thunk[Reader]):HttpResponder					= _ writeFrom			in
 	
-	def SendString(string:String):HttpResponder					= _ sendString			string
-	def SendFile(file:File):HttpResponder						= _ sendFile			file
+	def SendString(string:String):HttpResponder						= _ sendString			string
+	def SendFile(file:File):HttpResponder							= _ sendFile			file
 	
-	def StreamFromGZIP(stream:Thunk[InputStream]):HttpResponder	= _ streamFromGZIP		stream
-	def WriteFromGZIP(reader:Thunk[Reader]):HttpResponder		= _ writeFromGZIP		reader
+	def StreamFromGZIP(stream:Thunk[InputStream]):HttpResponder		= _ streamFromGZIP		stream
+	def WriteFromGZIP(reader:Thunk[Reader]):HttpResponder			= _ writeFromGZIP		reader
 	
-	def SendStringGZIP(string:String):HttpResponder				= _ sendStringGZIP		string
-	def SendFileGZIP(file:File):HttpResponder					= _ sendFileGZIP		file
+	def SendStringGZIP(string:String):HttpResponder					= _ sendStringGZIP		string
+	def SendFileGZIP(file:File):HttpResponder						= _ sendFileGZIP		file
 	
-	// extras
+	//## extras
 	
 	/** the string function gets passed a function to encode urls */
 	def WithEncodeLink(mkResponder:Endo[String]=>HttpResponder):HttpResponder	=

@@ -2,14 +2,20 @@ package scwebapp
 
 import java.io._
 import java.nio.charset.Charset
+import java.util.zip.GZIPOutputStream
 
 import scutil.lang._
 import scutil.implicits._
 
 object HttpOutput {
+	// TODO hardcoded
+	private val gzipBufferSize	= 8192
+	
+	//------------------------------------------------------------------------------
+	
 	def outputStream(effect:Effect[OutputStream]):HttpOutput	=
 			new HttpOutput {
-				def transferTo(ost:OutputStream)	= effect(ost)
+				def transferTo(ost:OutputStream):Unit	= effect(ost)
 			}
 			
 	def byteArray(data:Thunk[Array[Byte]]):HttpOutput	=
@@ -48,6 +54,15 @@ object HttpOutput {
 			}
 }
 
-trait HttpOutput {
-	def transferTo(ost:OutputStream)	
+trait HttpOutput { self =>
+	def transferTo(ost:OutputStream):Unit
+	
+	final def gzip:HttpOutput	=
+			new HttpOutput {
+				def transferTo(ost:OutputStream) {
+					val stream	= new GZIPOutputStream(ost, HttpOutput.gzipBufferSize)
+					self transferTo stream
+					stream.finish()
+				}
+			}
 }

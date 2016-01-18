@@ -31,6 +31,4 @@ final class ServletContextExtension(peer:ServletContext) {
 			
 	def resourcePaths(base:String):Option[Set[String]]	=
 			Option(peer getResourcePaths base) map { _.asInstanceOf[JSet[String]].toSet }
-		
-	
 }

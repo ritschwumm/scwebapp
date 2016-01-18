@@ -81,7 +81,6 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 					case _	=>
 							return	SetStatus(REQUESTED_RANGE_NOT_SATISFIABLE)	~>
 									AddHeader("Content-Range", so"bytes */${source.size.toString}")
-									
 				}
 		
 		val acceptEncoding		= requestHeaders firstString "Accept-Encoding"
@@ -101,19 +100,20 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 			 so"${dispositionType};filename=${fileName};filename*=${fileNameStar}"
 		}
 
-		HttpResponder { _ setBufferSize SourceHandler.DEFAULT_BUFFER_SIZE }			~>
-		AddHeader("X-Content-Type-Options",	"nosniff")								~>
-		AddHeader("Content-Disposition",	disposition)							~>
-		AddHeader("Accept-Ranges",			"bytes")								~>
-		AddHeader("ETag",					eTag)									~>
-		AddHeader("Last-Modified",			HttpDateFormat unparse lastModified)	~>
-		AddHeader("Expires",				HttpDateFormat unparse expires)			~> {
-			ranges match {
-				case x if x forall { _ == full }	=>
-					val r:Range	= full
-					SetContentType(contentType)					~>
-					AddHeader("Content-Range", formatRange(r))	~> (
-						if (content) {
+		def contentOrPass(contentResponder: =>HttpResponder):HttpResponder	=
+				if (content)	contentResponder
+				else			Pass
+				
+		// NOTE does not GZIP except for full range
+		// servers and browsers seem to disagree on whether offsets should
+		// apply to the body data before or after compression
+		val rangeResponder	=
+				ranges match {
+					case x if x forall { _ == full }	=>
+						val r:Range	= full
+						SetContentType(contentType)					~>
+						AddHeader("Content-Range", formatRange(r))	~>
+						contentOrPass {
 							if (acceptsGzip) {
 								AddHeader("Content-Encoding", "gzip")	~>
 								streamResponderGZIP(rangeTransfer(r))
@@ -123,42 +123,56 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 								streamResponder(rangeTransfer(r))
 							}
 						}
-						else Pass
-					)
-				case ISeq(r)	=>
-					SetContentType(contentType)					~>
-					AddHeader("Content-Range", formatRange(r))	~>
-					SetContentLength(r.length)					~>
-					SetStatus(PARTIAL_CONTENT)					~> (
-						if (content) {
+					case ISeq(r)	=>
+						SetContentType(contentType)					~>
+						AddHeader("Content-Range", formatRange(r))	~>
+						SetContentLength(r.length)					~>
+						SetStatus(PARTIAL_CONTENT)					~>
+						contentOrPass {
 							streamResponder(rangeTransfer(r))
 						}
-						else Pass
-					)
-				case ranges	=>
-					val boundary	= HttpUtil.multipartBoundary()
-					val ct			= MimeType("multipart", "byteranges") addParameter ("boundary", boundary)
-					// TODO send ContentLength here, too?
-					SetContentType(ct)			~>
-					SetStatus(PARTIAL_CONTENT)	~> (
-						if (content) {
-							streamResponder { output =>
-								// TODO ugly to rely on ServletOutputStream
-								ranges foreach { r =>
-									output println ()
-									output println (so"--${boundary}")
-									output println (so"Content-Type: ${contentType.value}")
-									output println (so"Content-Range: ${formatRange(r)}")
-									source range (r.start, r.length) transferTo output
-								}
-								output println ()
-								output println (so"--${boundary}--")
-							}
+					case ranges	=>
+						val boundary	= HttpUtil.multipartBoundary()
+						val ct			= MimeType("multipart", "byteranges") addParameter ("boundary", boundary)
+						SetContentType(ct)			~>
+						SetStatus(PARTIAL_CONTENT)	~>
+						contentOrPass {
+							def crlfResponder(ss:String*):HttpResponder	=
+									SendString(ss map (_ + "\r\n") mkString "")
+							
+							def boundaryResponder(r:Range):HttpResponder	=
+									crlfResponder(
+										"",
+										so"--${boundary}",
+										so"Content-Type: ${contentType.value}",
+										so"Content-Range: ${formatRange(r)}"
+									)
+							
+							def finishResponder:HttpResponder	=
+									crlfResponder(
+										"",
+										so"--${boundary}--"
+									)
+									
+							def contentResponder(r:Range):HttpResponder	=
+									streamResponder(rangeTransfer(r))
+								
+							ranges
+							.flatMap	{ r => Vector(boundaryResponder(r), contentResponder(r)) }
+							.append		(finishResponder)
+							.into		(concat)
 						}
-						else Pass
-					)
-			}
-		}
+				}
+				
+		// TODO ugly hack
+		HttpResponder { _ setBufferSize SourceHandler.DEFAULT_BUFFER_SIZE }			~>
+		AddHeader("X-Content-Type-Options",	"nosniff")								~>
+		AddHeader("Content-Disposition",	disposition)							~>
+		AddHeader("Accept-Ranges",			"bytes")								~>
+		AddHeader("ETag",					eTag)									~>
+		AddHeader("Last-Modified",			HttpDateFormat unparse lastModified)	~>
+		AddHeader("Expires",				HttpDateFormat unparse expires)			~>
+		rangeResponder
 	}
 	
 	//------------------------------------------------------------------------------
