@@ -1,6 +1,7 @@
 package scwebapp
 
 import scutil.lang._
+import scutil.implicits._
 import scutil.time._
 
 import scwebapp.status._
@@ -51,12 +52,17 @@ object HttpResponder {
 			)
 }
 
-sealed trait HttpResponder
+sealed trait HttpResponder {
+	def modify(func:Endo[HttpResponse]):HttpResponder
+}
 
 final case class HttpResponderSync(
 	response:HttpResponse
 )
-extends HttpResponder
+extends HttpResponder {
+	def modify(func:Endo[HttpResponse]):HttpResponder	=
+			HttpResponderSync(func(response))
+}
 
 final case class HttpResponderAsync(
 	response:Effect[Effect[HttpResponse]],
@@ -64,4 +70,7 @@ final case class HttpResponderAsync(
 	timeoutResponse:Thunk[HttpResponse],
 	errorResponse:Thunk[HttpResponse]
 )
-extends HttpResponder
+extends HttpResponder {
+	def modify(func:Endo[HttpResponse]):HttpResponder	=
+			copy(response	= _ compose func into response)
+}

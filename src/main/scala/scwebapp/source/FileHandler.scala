@@ -1,4 +1,4 @@
-package scwebapp.handler
+package scwebapp.source
 
 import java.io._
 
@@ -7,7 +7,6 @@ import scutil.implicits._
 import scwebapp._
 import scwebapp.status._
 import scwebapp.factory.mimeType._
-import scwebapp.source._
 
 // @see https://github.com/apache/tomcat/blob/trunk/java/org/apache/catalina/servlets/DefaultServlet.java
 final class FileHandler(baseDir:File) extends HttpHandler {

@@ -8,7 +8,7 @@ import javax.servlet.http._
 
 import scutil.implicits._
 
-import scwebapp.handler._
+import scwebapp.source._
 import scwebapp.servlet.implicits._
 
 final class FileServlet extends HttpServlet {
