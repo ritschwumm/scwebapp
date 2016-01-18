@@ -1,4 +1,4 @@
-package scwebapp
+package scwebapp.data
 
 import scutil.implicits._
 

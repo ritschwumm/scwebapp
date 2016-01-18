@@ -6,6 +6,7 @@ import org.specs2.mutable._
 import scutil.lang.Nes
 import scutil.io.Charsets
 
+import scwebapp.data._
 import scwebapp.parser.string._
 
 class HttpParsersTest extends Specification {

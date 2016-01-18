@@ -1,5 +1,4 @@
-package scwebapp
-package format
+package scwebapp.format
 
 import java.nio.charset.Charset
 
@@ -7,6 +6,7 @@ import scutil.lang._
 import scutil.io.Base64
 import scutil.io.Charsets
 
+import scwebapp.data._
 import scwebapp.parser.Parser._
 import scwebapp.parser.string._
 
@@ -151,13 +151,13 @@ private[format] object HttpParsers {
 	//------------------------------------------------------------------------------
 
 	val longZero:CParser[Long]	= cis('0') tag 0L
-	val longPos:CParser[Long]	=
+	val longPositive:CParser[Long]	=
 			rng('1', '9') next DIGIT.seq map {
 				case (h, t)	=> (h +: t).toString.toLong
 			}
-	val longZeroPos:CParser[Long]	= longZero orElse longPos
+	val longUnsigned:CParser[Long]	= longZero orElse longPositive
 		
-	val contentLength:CParser[Long]	= longZeroPos.phrase
+	val contentLength:CParser[Long]	= longUnsigned.phrase
 		
 	//------------------------------------------------------------------------------
 	

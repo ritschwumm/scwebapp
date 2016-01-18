@@ -1,4 +1,4 @@
-package scwebapp
+package scwebapp.data
 
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -23,17 +23,14 @@ object HttpDate {
 	
 	//------------------------------------------------------------------------------
 	
-	val prism:Prism[String,HttpDate]	=
-			Prism(parse, unparse)
-	
-	def unparse(date:HttpDate):String	=
-			synchronized {
-				standardFormat format date.toDate
-			}
-
 	def parse(str:String):Option[HttpDate]	=
 			synchronized {
 				allFormats collapseFirst parseDateWith(str)
+			}
+			
+	def unparse(date:HttpDate):String	=
+			synchronized {
+				standardFormat format date.toDate
 			}
 			
 	//------------------------------------------------------------------------------

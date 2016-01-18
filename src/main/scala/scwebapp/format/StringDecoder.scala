@@ -1,5 +1,4 @@
-package scwebapp
-package format
+package scwebapp.format
 
 import java.nio.ByteBuffer
 import java.nio.charset._

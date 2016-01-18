@@ -1,9 +1,9 @@
-package scwebapp
-package factory
+package scwebapp.factory
 
 import scutil.lang._
 import scutil.implicits._
 
+import scwebapp.data._
 import scwebapp.format._
 
 object header extends header
@@ -16,7 +16,7 @@ trait header {
 	def Expires(it:HttpDate):Header							= Header("Expires",					HttpDate unparse it)
 	def LastModified(it:HttpDate):Header					= Header("Last-Modified",			HttpDate unparse it)
 	
-	def ContentEncoding(it:ContentEncodingValue):Header		= Header("Content-Encoding",		ContentEncodingValue unparse it)
+	def ContentEncoding(it:ContentEncodingType):Header		= Header("Content-Encoding",		ContentEncodingType unparse it)
 	def ContentDisposition(it:Disposition):Header			= Header("Content-Disposition",		Disposition unparse it)
 	def ContentType(it:MimeType)							= Header("Content-Type",			MimeType unparse it)
 	def ContentLength(it:Long)								= Header("Content-Length",			it.toString)

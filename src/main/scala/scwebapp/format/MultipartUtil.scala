@@ -1,5 +1,4 @@
-package scwebapp
-package format
+package scwebapp.format
 
 import java.util.Random
 

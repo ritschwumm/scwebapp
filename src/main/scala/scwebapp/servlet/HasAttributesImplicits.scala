@@ -1,5 +1,4 @@
-package scwebapp
-package servlet
+package scwebapp.servlet
 
 import javax.servlet._
 import javax.servlet.http._

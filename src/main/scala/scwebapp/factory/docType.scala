@@ -1,5 +1,6 @@
-package scwebapp
-package factory
+package scwebapp.factory
+
+import scwebapp.data._
 
 object docType extends docType
 

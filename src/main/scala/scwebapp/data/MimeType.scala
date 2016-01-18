@@ -1,8 +1,7 @@
-package scwebapp
+package scwebapp.data
 
 import scala.annotation.tailrec
 
-import scutil.lang._
 import scutil.implicits._
 
 import scwebapp.format.HttpParser
@@ -11,9 +10,6 @@ import scwebapp.format.HttpParser
 
 // TODO handle trees
 object MimeType {
-	val prism:Prism[String,MimeType]	=
-			Prism(parse, unparse)
-		
 	def parse(s:String):Option[MimeType]	=
 			HttpParser parseContentType s
 		

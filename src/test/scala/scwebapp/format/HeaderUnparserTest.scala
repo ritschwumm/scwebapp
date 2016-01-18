@@ -1,7 +1,8 @@
-package scwebapp
-package format
+package scwebapp.format
 
 import org.specs2.mutable._
+
+import scwebapp.data._
 
 class HeaderUnparserTest extends Specification {
 	"setCookieHeader" should {

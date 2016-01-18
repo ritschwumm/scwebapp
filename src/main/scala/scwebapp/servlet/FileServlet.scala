@@ -1,5 +1,4 @@
-package scwebapp
-package servlet
+package scwebapp.servlet
 
 import java.io._
 

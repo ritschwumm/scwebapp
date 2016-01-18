@@ -10,6 +10,7 @@ import scutil.io.URIComponent
 import scwebapp._
 import scwebapp.method._
 import scwebapp.status._
+import scwebapp.data._
 import scwebapp.format._
 import scwebapp.factory.header._
 import scwebapp.factory.mimeType._

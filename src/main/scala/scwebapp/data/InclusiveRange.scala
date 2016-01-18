@@ -1,4 +1,4 @@
-package scwebapp
+package scwebapp.data
 
 object InclusiveRange {
 	def full(total:Long):InclusiveRange	=

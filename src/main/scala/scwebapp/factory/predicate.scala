@@ -1,9 +1,10 @@
-package scwebapp
-package factory
+package scwebapp.factory
 
 import java.nio.charset.Charset
 
 import scutil.implicits._
+
+import scwebapp._
 
 object predicate extends predicate
 

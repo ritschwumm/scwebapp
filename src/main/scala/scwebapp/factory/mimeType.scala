@@ -1,7 +1,8 @@
-package scwebapp
-package factory
+package scwebapp.factory
 
 import java.nio.charset.Charset
+
+import scwebapp.data._
 
 object mimeType extends mimeType
 

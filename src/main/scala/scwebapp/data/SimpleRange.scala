@@ -1,4 +1,4 @@
-package scwebapp
+package scwebapp.data
 
 object SimpleRange {
 	def full(total:Long):SimpleRange	=

@@ -1,4 +1,4 @@
-package scwebapp
+package scwebapp.data
 
 import org.specs2.mutable._
 

@@ -1,11 +1,12 @@
-package scwebapp
-package format
+package scwebapp.format
 
 import java.nio.charset.Charset
 
 import scutil.lang._
 import scutil.implicits._
 import scutil.io.Charsets
+
+import scwebapp.data._
 
 /** Fail is invalid, Win(None) if missing, Win(Some) if valid */
 object HeaderParser {

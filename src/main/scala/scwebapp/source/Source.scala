@@ -2,7 +2,7 @@ package scwebapp.source
 
 import scutil.time.MilliInstant
 
-import scwebapp.MimeType
+import scwebapp.data._
 
 trait Source {
 	def fileName:String

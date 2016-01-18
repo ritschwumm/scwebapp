@@ -1,4 +1,4 @@
-package scwebapp
+package scwebapp.data
 
 sealed trait RangeValue
 final case class RangeBegin(start:Long)				extends RangeValue

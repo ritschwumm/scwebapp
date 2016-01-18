@@ -1,5 +1,4 @@
-package scwebapp
-package format
+package scwebapp.format
 
 import java.net.URLDecoder
 import java.nio.charset.Charset
@@ -7,6 +6,8 @@ import java.nio.charset.Charset
 import scutil.lang._
 import scutil.implicits._
 import scutil.io.URIComponent
+
+import scwebapp.data._
 
 object UrlEncoding {
 	def parseQueryParameters(queryString:String, encoding:Charset):CaseParameters	=

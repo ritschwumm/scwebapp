@@ -1,11 +1,12 @@
-package scwebapp
-package servlet
+package scwebapp.servlet
 
 import java.util.{ Enumeration=>JEnumeration }
 
 import javax.servlet._
 
 import scutil.implicits._
+
+import scwebapp.data._
 
 object HasInitParametersImplicits extends HasInitParametersImplicits
 

@@ -1,5 +1,4 @@
-package scwebapp
-package servlet
+package scwebapp.servlet
 
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -7,6 +6,8 @@ import javax.servlet._
 import javax.servlet.http._
 
 import scutil.lang._
+
+import scwebapp._
 
 object HttpIO {
 	def execute(servletRequest:HttpServletRequest, servletResponse:HttpServletResponse, handler:HttpHandler) {

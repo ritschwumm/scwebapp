@@ -1,11 +1,11 @@
-package scwebapp
-package format
+package scwebapp.format
 
 import java.nio.charset.Charset
 
 import scutil.lang._
 import scutil.io.Charsets
 
+import scwebapp.data._
 import scwebapp.parser.string._
 
 object HttpParser {

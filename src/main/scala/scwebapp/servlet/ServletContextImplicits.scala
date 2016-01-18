@@ -1,5 +1,4 @@
-package scwebapp
-package servlet
+package scwebapp.servlet
 
 import java.util.{  Enumeration=>JEnumeration, Set=>JSet }
 import java.io.InputStream
@@ -9,6 +8,9 @@ import javax.servlet._
 
 import scutil.lang._
 import scutil.implicits._
+
+import scwebapp._
+import scwebapp.data._
 
 object ServletContextImplicits extends ServletContextImplicits
 

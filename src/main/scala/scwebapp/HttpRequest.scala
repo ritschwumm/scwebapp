@@ -8,6 +8,7 @@ import scutil.implicits._
 import scutil.io._
 
 import scwebapp.factory.mimeType
+import scwebapp.data._
 import scwebapp.format._
 
 trait HttpRequest {

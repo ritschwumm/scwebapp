@@ -1,5 +1,4 @@
-package scwebapp
-package servlet
+package scwebapp.servlet
 
 trait HttpAttribute[T] {
 	def get:Option[T]

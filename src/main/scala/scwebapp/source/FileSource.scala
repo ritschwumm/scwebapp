@@ -7,7 +7,7 @@ import scala.annotation.tailrec
 import scutil.implicits._
 import scutil.time.MilliInstant
 
-import scwebapp.MimeType
+import scwebapp.data._
 
 object FileSource {
 	private val DEFAULT_BUFFER_SIZE = 16384

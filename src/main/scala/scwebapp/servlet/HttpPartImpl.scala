@@ -1,5 +1,4 @@
-package scwebapp
-package servlet
+package scwebapp.servlet
 
 import java.util.{ Collection=>JCollection }
 import java.io.InputStream
@@ -11,6 +10,9 @@ import scala.collection.JavaConverters._
 
 import scutil.implicits._
 import scutil.io.Charsets
+
+import scwebapp._
+import scwebapp.data._
 
 private final class HttpPartImpl(peer:Part) extends HttpPart {
 	def name:String	= peer.getName

@@ -1,5 +1,4 @@
-package scwebapp
-package format
+package scwebapp.format
 
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -8,6 +7,8 @@ import java.util.TimeZone
 
 import scutil.lang._
 import scutil.implicits._
+
+import scwebapp.data._
 
 object HeaderUnparser {
 	// TODO make sure responses with a cookie are not cached

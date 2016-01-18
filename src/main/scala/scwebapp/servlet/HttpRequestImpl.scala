@@ -1,5 +1,4 @@
-package scwebapp
-package servlet
+package scwebapp.servlet
 
 import java.util.{ Enumeration=>JEnumeration }
 import java.io.IOException
@@ -15,6 +14,9 @@ import scutil.lang._
 import scutil.implicits._
 import scutil.io.Base64
 import scutil.io.Charsets
+
+import scwebapp._
+import scwebapp.data._
 
 private final class HttpRequestImpl(peer:HttpServletRequest) extends HttpRequest {
 	//------------------------------------------------------------------------------

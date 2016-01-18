@@ -4,6 +4,7 @@ import java.nio.charset.Charset
 
 import scutil.lang._
 
+import scwebapp.data._
 import scwebapp.format._
 
 trait HttpPart {

@@ -1,6 +1,5 @@
-package scwebapp
+package scwebapp.data
 
-import scutil.lang._
 import scutil.implicits._
 import scutil.time.MilliDuration
 
@@ -18,12 +17,9 @@ object HttpDuration {
 	
 	//------------------------------------------------------------------------------
 	
-	val prism:Prism[String,HttpDuration]	=
-			Prism(parse, unparse)
-	
 	def unparse(duration:HttpDuration):String	=
 			duration.seconds.toString
-
+		
 	def parse(str:String):Option[HttpDuration]	=
 			str.toLongOption map HttpDuration.apply
 }

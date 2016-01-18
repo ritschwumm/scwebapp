@@ -5,6 +5,8 @@ import org.specs2.mutable._
 
 import scutil.io.Charsets.utf_8
 
+import scwebapp.data._
+
 class UrlEncodingTest extends Specification {
 	"parsing query parameters should" should {
 		"return empty for an empty string" in {

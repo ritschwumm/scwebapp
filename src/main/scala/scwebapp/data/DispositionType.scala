@@ -1,14 +1,10 @@
-package scwebapp
+package scwebapp.data
 
-import scutil.lang._
 import scutil.implicits._
 
 import scwebapp.format.CaseUtil
 
 object DispositionType {
-	val prism:Prism[String,DispositionType]	=
-			Prism(parse, unparse)
-		
 	def parse(it:String):Option[DispositionType]	=
 			CaseUtil lowerCase it matchOption {
 				case "attachment"	=> DispositionAttachment
