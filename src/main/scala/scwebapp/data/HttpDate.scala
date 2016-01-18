@@ -25,7 +25,7 @@ object HttpDate {
 	
 	def parse(str:String):Option[HttpDate]	=
 			synchronized {
-				allFormats collapseFirst parseDateWith(str)
+				allFormats collapseMapFirst parseDateWith(str)
 			}
 			
 	def unparse(date:HttpDate):String	=
