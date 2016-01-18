@@ -2,21 +2,17 @@ package scwebapp.handler
 
 import java.io._
 
-import javax.servlet.http._
-
 import scutil.implicits._
 
 import scwebapp._
-import scwebapp.implicits._
 import scwebapp.status._
 import scwebapp.factory.mimeType._
-import scwebapp.factory.responder._
 import scwebapp.source._
 
 // @see https://github.com/apache/tomcat/blob/trunk/java/org/apache/catalina/servlets/DefaultServlet.java
 final class FileHandler(baseDir:File) extends HttpHandler {
-	def apply(request:HttpServletRequest):HttpResponder	= {
-		val file	= baseDir / request.pathInfoUTF8
+	def apply(request:HttpRequest):HttpResponder	= {
+		val file		= baseDir / request.pathInfoUTF8
 		if (safeToDeliver(file)) {
 			val mimeType	= request mimeTypeFor file.getName getOrElse application_octetStream
 			val handler		=
@@ -28,7 +24,7 @@ final class FileHandler(baseDir:File) extends HttpHandler {
 			handler apply request
 		}
 		else {
-			SetStatus(NOT_FOUND)
+			HttpResponder(HttpResponse(NOT_FOUND))
 		}
 	}
 			

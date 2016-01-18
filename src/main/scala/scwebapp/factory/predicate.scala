@@ -5,13 +5,11 @@ import java.nio.charset.Charset
 
 import scutil.implicits._
 
-import scwebapp.implicits._
-
 object predicate extends predicate
 
 trait predicate {
 	def Method(method:HttpMethod):HttpPredicate	=
-			_.method ==== method
+			_.method.toOption == Some(method)
 
 	def ContextPath(path:String):HttpPredicate	=
 			_.contextPath ==== path

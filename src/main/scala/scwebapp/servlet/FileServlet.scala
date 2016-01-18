@@ -1,4 +1,5 @@
-package scwebapp.servlet
+package scwebapp
+package servlet
 
 import java.io._
 
@@ -7,8 +8,8 @@ import javax.servlet.http._
 
 import scutil.implicits._
 
-import scwebapp.implicits._
 import scwebapp.handler._
+import scwebapp.servlet.implicits._
 
 final class FileServlet extends HttpServlet {
 	private var handler:FileHandler	= null
@@ -32,6 +33,6 @@ final class FileServlet extends HttpServlet {
 	}
 
 	override protected def service(request:HttpServletRequest, response:HttpServletResponse) {
-		handler apply request apply response
+		HttpIO execute (request, response, handler)
 	}
 }

@@ -1,10 +1,11 @@
-package scwebapp.servlet
+package scwebapp
+package servlet
 
 import javax.servlet.http._
 
 import scutil.io.Charsets
 
-import scwebapp.HttpHandler
+import scwebapp._
 
 object HttpHandlerServlet {
 	val defaultEncoding	= Charsets.utf_8
@@ -15,6 +16,6 @@ final class HttpHandlerServlet(handler:HttpHandler) extends HttpServlet {
 		if (request.getCharacterEncoding eq null) {
 			request setCharacterEncoding HttpHandlerServlet.defaultEncoding.name
 		}
-		handler apply request apply response
+		HttpIO execute (request, response, handler)
 	}
 }

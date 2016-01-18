@@ -1,5 +1,5 @@
 package scwebapp
-package pimp
+package servlet
 
 import java.util.{  Enumeration=>JEnumeration, Set=>JSet }
 import java.io.InputStream
@@ -9,8 +9,6 @@ import javax.servlet._
 
 import scutil.lang._
 import scutil.implicits._
-
-import scwebapp.servlet.HttpHandlerServlet
 
 object ServletContextImplicits extends ServletContextImplicits
 
@@ -24,14 +22,13 @@ final class ServletContextExtension(peer:ServletContext) {
 		name:String,
 		handler:HttpHandler,
 		mappings:ISeq[String],
-		loadOnStartup:Option[Int],
-		asyncSupported:Boolean
+		loadOnStartup:Option[Int]
 	):ServletRegistration.Dynamic	= {
 		val servlet	= new HttpHandlerServlet(handler)
 		val dynamic	= peer addServlet (name, servlet)
 		dynamic addMapping (mappings:_*)
 		loadOnStartup foreach dynamic.setLoadOnStartup
-		dynamic	setAsyncSupported asyncSupported
+		dynamic	setAsyncSupported true
 		dynamic
 	}
 	

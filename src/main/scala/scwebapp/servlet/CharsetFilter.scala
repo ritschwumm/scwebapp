@@ -1,4 +1,5 @@
-package scwebapp.filter
+package scwebapp
+package servlet
 
 import javax.servlet._
 

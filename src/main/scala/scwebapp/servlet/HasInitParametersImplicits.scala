@@ -1,5 +1,5 @@
 package scwebapp
-package pimp
+package servlet
 
 import java.util.{ Enumeration=>JEnumeration }
 
