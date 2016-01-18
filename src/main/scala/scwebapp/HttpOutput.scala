@@ -36,7 +36,9 @@ object HttpOutput {
 	
 	def withWriter(encoding:Charset)(handler:Effect[Writer]):HttpOutput	=
 			withOutputStream { ost =>
-				handler(new OutputStreamWriter(ost))
+				val wr	= new OutputStreamWriter(ost)
+				handler(wr)
+				wr.flush()
 			}
 			
 	def writeString(encoding:Charset)(data:String):HttpOutput	=
