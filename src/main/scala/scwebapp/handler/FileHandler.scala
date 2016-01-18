@@ -17,23 +17,20 @@ import scwebapp.source._
 // @see https://github.com/apache/tomcat/blob/trunk/java/org/apache/catalina/servlets/DefaultServlet.java
 final class FileHandler(baseDir:File) extends HttpHandler {
 	def apply(request:HttpServletRequest):HttpResponder	= {
-		val mimeTypeFor	= request.getServletContext mimeTypeFor _
-		val responder	=
-				for {
-					path		<- request.pathInfoUTF8	toWin	SetStatus(NOT_FOUND)
-					file		= baseDir / (URIComponent decode path)
-					_			<- safeToDeliver(file)	trueWin	SetStatus(NOT_FOUND)
-					mimeType	= mimeTypeFor(file.getName) getOrElse application_octetStream
-					handler		=
-							new SourceHandler(
-								source			= FileSource simple (file, mimeType),
-								enableInline	= mimeType.major ==== "image",
-								enableGZIP		= mimeType.major ==== "text"
-							)
-				}
-				yield handler apply request
-				
-		responder.merge
+		val file	= baseDir / request.pathInfoUTF8
+		if (safeToDeliver(file)) {
+			val mimeType	= request mimeTypeFor file.getName getOrElse application_octetStream
+			val handler		=
+					new SourceHandler(
+						source			= FileSource simple (file, mimeType),
+						enableInline	= mimeType.major ==== "image",
+						enableGZIP		= mimeType.major ==== "text"
+					)
+			handler apply request
+		}
+		else {
+			SetStatus(NOT_FOUND)
+		}
 	}
 			
 	private def safeToDeliver(file:File):Boolean	=

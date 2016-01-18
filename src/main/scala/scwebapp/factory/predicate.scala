@@ -12,25 +12,22 @@ object predicate extends predicate
 trait predicate {
 	def Method(method:HttpMethod):HttpPredicate	=
 			_.method ==== method
-			
+
+	def ContextPath(path:String):HttpPredicate	=
+			_.contextPath ==== path
+
+	def ServletPath(path:String):HttpPredicate	=
+			_.servletPath ==== path
+
 	def FullPathRaw(path:String):HttpPredicate	=
 			_.fullPathRaw ==== path
 	
-	def FullPathServlet(path:String):HttpPredicate	=
-			_.fullPathServlet ==== path
-	
 	def FullPathUTF8(path:String):HttpPredicate	=
 			_.fullPathUTF8 ==== path
-			
+		
 	def PathInfoRaw(path:String):HttpPredicate	=
-			_.pathInfoRaw exists { _ ==== path }
-			
-	def PathInfoServlet(path:String):HttpPredicate	=
-			_.pathInfoServlet exists { _ ==== path }
+			_.pathInfoRaw ==== path
 		
 	def PathInfoUTF8(path:String):HttpPredicate	=
-			_.pathInfoUTF8 exists { _ ==== path }
-		
-	def ServletPath(path:String):HttpPredicate	=
-			_.getServletPath ==== path
+			_.pathInfoUTF8 ==== path
 }

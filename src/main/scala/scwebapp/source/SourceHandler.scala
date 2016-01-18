@@ -30,7 +30,7 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 				case _		=> SetStatus(METHOD_NOT_ALLOWED)
 			}
 			
-	private def respond(request:HttpServletRequest, content:Boolean):HttpResponder	= {
+	private def respond(request:HttpServletRequest, includeContent:Boolean):HttpResponder	= {
 		var contentType		= source.mimeType
 		val lastModified	= HttpDate fromMilliInstant source.lastModified
 		// with URL-encoding we're safe with whitespace and line separators
@@ -101,8 +101,8 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 		}
 
 		def contentOrPass(contentResponder: =>HttpResponder):HttpResponder	=
-				if (content)	contentResponder
-				else			Pass
+				if (includeContent)	contentResponder
+				else				Pass
 				
 		// NOTE does not GZIP except for full range
 		// servers and browsers seem to disagree on whether offsets should

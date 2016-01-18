@@ -68,15 +68,15 @@ trait responder {
 	
 	def Body(data:HttpOutput):HttpResponder							= _ body data
 	
-	def StreamFrom(in:Thunk[InputStream]):HttpResponder					= Body(HttpOutput pipeInputStream in)
-	def StreamFromGZIP(in:Thunk[InputStream]):HttpResponder				= Body(HttpOutput pipeInputStream in gzip gzipBufferSize)
-	def SendFile(file:File):HttpResponder								= Body(HttpOutput writeFile file)
-	def SendFileGZIP(file:File):HttpResponder							= Body(HttpOutput writeFile file gzip gzipBufferSize)
+	def StreamFrom(in:Thunk[InputStream]):HttpResponder					= Body(HttpOutput pipeInputStream	in)
+	def StreamFromGZIP(in:Thunk[InputStream]):HttpResponder				= Body(HttpOutput pipeInputStream	in		gzip gzipBufferSize)
+	def SendFile(file:File):HttpResponder								= Body(HttpOutput writeFile			file)
+	def SendFileGZIP(file:File):HttpResponder							= Body(HttpOutput writeFile			file	gzip gzipBufferSize)
 	
-	def WriteFrom(encoding:Charset, in:Thunk[Reader]):HttpResponder		= Body((HttpOutput pipeReader encoding)(in))
-	def WriteFromGZIP(encoding:Charset, in:Thunk[Reader]):HttpResponder	= Body((HttpOutput pipeReader encoding)(in) gzip gzipBufferSize)
-	def SendString(encoding:Charset, string:String):HttpResponder		= Body((HttpOutput writeString encoding)(string))
-	def SendStringGZIP(encoding:Charset, string:String):HttpResponder	= Body((HttpOutput writeString encoding)(string) gzip gzipBufferSize)
+	def WriteFrom(encoding:Charset, in:Thunk[Reader]):HttpResponder		= Body(HttpOutput pipeReader	(encoding, in))
+	def WriteFromGZIP(encoding:Charset, in:Thunk[Reader]):HttpResponder	= Body(HttpOutput pipeReader	(encoding, in)		gzip gzipBufferSize)
+	def SendString(encoding:Charset, string:String):HttpResponder		= Body(HttpOutput writeString	(encoding, string))
+	def SendStringGZIP(encoding:Charset, string:String):HttpResponder	= Body(HttpOutput writeString	(encoding, string)	gzip gzipBufferSize)
 	
 	/*
 	//## extras

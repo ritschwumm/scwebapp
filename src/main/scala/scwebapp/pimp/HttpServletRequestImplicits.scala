@@ -10,7 +10,7 @@ import javax.servlet.http._
 
 import scutil.lang._
 import scutil.implicits._
-import scutil.io.URIComponent
+import scutil.io._
 
 import scwebapp.HttpInput
 
@@ -36,42 +36,51 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 	//------------------------------------------------------------------------------
 	//## paths
 	
-	// NOTE
 	// requestURI		always contains contextPath, servletPath and pathInfo but is still URL-encoded
-	// mapping /*		causes an empty servletPath
-	// ROOT context		causes an empty contextPath
-	// *.foo mapping	causes pathInfo to be null and a servletPath containing everything below the context
+	// ROOT context	contextPath is empty
+	// mapping /foo/*	servletPath is "/foo", pathInfo contains the rest
+	// mapping /*		servletPath is empty, pathInfo contains the rest
+	// *.foo mapping	servletPath contains everything below the context, pathInfo is null
 	
-	/**
-	the full path after the context path,
-	decoded according to server settings which by default (in tomcat) is ISO-8859-1.
-	this is not influenced by setCharacterEncoding or setEncoding
-	*/
+	/*
+	// decoded according to server settings which by default (in tomcat) is ISO-8859-1.
+	// this is not influenced by setCharacterEncoding or setEncoding
 	def fullPathServlet:String	=
 			ISeq(peer.getServletPath, peer.getPathInfo) filter { _ != null } mkString ""
-	
-	/** the full path after the context path, not yet url-decoded */
-	def fullPathRaw:String	=
-			peer.getRequestURI	cutPrefix
-			peer.getContextPath	getOrError
-			so"expected RequestURI ${peer.getRequestURI} to start with context path ${peer.getContextPath}"
-			
-	/** the full path after the context path, URL-decoded with the given Charset */
-	def fullPathUTF8:String	=
-			URIComponent decode fullPathRaw
 		
 	def pathInfoServlet:Option[String]	=
 			Option(peer.getPathInfo)
+	*/
 	
-	def pathInfoRaw:Option[String]	=
-			pathInfoServlet.isDefined guard {
-				fullPathRaw			cutPrefix
-				peer.getServletPath	getOrError
-				so"expected RequestURI ${peer.getRequestURI} to start with context path ${peer.getContextPath} and servlet path ${peer.getServletPath}"
-			}
+	def uri:String			= peer.getRequestURI
+	def contextPath:String	= peer.getContextPath
+	def servletPath:String	= peer.getServletPath
+	
+	/** the full path after the context path, not yet url-decoded */
+	def fullPathRaw:String	=
+			uri	cutPrefix contextPath getOrError so"expected uri ${uri} to start with context path ${contextPath}"
 			
-	def pathInfoUTF8:Option[String]	=
-			pathInfoRaw map URIComponent.decode
+	def pathInfoRaw:String	=
+			fullPathRaw	cutPrefix servletPath getOrError so"expected uri ${uri} to start with context path ${contextPath} and servlet path ${servletPath}"
+
+	/** the full path after the context path, URL-decoded with an utf-8 charset */
+	def fullPathUTF8:String	=
+			URIComponent decode fullPathRaw
+		
+	def pathInfoUTF8:String	=
+			URIComponent decode pathInfoRaw
+		
+	//------------------------------------------------------------------------------
+	//## query
+	
+	def queryString:Option[String]	=
+			Option(peer.getQueryString)
+		
+	def queryParameters(encoding:Charset):CaseParameters	=
+			queryString cata (CaseParameters.empty, HttpUtil parseQueryParameters (_, encoding))
+	
+	def queryParametersUTF8:CaseParameters	=
+			queryParameters(Charsets.utf_8)
 	
 	//------------------------------------------------------------------------------
 	//## headers
@@ -132,4 +141,11 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 				case e:IOException				=> Fail(InputOutputFailed(e))
 				case e:IllegalStateException	=> Fail(SizeLimitExceeded(e))
 			}
+			
+	//------------------------------------------------------------------------------
+	//## servlet context
+	
+	// NOTE without the toLowerCase hack this returns application/octet-stream for files with uppercase name extensions
+	def mimeTypeFor(path:String):Option[MimeType]	=
+			Option(peer.getServletContext getMimeType path.toLowerCase) flatMap MimeType.parse
 }

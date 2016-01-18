@@ -11,6 +11,11 @@ object HttpOutput {
 	val empty:HttpOutput	=
 			withOutputStream(constant(()))
 		
+	def concat(its:ISeq[HttpOutput]):HttpOutput	=
+			(its foldLeft empty)(_ ~> _)
+		
+	//------------------------------------------------------------------------------
+	
 	def withOutputStream(handler:Effect[OutputStream]):HttpOutput	=
 			new HttpOutput {
 				def intoOutputStream(ost:OutputStream):Unit	= handler(ost)
@@ -44,10 +49,10 @@ object HttpOutput {
 				wr.flush()
 			}
 			
-	def writeString(encoding:Charset)(data:String):HttpOutput	=
+	def writeString(encoding:Charset, data:String):HttpOutput	=
 			withWriter(encoding)(_ write data)
 	
-	def pipeReader(encoding:Charset)(data:Thunk[Reader]):HttpOutput	=
+	def pipeReader(encoding:Charset, data:Thunk[Reader]):HttpOutput	=
 			withWriter(encoding) { wr =>
 				data() use { rd =>
 					rd transferTo wr
@@ -57,6 +62,12 @@ object HttpOutput {
 
 trait HttpOutput {
 	def intoOutputStream(ost:OutputStream):Unit
+	
+	final def ~> (that:HttpOutput):HttpOutput	=
+			HttpOutput withOutputStream { ost =>
+				this intoOutputStream ost
+				that intoOutputStream ost
+			}
 	
 	final def gzip(bufferSize:Int):HttpOutput	=
 			HttpOutput withOutputStream { ost =>

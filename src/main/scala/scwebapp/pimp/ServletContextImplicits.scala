@@ -10,6 +10,8 @@ import javax.servlet._
 import scutil.lang._
 import scutil.implicits._
 
+import scwebapp.servlet.HttpHandlerServlet
+
 object ServletContextImplicits extends ServletContextImplicits
 
 trait ServletContextImplicits {
