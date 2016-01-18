@@ -8,61 +8,55 @@ import scutil.lang._
 import scutil.implicits._
 
 object HttpOutput {
-	// TODO hardcoded
-	private val gzipBufferSize	= 8192
-	
-	//------------------------------------------------------------------------------
-	
-	def outputStream(effect:Effect[OutputStream]):HttpOutput	=
+	def withOutputStream(handler:Effect[OutputStream]):HttpOutput	=
 			new HttpOutput {
-				def transferTo(ost:OutputStream):Unit	= effect(ost)
+				def intoOutputStream(ost:OutputStream):Unit	= handler(ost)
 			}
 			
-	def byteArray(data:Thunk[Array[Byte]]):HttpOutput	=
-			outputStream { ost =>
-				val bytes	= data()
-				ost write (bytes, 0, bytes.length)
+	def writeByteArray(data:Array[Byte]):HttpOutput	=
+			withOutputStream { ost =>
+				ost write (data, 0, data.length)
 			}
 			
-	def fullByteArray(data:Array[Byte]):HttpOutput	=
-			byteArray(thunk(data))
-			
-	def encoded(encoding:Charset):HttpStringOutput	=
-			new HttpStringOutput {
-				def writer(effect:Effect[Writer]):HttpOutput	=
-						outputStream { ost =>
-							effect(new OutputStreamWriter(ost, encoding))
-						}
-			}
-			
-	//------------------------------------------------------------------------------
-	
-	def fromFile(data:Thunk[File]):HttpOutput	=
-			outputStream { ost =>
-				val file	= data()
-				new FileInputStream(file) use { ist =>
+	def writeFile(data:File):HttpOutput	=
+			withOutputStream { ost =>
+				new FileInputStream(data) use { ist =>
 					ist transferTo ost
 				}
 			}
-	
-	def fromInputStream(data:Thunk[InputStream]):HttpOutput	=
-			outputStream { ost =>
-				val input	= data()
-				input use { ist =>
+			
+	def pipeInputStream(data:Thunk[InputStream]):HttpOutput	=
+			withOutputStream { ost =>
+				data() use { ist =>
 					ist transferTo ost
+				}
+			}
+			
+	//------------------------------------------------------------------------------
+	
+	def withWriter(encoding:Charset)(handler:Effect[Writer]):HttpOutput	=
+			withOutputStream { ost =>
+				handler(new OutputStreamWriter(ost))
+			}
+			
+	def writeString(encoding:Charset)(data:String):HttpOutput	=
+			withWriter(encoding)(_ write data)
+	
+	def pipeReader(encoding:Charset)(data:Thunk[Reader]):HttpOutput	=
+			withWriter(encoding) { wr =>
+				data() use { rd =>
+					rd transferTo wr
 				}
 			}
 }
 
-trait HttpOutput { self =>
-	def transferTo(ost:OutputStream):Unit
+trait HttpOutput {
+	def intoOutputStream(ost:OutputStream):Unit
 	
-	final def gzip:HttpOutput	=
-			new HttpOutput {
-				def transferTo(ost:OutputStream) {
-					val stream	= new GZIPOutputStream(ost, HttpOutput.gzipBufferSize)
-					self transferTo stream
-					stream.finish()
-				}
+	final def gzip(bufferSize:Int):HttpOutput	=
+			HttpOutput withOutputStream { ost =>
+				val stream	= new GZIPOutputStream(ost, bufferSize)
+				intoOutputStream(stream)
+				stream.finish()
 			}
 }

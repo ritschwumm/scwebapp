@@ -3,12 +3,12 @@ package scwebapp.source
 import java.io._
 import java.util.zip.GZIPOutputStream
 
-import javax.servlet._
 import javax.servlet.http._
 
 import scutil.lang._
 import scutil.implicits._
 import scutil.io.URIComponent
+import scutil.io.Charsets
 
 import scwebapp._
 import scwebapp.implicits._
@@ -17,8 +17,8 @@ import scwebapp.status._
 import scwebapp.instances._
 
 object SourceHandler {
-	private val DEFAULT_BUFFER_SIZE = 16384
-	private val DEFAULT_EXPIRE_TIME = 7L * 24 * 60 * 60	// seconds of a week
+	private val defaultBufferSize = 16384
+	private val defaultExpireTime = 7L * 24 * 60 * 60	// seconds of a week
 }
 
 // @see https://github.com/apache/tomcat/blob/trunk/java/org/apache/catalina/servlets/DefaultServlet.java
@@ -35,7 +35,7 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 		val lastModified	= HttpDate fromMilliInstant source.lastModified
 		// with URL-encoding we're safe with whitespace and line separators
 		val eTag			= HttpUtil quoteSimple so"${URIComponent encode source.fileName}_${source.size.toString}_${source.lastModified.millis.toString}"
-		val expires			= HttpDate.now + SourceHandler.DEFAULT_EXPIRE_TIME
+		val expires			= HttpDate.now + SourceHandler.defaultExpireTime
 
 		val requestHeaders	= request.headers
 		
@@ -138,7 +138,7 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 						SetStatus(PARTIAL_CONTENT)	~>
 						contentOrPass {
 							def crlfResponder(ss:String*):HttpResponder	=
-									SendString(ss map (_ + "\r\n") mkString "")
+									SendString(Charsets.us_ascii, ss map (_ + "\r\n") mkString "")
 							
 							def boundaryResponder(r:Range):HttpResponder	=
 									crlfResponder(
@@ -165,7 +165,7 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 				}
 				
 		// TODO ugly hack
-		HttpResponder { _ setBufferSize SourceHandler.DEFAULT_BUFFER_SIZE }			~>
+		HttpResponder { _ setBufferSize SourceHandler.defaultBufferSize }			~>
 		AddHeader("X-Content-Type-Options",	"nosniff")								~>
 		AddHeader("Content-Disposition",	disposition)							~>
 		AddHeader("Accept-Ranges",			"bytes")								~>
@@ -177,15 +177,11 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 	
 	//------------------------------------------------------------------------------
 	
-	private def streamResponder(func:Effect[ServletOutputStream]):HttpResponder	=
-			_.getOutputStream use func
+	private def streamResponder(effect:Effect[OutputStream]):HttpResponder	=
+			_ body (HttpOutput withOutputStream effect)
 		
-	private def streamResponderGZIP(func:Effect[GZIPOutputStream]):HttpResponder	=
-			response =>
-					new GZIPOutputStream(response.getOutputStream, SourceHandler.DEFAULT_BUFFER_SIZE) use { ost =>
-						func(ost)
-						ost.flush()
-					}
+	private def streamResponderGZIP(effect:Effect[OutputStream]):HttpResponder	=
+			_ body (HttpOutput withOutputStream effect gzip gzipBufferSize)
 			
 	private def rangeTransfer(range:Range):Effect[OutputStream]	=
 			source range (range.start, range.length) transferTo _

@@ -2,7 +2,6 @@ package scwebapp
 package pimp
 
 import java.util.{ Collection=>JCollection }
-import java.io._
 import java.nio.charset.Charset
 
 import javax.servlet.http.Part
@@ -48,8 +47,5 @@ final class PartExtension(peer:Part) {
 	//------------------------------------------------------------------------------
 	//## body
 	
-	def body:HttpInput	=
-			new HttpInput {
-				def inputStream[T](handler:InputStream=>T):T	= handler(peer.getInputStream)
-			}
+	def body:HttpInput	= HttpInput outofInputStream (thunk { peer.getInputStream })
 }

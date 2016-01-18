@@ -15,6 +15,12 @@ import scwebapp.implicits._
 object responder extends responder
 
 trait responder {
+	val gzipBufferSize	= 8192
+	
+	//## primtive
+	
+	val Pass:HttpResponder	= constant(())
+	
 	def concat(responders:ISeq[HttpResponder]):HttpResponder	=
 			(responders foldLeft Pass)(_ ~> _)
 	
@@ -66,29 +72,27 @@ trait responder {
 	def SetContentType(contentType:MimeType):HttpResponder			= _ setContentType		contentType
 	def SetContentLength(contentLength:Long):HttpResponder			= _ setContentLength	contentLength
 	
-	def Send(data:HttpOutput):HttpResponder							= _ send data
+	def Body(data:HttpOutput):HttpResponder							= _ body data
 	
-	def StreamFrom(in:Thunk[InputStream]):HttpResponder				= _ streamFrom			in
-	def WriteFrom(in:Thunk[Reader]):HttpResponder					= _ writeFrom			in
+	def StreamFrom(in:Thunk[InputStream]):HttpResponder					= Body(HttpOutput pipeInputStream in)
+	def StreamFromGZIP(in:Thunk[InputStream]):HttpResponder				= Body(HttpOutput pipeInputStream in gzip gzipBufferSize)
+	def SendFile(file:File):HttpResponder								= Body(HttpOutput writeFile file)
+	def SendFileGZIP(file:File):HttpResponder							= Body(HttpOutput writeFile file gzip gzipBufferSize)
 	
-	def SendString(string:String):HttpResponder						= _ sendString			string
-	def SendFile(file:File):HttpResponder							= _ sendFile			file
+	def WriteFrom(encoding:Charset, in:Thunk[Reader]):HttpResponder		= Body((HttpOutput pipeReader encoding)(in))
+	def WriteFromGZIP(encoding:Charset, in:Thunk[Reader]):HttpResponder	= Body((HttpOutput pipeReader encoding)(in) gzip gzipBufferSize)
+	def SendString(encoding:Charset, string:String):HttpResponder		= Body((HttpOutput writeString encoding)(string))
+	def SendStringGZIP(encoding:Charset, string:String):HttpResponder	= Body((HttpOutput writeString encoding)(string) gzip gzipBufferSize)
 	
-	def StreamFromGZIP(stream:Thunk[InputStream]):HttpResponder		= _ streamFromGZIP		stream
-	def WriteFromGZIP(reader:Thunk[Reader]):HttpResponder			= _ writeFromGZIP		reader
-	
-	def SendStringGZIP(string:String):HttpResponder					= _ sendStringGZIP		string
-	def SendFileGZIP(file:File):HttpResponder						= _ sendFileGZIP		file
-	
+	/*
 	//## extras
 	
-	/** the string function gets passed a function to encode urls */
-	def WithEncodeLink(mkResponder:Endo[String]=>HttpResponder):HttpResponder	=
-			response	=> mkResponder(response.encodeURL)(response)
-		
-	/** mkString gets passed a function encoding a path suitable for a link */
+	// mkString gets passed a function encoding a path suitable for a link
 	def SendStringWithLinks(mkString:Endo[String]=>String):HttpResponder	=
 			WithEncodeLink(mkString andThen SendString)
 		
-	val Pass:HttpResponder	= constant(())
+	// the string function gets passed a function to encode urls
+	def WithEncodeLink(mkResponder:Endo[String]=>HttpResponder):HttpResponder	=
+			response	=> mkResponder(response.encodeURL)(response)
+	*/
 }

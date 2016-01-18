@@ -117,11 +117,7 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 	//------------------------------------------------------------------------------
 	//## body
 	
-	// NOTE ServletRequest has getReader which uses the supplied encoding!
-	def body:HttpInput	=
-			new HttpInput {
-				def inputStream[T](handler:InputStream=>T):T	= handler(peer.getInputStream)
-			}
+	def body:HttpInput	= HttpInput outofInputStream (thunk { peer.getInputStream })
 	
 	def part(name:String):Tried[HttpPartsProblem,Option[Part]]	=
 			catchHttpPartsProblem(Option(peer getPart name))
