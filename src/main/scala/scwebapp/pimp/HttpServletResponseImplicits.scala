@@ -69,7 +69,7 @@ final class HttpServletResponseExtension(peer:HttpServletResponse) {
 	}
 	
 	def addHttpDateHeader(name:String, value:HttpDate) {
-		peer addHeader (name, HttpDateFormat unparse value)
+		peer addHeader (name, HttpDate unparse value)
 	}
 	
 	def noCache() {

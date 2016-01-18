@@ -2,14 +2,18 @@ package scwebapp
 
 import scala.annotation.tailrec
 
-// top-level:	text image audio video application multipart message
-
+import scutil.lang._
 import scutil.implicits._
+
+import scwebapp.format.HttpParser
+
+// top-level:	text image audio video application multipart message
 
 // TODO handle trees
 object MimeType {
-	val emptyParameters	= NoCaseParameters.empty
-	
+	val prism:Prism[String,MimeType]	=
+			Prism(parse, unparse)
+		
 	def parse(s:String):Option[MimeType]	=
 			HttpParser parseContentType s
 		
@@ -21,7 +25,7 @@ object MimeType {
 			)
 }
 
-case class MimeType(major:String, minor:String, parameters:NoCaseParameters = MimeType.emptyParameters) {
+case class MimeType(major:String, minor:String, parameters:NoCaseParameters = NoCaseParameters.empty) {
 	def value:String =
 			MimeType unparse this
 			

@@ -14,6 +14,7 @@ import scutil.io._
 
 import scwebapp.HttpInput
 import scwebapp.factory.mimeType
+import scwebapp.format._
 
 object HttpServletRequestImplicits extends HttpServletRequestImplicits
 
@@ -83,7 +84,7 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 			Option(peer.getQueryString)
 		
 	def queryParameters(encoding:Charset):CaseParameters	=
-			queryString cata (CaseParameters.empty, UrlEncodingUtil parseQueryParameters (_, encoding))
+			queryString cata (CaseParameters.empty, UrlEncoding parseQueryParameters (_, encoding))
 	
 	def queryParametersUTF8:CaseParameters	=
 			queryParameters(Charsets.utf_8)
@@ -101,19 +102,19 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 			)
 		
 	def contentLength:Tried[String,Option[Long]]	=
-			HeaderParsers contentLength headers
+			HeaderParser contentLength headers
 			
 	def contentType:Tried[String,Option[MimeType]]	=
-			HeaderParsers contentType headers
+			HeaderParser contentType headers
 			
 	def encoding:Tried[String,Option[Charset]]	=
-			HeaderParsers encoding headers
+			HeaderParser encoding headers
 			
 	def authorizationBasic(encoding:Charset):Tried[String,Option[BasicAuthentication]]	=
-			HeaderParsers authorizationBasic (headers, encoding)
+			HeaderParser authorizationBasic (headers, encoding)
 			
 	def cookies:Tried[String,Option[CaseParameters]]	=
-			HeaderParsers cookies headers
+			HeaderParser cookies headers
 	
 	//------------------------------------------------------------------------------
 	//## parameters
@@ -123,12 +124,12 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 				mimeOpt		<- contentType
 				mime		<- mimeOpt											toWin	so"missing content type"
 				_			<- mime sameMajorAndMinor mimeType.application_form	trueWin	so"unexpected content type ${mime.value}"
-				encodingOpt	<- HeaderParsers parseEncoding mime
+				encodingOpt	<- HeaderParser parseEncoding mime
 			}
 			yield {
 				val string		= body readString Charsets.us_ascii
 				val encoding	= encodingOpt getOrElse defaultEncoding
-				UrlEncodingUtil parseForm (string, encoding)
+				UrlEncoding parseForm (string, encoding)
 			}
 			
 	def formParametersUTF8:Tried[String,CaseParameters]	=

@@ -10,6 +10,7 @@ import scutil.lang._
 import scutil.implicits._
 
 import scwebapp.HttpInput
+import scwebapp.format._
 
 object PartImplicits extends PartImplicits
 
@@ -33,16 +34,16 @@ final class PartExtension(peer:Part) {
 		
 	def contentType:Tried[String,Option[MimeType]]	=
 			// NOTE this used peer.getContentType.guardNotNull
-			HeaderParsers contentType headers
+			HeaderParser contentType headers
 			
 	def encoding:Tried[String,Option[Charset]]	=
-			HeaderParsers encoding headers
+			HeaderParser encoding headers
 			
-	def contentDisposition:Tried[String,Option[ContentDisposition]]	=
-			HeaderParsers contentDisposition headers
+	def contentDisposition:Tried[String,Option[Disposition]]	=
+			HeaderParser contentDisposition headers
 	
 	def fileName:Tried[String,Option[String]]	=
-			HeaderParsers fileName headers
+			HeaderParser fileName headers
 			
 	//------------------------------------------------------------------------------
 	//## body

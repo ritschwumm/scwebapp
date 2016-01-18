@@ -8,4 +8,7 @@ object HttpRange {
 final case class HttpRange(start:Long, end:Long, total:Long) {
 	// start and end are both inclusive
 	val length	= end - start + 1
+	
+	def toHttpOutRange:HttpOutRange	=
+			HttpOutRangeFull(start, end, total)
 }

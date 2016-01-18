@@ -21,7 +21,7 @@ sealed trait Parameters {
 			first(name) flatMap { _.toLongOption }
 		
 	def firstDate(name:String):Option[HttpDate]	=
-			first(name) flatMap HttpDateFormat.parse
+			first(name) flatMap HttpDate.parse
 }
 
 //------------------------------------------------------------------------------

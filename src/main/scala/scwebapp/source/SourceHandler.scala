@@ -15,6 +15,7 @@ import scwebapp.implicits._
 import scwebapp.method._
 import scwebapp.status._
 import scwebapp.instances._
+import scwebapp.format._
 
 object SourceHandler {
 	private val defaultBufferSize	= 16384
@@ -34,7 +35,7 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 		var contentType		= source.mimeType
 		val lastModified	= HttpDate fromMilliInstant source.lastModified
 		// with URL-encoding we're safe with whitespace and line separators
-		val eTag			= HeaderUnparsers quoteSimple so"${URIComponent.utf_8 encode source.fileName}_${source.size.toString}_${source.lastModified.millis.toString}"
+		val eTag			= Quoting quoteSimple so"${URIComponent.utf_8 encode source.fileName}_${source.size.toString}_${source.lastModified.millis.toString}"
 		val expires			= HttpDate.now + SourceHandler.defaultExpireTime
 
 		val requestHeaders	= request.headers
@@ -48,7 +49,7 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 		if (notModified) {
 			return	SetStatus(NOT_MODIFIED) ~>
 					AddHeader("ETag",		eTag) ~>
-					AddHeader("Expires",	HttpDateFormat unparse expires)
+					AddHeader("Expires",	HttpDate unparse expires)
 		}
 
 		val ifMatch				= requestHeaders firstString	"If-Match"
@@ -69,7 +70,7 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 				(ifRangeTime	exists { _ + HttpDuration.second < lastModified	})
 				
 		val range		= requestHeaders firstString "Range"
-		val rangesRaw	= range map (HeaderParsers parseRangeHeader source.size)
+		val rangesRaw	= range map (HttpParser parseRangeHeader source.size)
 		
 		// TODO should we fail when needsFull but range headers are invalid?
 		val full:HttpRange	= HttpRange full source.size
@@ -79,8 +80,9 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 					case (false,	None)				=> Vector(full)
 					case (false,	Some(Some(ranges)))	=> ranges
 					case _	=>
-							return	SetStatus(REQUESTED_RANGE_NOT_SATISFIABLE)	~>
-									AddHeader("Content-Range", so"bytes */${source.size.toString}")
+						val outRange	= HttpOutRangeTotal(source.size)
+						return	SetStatus(REQUESTED_RANGE_NOT_SATISFIABLE)	~>
+								AddHeader("Content-Range", HttpOutRange unparse outRange)
 				}
 		
 		val acceptEncoding		= requestHeaders firstString "Accept-Encoding"
@@ -93,12 +95,12 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 				enableInline &&
 				(accept exists (Matchers accept contentType))
 			
-		val disposition		= {
-			val dispositionType	= inline cata ("attachment", "inline")
-			val fileName		= HeaderUnparsers quoteSimple	source.fileName
-			val fileNameStar	= HeaderUnparsers quoteStar		source.fileName
-			 so"${dispositionType};filename=${fileName};filename*=${fileNameStar}"
-		}
+		val disposition		=
+				Disposition(
+					inline cata (DispositionAttachment, DispositionInline),
+					Some(source.fileName),
+					Some(source.fileName)
+				)
 
 		def contentOrPass(contentResponder: =>HttpResponder):HttpResponder	=
 				if (includeContent)	contentResponder
@@ -111,12 +113,13 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 				ranges match {
 					case x if x forall { _ == full }	=>
 						val r:HttpRange	= full
+						val outRange	= r.toHttpOutRange
 						SetContentType(contentType)									~>
-						AddHeader("Content-Range", HeaderUnparsers formatRange r)	~>
+						AddHeader("Content-Range", HttpOutRange unparse outRange)	~>
 						(if (acceptsGzip) Pass else	SetContentLength(r.length))		~>
 						contentOrPass {
 							if (acceptsGzip) {
-								AddHeader("Content-Encoding", "gzip")	~>
+								AddHeader("Content-Encoding", ContentEncodingValue unparse ContentEncodingGzip)	~>
 								streamResponderGZIP(rangeTransfer(r))
 							}
 							else {
@@ -124,8 +127,9 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 							}
 						}
 					case ISeq(r)	=>
+						val outRange	= r.toHttpOutRange
 						SetContentType(contentType)									~>
-						AddHeader("Content-Range", HeaderUnparsers formatRange r)	~>
+						AddHeader("Content-Range", HttpOutRange unparse outRange)	~>
 						SetContentLength(r.length)									~>
 						SetStatus(PARTIAL_CONTENT)									~>
 						contentOrPass {
@@ -140,12 +144,12 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 							def crlfResponder(ss:String*):HttpResponder	=
 									SendString(Charsets.us_ascii, ss map (_ + "\r\n") mkString "")
 							
-							def boundaryResponder(r:HttpRange):HttpResponder	=
+							def boundaryResponder(or:HttpOutRange):HttpResponder	=
 									crlfResponder(
 										"",
 										so"--${boundary}",
 										so"Content-Type: ${contentType.value}",
-										so"Content-Range: ${HeaderUnparsers formatRange r}"
+										so"Content-Range: ${HttpOutRange unparse or}"
 									)
 							
 							def finishResponder:HttpResponder	=
@@ -158,20 +162,20 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 									streamResponder(rangeTransfer(r))
 								
 							ranges
-							.flatMap	{ r => Vector(boundaryResponder(r), contentResponder(r)) }
+							.flatMap	{ r => Vector(boundaryResponder(r.toHttpOutRange), contentResponder(r)) }
 							.append		(finishResponder)
 							.into		(concat)
 						}
 				}
 				
 		// TODO ugly hack
-		HttpResponder { _ setBufferSize SourceHandler.defaultBufferSize }			~>
-		AddHeader("X-Content-Type-Options",	"nosniff")								~>
-		AddHeader("Content-Disposition",	disposition)							~>
-		AddHeader("Accept-Ranges",			"bytes")								~>
-		AddHeader("ETag",					eTag)									~>
-		AddHeader("Last-Modified",			HttpDateFormat unparse lastModified)	~>
-		AddHeader("Expires",				HttpDateFormat unparse expires)			~>
+		HttpResponder { _ setBufferSize SourceHandler.defaultBufferSize }		~>
+		AddHeader("X-Content-Type-Options",	"nosniff")							~>
+		AddHeader("Content-Disposition",	Disposition unparse disposition)	~>
+		AddHeader("Accept-Ranges",			"bytes")							~>
+		AddHeader("ETag",					eTag)								~>
+		AddHeader("Last-Modified",			HttpDate unparse lastModified)		~>
+		AddHeader("Expires",				HttpDate unparse expires)			~>
 		rangeResponder
 	}
 	

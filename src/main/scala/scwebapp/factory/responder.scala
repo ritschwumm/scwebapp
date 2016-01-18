@@ -7,6 +7,7 @@ import java.nio.charset.Charset
 import scutil.lang._
 
 import scwebapp.implicits._
+import scwebapp.format._
 
 object responder extends responder
 
@@ -47,7 +48,7 @@ trait responder {
 	):HttpResponder =
 			AddHeader(
 				"Set-Cookie",
-				HeaderUnparsers setCookieHeader (
+				HeaderUnparser setCookieValue (
 					name, value, domain, path, comment, maxAge, secure, httpOnly
 				)
 			)

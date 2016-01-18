@@ -1,5 +1,7 @@
 package scwebapp
 
+import scutil.lang._
+import scutil.implicits._
 import scutil.time.MilliDuration
 
 object HttpDuration {
@@ -13,6 +15,17 @@ object HttpDuration {
 	
 	def fromMilliDuration(it:MilliDuration):HttpDuration	= HttpDuration(it.millis  / 1000)
 	def toMilliDuration(it:HttpDuration):MilliDuration		= MilliDuration(it.seconds * 1000)
+	
+	//------------------------------------------------------------------------------
+	
+	val prism:Prism[String,HttpDuration]	=
+			Prism(parse, unparse)
+	
+	def unparse(duration:HttpDuration):String	=
+			duration.seconds.toString
+
+	def parse(str:String):Option[HttpDuration]	=
+			str.toLongOption map HttpDuration.apply
 }
 
 final case class HttpDuration(seconds:Long) extends Ordered[HttpDuration] {

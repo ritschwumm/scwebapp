@@ -1,4 +1,5 @@
 package scwebapp
+package format
 
 import org.specs2.mutable._
 

@@ -1,4 +1,5 @@
 package scwebapp
+package format
 
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -8,12 +9,12 @@ import java.util.TimeZone
 import scutil.lang._
 import scutil.implicits._
 
-object HeaderUnparsers {
+object HeaderUnparser {
 	// TODO make sure responses with a cookie are not cached
 	
 	// NOTE this always compiles to version 0 and does no quotiong at ass
 	// forbidden in name and value: space, [ ] ( ) = , " / ? @ : ;
-	def setCookieHeader(
+	def setCookieValue(
 		name:String,
 		value:String,
 		domain:Option[String]		= None,
@@ -43,7 +44,7 @@ object HeaderUnparsers {
 					val expiresDate	=
 							if (duration == HttpDuration.zero)	HttpDate.zero
 							else								HttpDate.now + duration
-					(HttpDurationFormat unparse duration, HttpDateFormat unparse expiresDate)
+					(HttpDuration unparse duration, HttpDate unparse expiresDate)
 				}
 				.unzip
 			
@@ -61,46 +62,4 @@ object HeaderUnparsers {
 				
 		values.collapse map { _ mkString "=" } mkString ";"
 	}
-
-	//------------------------------------------------------------------------------
-	
-	// TODO check
-	// @see RFC2616
-	def quoteSimple(s:String):String	=
-			"\"" +
-			(
-				s flatMap {
-					case '"'	=> "\\\""
-					case '\\'	=> "\\\\"
-					case '\r'	=> " "
-					case '\n'	=> " "
-					case x		=> x.toString
-				}
-			) +
-			"\""
-		
-	// used for content-disposition's filename*, @see RFC6266
-	// about the encoding, @see RFC5987
-	def quoteStar(s:String):String	=
-			"UTF-8''" + (s getBytes "UTF-8" map quoteStar1 mkString "")
-	
-	private def quoteStar1(c:Byte):String	=
-			c match {
-				case x
-				if	x >= 'a' && x <= 'z' ||
-					x >= 'A' && x <= 'Z' ||
-					x >= '0' && x <= '9'
-					=> c.toChar.toString
-				
-				case '!' | '#' | '$' | '&' | '+' | '-' | '.' | '^' | '_' | '`' | '|' | '~'
-					=> c.toChar.toString
-					
-				case x
-					=> "%%%02x" format (c & 0xff)
-			}
-			
-	//------------------------------------------------------------------------------
-	
-	def formatRange(r:HttpRange):String	=
-			so"bytes ${r.start.toString}-${r.end.toString}/${r.total.toString}"
 }
