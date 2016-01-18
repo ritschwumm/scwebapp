@@ -43,7 +43,7 @@ trait responder {
 		path	foreach cookie.setPath
 		domain	foreach cookie.setDomain
 		comment	foreach	cookie.setComment
-		val	age	= maxAge	cata (-1, it => (it.millis / 1000).toInt)
+		val	age	= maxAge cata (-1, it => (it.millis / 1000).toInt)
 		cookie	setMaxAge	age
 		cookie	setSecure	secure
 		cookie	setVersion	version	

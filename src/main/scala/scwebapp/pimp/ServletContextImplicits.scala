@@ -17,14 +17,6 @@ trait ServletContextImplicits {
 }
 
 final class ServletContextExtension(peer:ServletContext) {
-	def initParameters:CaseParameters	=
-			CaseParameters(
-				for {
-					name	<- peer.getInitParameterNames.asInstanceOf[JEnumeration[String]].toIterator.toVector
-				}
-				yield name -> (peer getInitParameter name)
-			)
-			
 	def mimeTypeFor(path:String):Option[MimeType]	=
 			Option(peer getMimeType path) flatMap MimeType.parse
 		
@@ -40,10 +32,5 @@ final class ServletContextExtension(peer:ServletContext) {
 	def resourcePaths(base:String):Option[Set[String]]	=
 			Option(peer getResourcePaths base) map { _.asInstanceOf[JSet[String]].toSet }
 		
-	def attribute[T<:AnyRef](name:String):HttpAttribute[T]	=
-		 	new HttpAttribute[T](
-				getter	= ()	=> (peer getAttribute name).asInstanceOf[T],
-				setter	= t		=> peer setAttribute (name, t),
-				remover	= ()	=> peer removeAttribute name
-			)
+	
 }

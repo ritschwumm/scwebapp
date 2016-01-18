@@ -181,14 +181,4 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 				case e:IOException				=> Fail(InputOutputFailed(e))
 				case e:IllegalStateException	=> Fail(SizeLimitExceeded(e))
 			}
-		
-	//------------------------------------------------------------------------------
-	//## attributes
-	
-	def attribute[T<:AnyRef](name:String):HttpAttribute[T]	=
-			new HttpAttribute[T](
-				getter	= ()	=> (peer getAttribute name).asInstanceOf[T],
-				setter	= t		=> peer setAttribute (name, t),
-				remover	= ()	=> peer removeAttribute name
-			)
 }
