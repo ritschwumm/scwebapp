@@ -7,7 +7,6 @@ import java.util.TimeZone
 
 import scutil.lang._
 import scutil.implicits._
-import scutil.time._
 
 object HeaderUnparsers {
 	// forbidden in name and value: [ ] ( ) = , " / ? @ : ;
@@ -15,13 +14,13 @@ object HeaderUnparsers {
 	def setCookieHeader(
 		name:String,
 		value:String,
-		domain:Option[String]			= None,
-		path:Option[String]				= None,	
-		comment:Option[String]			= None,
-		maxAge:Option[MilliDuration]	= None,	// None deletes on browser exit, zero deletes immediately
-		secure:Boolean					= false,
-		httpOnly:Boolean				= false
-		//version:Int						= 0		// 0=netscape, 1=RFC
+		domain:Option[String]		= None,
+		path:Option[String]			= None,	
+		comment:Option[String]		= None,
+		maxAge:Option[HttpDuration]	= None,	// None deletes on browser exit, zero deletes immediately
+		secure:Boolean				= false,
+		httpOnly:Boolean			= false
+		//version:Int				= 0		// 0=netscape, 1=RFC
 	):String = {
 		require(name.length != 0, "bad cookie name")
 		
@@ -39,11 +38,10 @@ object HeaderUnparsers {
 		val (maxAgeValue, expiresValue)	=
 				maxAge
 				.map { duration =>
-					val seconds		= (duration.millis + 999) / 1000
 					val expiresDate	=
-							if (seconds == 0)	HttpDate.zero
-							else				HttpDate.now + seconds
-					(seconds.toString, HttpDateFormat unparse expiresDate)
+							if (duration == HttpDuration.zero)	HttpDate.zero
+							else								HttpDate.now + duration
+					(HttpDurationFormat unparse duration, HttpDateFormat unparse expiresDate)
 				}
 				.unzip
 			

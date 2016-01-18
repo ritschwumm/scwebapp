@@ -51,7 +51,7 @@ object HttpParser {
 	// val ctext:Parser[Char]		= (sat('(') orElse sat(')')).prevent right TEXT
 	// val comment:Parser[String]	= '(' ~> (quoted_pair_string | comment | ctext_string).* <~ ')' stringify
 	
-	// TODO check, @see HttpUtil.quote
+	// TODO check, @see HeaderUnparsers.quote
 	val quotedPair:CParser[Char]	=
 			is('\\') right CHAR collect {
 				case 'r'	=> '\r'

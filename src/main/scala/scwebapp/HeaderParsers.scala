@@ -32,7 +32,7 @@ object HeaderParsers {
 				case Win(Some(Win(Some(x))))	=> Win(Some(x))
 			}
 			
-	private def parseEncoding(contentType:MimeType):Tried[String,Option[Charset]]	=
+	def parseEncoding(contentType:MimeType):Tried[String,Option[Charset]]	=
 			(contentType.parameters firstString "charset")
 			.map { it =>
 				Charsets byName it mapFail constant(so"invalid charset ${it}")

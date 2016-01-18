@@ -13,6 +13,7 @@ import scutil.implicits._
 import scutil.io._
 
 import scwebapp.HttpInput
+import scwebapp.factory.mimeType
 
 object HttpServletRequestImplicits extends HttpServletRequestImplicits
 
@@ -63,12 +64,17 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 	def pathInfoRaw:String	=
 			fullPathRaw	cutPrefix servletPath getOrError so"expected uri ${uri} to start with context path ${contextPath} and servlet path ${servletPath}"
 
-	/** the full path after the context path, URL-decoded with an utf-8 charset */
+	def fullPath(encoding:Charset):String	=
+			URIComponent forCharset encoding decode fullPathRaw
+		
+	def pathInfo(encoding:Charset):String	=
+			URIComponent forCharset encoding decode pathInfoRaw
+		
 	def fullPathUTF8:String	=
-			URIComponent decode fullPathRaw
+			fullPath(Charsets.utf_8)
 		
 	def pathInfoUTF8:String	=
-			URIComponent decode pathInfoRaw
+			pathInfo(Charsets.utf_8)
 		
 	//------------------------------------------------------------------------------
 	//## query
@@ -77,7 +83,7 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 			Option(peer.getQueryString)
 		
 	def queryParameters(encoding:Charset):CaseParameters	=
-			queryString cata (CaseParameters.empty, HttpUtil parseQueryParameters (_, encoding))
+			queryString cata (CaseParameters.empty, UrlEncodingUtil parseQueryParameters (_, encoding))
 	
 	def queryParametersUTF8:CaseParameters	=
 			queryParameters(Charsets.utf_8)
@@ -111,6 +117,22 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 	
 	//------------------------------------------------------------------------------
 	//## parameters
+	
+	def formParameters(defaultEncoding:Charset):Tried[String,CaseParameters]	=
+			for {
+				mimeOpt		<- contentType
+				mime		<- mimeOpt											toWin	so"missing content type"
+				_			<- mime sameMajorAndMinor mimeType.application_form	trueWin	so"unexpected content type ${mime.value}"
+				encodingOpt	<- HeaderParsers parseEncoding mime
+			}
+			yield {
+				val string		= body readString Charsets.us_ascii
+				val encoding	= encodingOpt getOrElse defaultEncoding
+				UrlEncodingUtil parseForm (string, encoding)
+			}
+			
+	def formParametersUTF8:Tried[String,CaseParameters]	=
+			formParameters(Charsets.utf_8)
 	
 	def parameters:CaseParameters	=
 			CaseParameters(

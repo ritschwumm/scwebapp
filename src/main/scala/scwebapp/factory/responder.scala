@@ -5,7 +5,6 @@ import java.io._
 import java.nio.charset.Charset
 
 import scutil.lang._
-import scutil.time._
 
 import scwebapp.implicits._
 
@@ -38,13 +37,13 @@ trait responder {
 	def AddCookie(
 		name:String,
 		value:String,
-		domain:Option[String]			= None,
-		path:Option[String]				= None,	
-		comment:Option[String]			= None,
-		maxAge:Option[MilliDuration]	= None,	// None deletes on browser exit, zero deletes immediately
-		secure:Boolean					= false,
-		httpOnly:Boolean				= false
-		// version:Int					= 0		// 0=netscape, 1=RFC
+		domain:Option[String]		= None,
+		path:Option[String]			= None,	
+		comment:Option[String]		= None,
+		maxAge:Option[HttpDuration]	= None,	// None deletes on browser exit, zero deletes immediately
+		secure:Boolean				= false,
+		httpOnly:Boolean			= false
+		// version:Int				= 0		// 0=netscape, 1=RFC
 	):HttpResponder =
 			AddHeader(
 				"Set-Cookie",

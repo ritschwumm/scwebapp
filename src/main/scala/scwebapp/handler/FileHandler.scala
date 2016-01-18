@@ -5,7 +5,6 @@ import java.io._
 import javax.servlet.http._
 
 import scutil.implicits._
-import scutil.io.URIComponent
 
 import scwebapp._
 import scwebapp.implicits._

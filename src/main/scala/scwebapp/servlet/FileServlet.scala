@@ -15,7 +15,6 @@ final class FileServlet extends HttpServlet {
 
 	@throws(classOf[ServletException])
 	override  def init() {
-		// TODO add flag for fullPathUTF8 instead of pathInfoUTF8
 		val baseParam	=
 				getServletConfig.initParameters firstString "basePath" getOrElse {
 					throw new ServletException("missing init param basePath")

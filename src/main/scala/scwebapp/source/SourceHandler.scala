@@ -7,8 +7,8 @@ import javax.servlet.http._
 
 import scutil.lang._
 import scutil.implicits._
-import scutil.io.URIComponent
 import scutil.io.Charsets
+import scutil.io.URIComponent
 
 import scwebapp._
 import scwebapp.implicits._
@@ -17,8 +17,8 @@ import scwebapp.status._
 import scwebapp.instances._
 
 object SourceHandler {
-	private val defaultBufferSize = 16384
-	private val defaultExpireTime = 7L * 24 * 60 * 60	// seconds of a week
+	private val defaultBufferSize	= 16384
+	private val defaultExpireTime	= HttpDuration.week
 }
 
 // @see https://github.com/apache/tomcat/blob/trunk/java/org/apache/catalina/servlets/DefaultServlet.java
@@ -34,7 +34,7 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 		var contentType		= source.mimeType
 		val lastModified	= HttpDate fromMilliInstant source.lastModified
 		// with URL-encoding we're safe with whitespace and line separators
-		val eTag			= HeaderUnparsers quoteSimple so"${URIComponent encode source.fileName}_${source.size.toString}_${source.lastModified.millis.toString}"
+		val eTag			= HeaderUnparsers quoteSimple so"${URIComponent.utf_8 encode source.fileName}_${source.size.toString}_${source.lastModified.millis.toString}"
 		val expires			= HttpDate.now + SourceHandler.defaultExpireTime
 
 		val requestHeaders	= request.headers
@@ -65,8 +65,8 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 		val ifRange		= requestHeaders firstString	"If-Range"
 		val ifRangeTime	= requestHeaders firstDate		"If-Range"
 		val needsFull	=
-				(ifRange		exists { _ != eTag				}) &&
-				(ifRangeTime	exists { _ + 1 < lastModified	})
+				(ifRange		exists { _ != eTag	}) &&
+				(ifRangeTime	exists { _ + HttpDuration.second < lastModified	})
 				
 		val range		= requestHeaders firstString "Range"
 		val rangesRaw	= range map (HeaderParsers parseRangeHeader source.size)
@@ -132,7 +132,7 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 							streamResponder(rangeTransfer(r))
 						}
 					case ranges	=>
-						val boundary	= HttpUtil.multipartBoundary()
+						val boundary	= MultipartUtil.multipartBoundary()
 						val ct			= MimeType("multipart", "byteranges") addParameter ("boundary", boundary)
 						SetContentType(ct)			~>
 						SetStatus(PARTIAL_CONTENT)	~>
@@ -198,7 +198,7 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 				
 		def lastModified(requirement:HttpDate):Predicate[HttpDate]	=
 				header =>
-						header + 1 > requirement
+						header + HttpDuration.second > requirement
 						
 		def acceptEncoding(encoding:String):Predicate[String]	=
 				header	=> {

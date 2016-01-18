@@ -27,4 +27,9 @@ case class MimeType(major:String, minor:String, parameters:NoCaseParameters = Mi
 			
 	def addParameter(name:String, value:String):MimeType	=
 			copy(parameters = parameters append (name, value))
+		
+	def sameMajorAndMinor(that:MimeType):Boolean	=
+			this.major == that.major &&
+			this.minor == that.minor
+		
 }

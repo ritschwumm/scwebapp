@@ -16,8 +16,8 @@ object HttpDate {
 }
 
 final case class HttpDate(seconds:Long) extends Ordered[HttpDate] {
-	def +(offset:Long):HttpDate	= copy(seconds = seconds + offset)
-	def -(offset:Long):HttpDate	= copy(seconds = seconds - offset)
+	def +(offset:HttpDuration):HttpDate	= copy(seconds = seconds + offset.seconds)
+	def -(offset:HttpDuration):HttpDate	= copy(seconds = seconds - offset.seconds)
 	
 	def compare(that:HttpDate):Int	= this.seconds compare that.seconds
 	
