@@ -4,10 +4,7 @@ package factory
 import java.io._
 import java.nio.charset.Charset
 
-import javax.servlet.http._
-
 import scutil.lang._
-import scutil.implicits._
 import scutil.time._
 
 import scwebapp.implicits._
@@ -46,20 +43,15 @@ trait responder {
 		comment:Option[String]			= None,
 		maxAge:Option[MilliDuration]	= None,	// None deletes on browser exit, zero deletes immediately
 		secure:Boolean					= false,
-		httpOnly:Boolean				= false,
-		version:Int						= 0		// 0=netscape, 1=RFC
-	):HttpResponder = {
-		val cookie	= new Cookie(name, value)
-		domain	foreach cookie.setDomain
-		path	foreach cookie.setPath
-		comment	foreach	cookie.setComment
-		val	age	= maxAge cata (-1, it => ((it.millis + 1000 - 1) / 1000).toInt)
-		cookie	setMaxAge	age
-		cookie	setSecure	secure
-		cookie	setHttpOnly	httpOnly
-		cookie	setVersion	version	
-		_ addCookie cookie
-	}
+		httpOnly:Boolean				= false
+		// version:Int					= 0		// 0=netscape, 1=RFC
+	):HttpResponder =
+			AddHeader(
+				"Set-Cookie",
+				HeaderUnparsers setCookieHeader (
+					name, value, domain, path, comment, maxAge, secure, httpOnly
+				)
+			)
 	
 	def AddHeader(name:String, value:String):HttpResponder			= _ addHeader			(name, value)
 	

@@ -34,7 +34,7 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 		var contentType		= source.mimeType
 		val lastModified	= HttpDate fromMilliInstant source.lastModified
 		// with URL-encoding we're safe with whitespace and line separators
-		val eTag			= HttpUtil quoteSimple so"${URIComponent encode source.fileName}_${source.size.toString}_${source.lastModified.millis.toString}"
+		val eTag			= HeaderUnparsers quoteSimple so"${URIComponent encode source.fileName}_${source.size.toString}_${source.lastModified.millis.toString}"
 		val expires			= HttpDate.now + SourceHandler.defaultExpireTime
 
 		val requestHeaders	= request.headers
@@ -69,11 +69,11 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 				(ifRangeTime	exists { _ + 1 < lastModified	})
 				
 		val range		= requestHeaders firstString "Range"
-		val rangesRaw	= range map parseRangeHeader(source.size)
+		val rangesRaw	= range map (HeaderParsers parseRangeHeader source.size)
 		
 		// TODO should we fail when needsFull but range headers are invalid?
-		val full:Range	= Range full source.size
-		val ranges:ISeq[Range]	=
+		val full:HttpRange	= HttpRange full source.size
+		val ranges:ISeq[HttpRange]	=
 				(needsFull, rangesRaw) match {
 					case (true,		_)					=> Vector(full)
 					case (false,	None)				=> Vector(full)
@@ -95,8 +95,8 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 			
 		val disposition		= {
 			val dispositionType	= inline cata ("attachment", "inline")
-			val fileName		= HttpUtil quoteSimple	source.fileName
-			val fileNameStar	= HttpUtil quoteStar	source.fileName
+			val fileName		= HeaderUnparsers quoteSimple	source.fileName
+			val fileNameStar	= HeaderUnparsers quoteStar		source.fileName
 			 so"${dispositionType};filename=${fileName};filename*=${fileNameStar}"
 		}
 
@@ -110,9 +110,9 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 		val rangeResponder	=
 				ranges match {
 					case x if x forall { _ == full }	=>
-						val r:Range	= full
-						SetContentType(contentType)					~>
-						AddHeader("Content-Range", formatRange(r))	~>
+						val r:HttpRange	= full
+						SetContentType(contentType)									~>
+						AddHeader("Content-Range", HeaderUnparsers formatRange r)	~>
 						contentOrPass {
 							if (acceptsGzip) {
 								AddHeader("Content-Encoding", "gzip")	~>
@@ -124,10 +124,10 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 							}
 						}
 					case ISeq(r)	=>
-						SetContentType(contentType)					~>
-						AddHeader("Content-Range", formatRange(r))	~>
-						SetContentLength(r.length)					~>
-						SetStatus(PARTIAL_CONTENT)					~>
+						SetContentType(contentType)									~>
+						AddHeader("Content-Range", HeaderUnparsers formatRange r)	~>
+						SetContentLength(r.length)									~>
+						SetStatus(PARTIAL_CONTENT)									~>
 						contentOrPass {
 							streamResponder(rangeTransfer(r))
 						}
@@ -140,12 +140,12 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 							def crlfResponder(ss:String*):HttpResponder	=
 									SendString(Charsets.us_ascii, ss map (_ + "\r\n") mkString "")
 							
-							def boundaryResponder(r:Range):HttpResponder	=
+							def boundaryResponder(r:HttpRange):HttpResponder	=
 									crlfResponder(
 										"",
 										so"--${boundary}",
 										so"Content-Type: ${contentType.value}",
-										so"Content-Range: ${formatRange(r)}"
+										so"Content-Range: ${HeaderUnparsers formatRange r}"
 									)
 							
 							def finishResponder:HttpResponder	=
@@ -154,7 +154,7 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 										so"--${boundary}--"
 									)
 									
-							def contentResponder(r:Range):HttpResponder	=
+							def contentResponder(r:HttpRange):HttpResponder	=
 									streamResponder(rangeTransfer(r))
 								
 							ranges
@@ -183,7 +183,7 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 	private def streamResponderGZIP(effect:Effect[OutputStream]):HttpResponder	=
 			Body(HttpOutput withOutputStream effect gzip gzipBufferSize)
 			
-	private def rangeTransfer(range:Range):Effect[OutputStream]	=
+	private def rangeTransfer(range:HttpRange):Effect[OutputStream]	=
 			source range (range.start, range.length) transferTo _
 	
 	//------------------------------------------------------------------------------
@@ -225,37 +225,5 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 			
 		private def stripParam(s:String):Option[String]	=
 				s replaceAll ("\\s*;.*", "") guardBy { _.nonEmpty }
-	}
-
-	//------------------------------------------------------------------------------
-	
-	private object Range {
-		def full(total:Long):Range	=
-				Range(0, total - 1, total)
-	}
-	
-	private case class Range(start:Long, end:Long, total:Long) {
-		// start and end are both inclusive
-		val length	= end - start + 1
-	}
-	
-	private def formatRange(r:Range):String	=
-			so"bytes ${r.start.toString}-${r.end.toString}/${r.total.toString}"
-	
-	private def parseRangeHeader(total:Long)(rangeHeader:String):Option[ISeq[Range]]	= {
-		import scwebapp.parser.string._
-		
-		val last	= total - 1
-		
-		def mkRange(it:Either[(Long,Option[Long]),Long]):Option[Range]	=
-				it matchOption {
-					case Left((start, Some(end)))	if start <= (end min last)		=> Range(start,			end min last,	total)
-					case Left((start, None))		if start <= last				=> Range(start,			last,			total)
-					case Right(count)				if count > 0 && count <= total	=> Range(total - count,	last,			total)
-				}
-		
-		(HttpParser.rangeHeader parseStringOption rangeHeader)
-		.map	{ _.toVector flatMap mkRange }
-		.filter	{ _.nonEmpty }
 	}
 }

@@ -5,6 +5,7 @@ import java.util.Date
 import scutil.time.MilliInstant
 
 object HttpDate {
+	val zero:HttpDate	= HttpDate(0)
 	def now:HttpDate	= HttpDate(System.currentTimeMillis / 1000)
 	
 	def fromDate(it:Date):HttpDate					= HttpDate(it.getTime / 1000)

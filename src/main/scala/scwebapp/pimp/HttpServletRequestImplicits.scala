@@ -28,9 +28,7 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 	}
 	
 	def method:HttpMethod	=
-			HttpMethods
-			.find		{ _.id == peer.getMethod.toUpperCase }
-			.getOrError (so"unexpected method ${peer.getMethod}")
+			HttpMethod lookup peer.getMethod getOrError so"unexpected method ${peer.getMethod}"
 	
 	def remoteUser:Option[String]	=
 			Option(peer.getRemoteUser)
@@ -99,7 +97,7 @@ final class HttpServletRequestExtension(peer:HttpServletRequest) {
 	def authorizationBasic(encoding:Charset):Tried[String,Option[BasicAuthentication]]	=
 			HeaderParsers authorizationBasic (headers, encoding)
 			
-	def cookies:CaseParameters	=
+	def cookies:Tried[String,Option[CaseParameters]]	=
 			HeaderParsers cookies headers
 	
 	//------------------------------------------------------------------------------

@@ -38,7 +38,7 @@ final class PartExtension(peer:Part) {
 	def encoding:Tried[String,Option[Charset]]	=
 			HeaderParsers encoding headers
 			
-	def contentDisposition:Option[String]	=
+	def contentDisposition:Tried[String,Option[ContentDisposition]]	=
 			HeaderParsers contentDisposition headers
 	
 	def fileName:Tried[String,Option[String]]	=

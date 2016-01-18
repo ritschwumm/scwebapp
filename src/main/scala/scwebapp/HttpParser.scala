@@ -6,9 +6,9 @@ import scwebapp.parser.Parser._
 import scwebapp.parser.string._
 
 object HttpParser {
-	def parseContentDisposition(it:String):Option[(String,NoCaseParameters)]	=
+	def parseContentDisposition(it:String):Option[ContentDisposition]	=
 			(contentDisposition parseStringOption it)
-			.map { case (kind, params) => (kind, NoCaseParameters(params)) }
+			.map { case (kind, params) => ContentDisposition(kind, NoCaseParameters(params)) }
 		
 	def parseContentType(it:String):Option[MimeType]	=
 			(contentType parseStringOption it)

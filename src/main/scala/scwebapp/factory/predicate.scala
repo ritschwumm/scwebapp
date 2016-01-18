@@ -11,7 +11,7 @@ object predicate extends predicate
 
 trait predicate {
 	def Method(method:HttpMethod):HttpPredicate	=
-			_.getMethod.toUpperCase ==== method.id.toUpperCase
+			_.method ==== method
 			
 	def FullPathRaw(path:String):HttpPredicate	=
 			_.fullPathRaw ==== path

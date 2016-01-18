@@ -2,8 +2,6 @@ import javax.servlet.http._
 
 import scutil.lang._
 
-import scwebapp.method._
-
 package object scwebapp {
 	//------------------------------------------------------------------------------
 	//## base types
@@ -35,10 +33,4 @@ package object scwebapp {
 	implicit def ResponderToPHandler(responder:HttpResponder):HttpPHandler	= PRespond(responder)
 	implicit def StatusToResponder(status:HttpStatus):HttpResponder			= SetStatus(status)
 	*/
-	
-	val HttpMethods:ISeq[HttpMethod]	=
-			Vector (
-				OPTIONS, HEAD, GET, POST, PUT, DELETE, TRACE, CONNECT,
-				PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, LOCK, UNLOCK
-			)
 }

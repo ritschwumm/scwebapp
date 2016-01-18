@@ -54,21 +54,43 @@ object HeaderParsers {
 			}
 			yield BasicAuthentication tupled pair
 			
-	def cookies(headers:Parameters):CaseParameters	=
+	def cookies(headers:Parameters):Tried[String,Option[CaseParameters]]	=
 			(headers firstString "Cookie")
-			.flatMap	(HttpParser.parseCookie)
-			.getOrElse	(CaseParameters.empty)
+			.map { it =>
+				HttpParser parseCookie it toWin so"invalid cookies header ${it}"
+			}
+			.sequenceTried
 			
-	def contentDisposition(headers:Parameters):Option[String]	=
-			headers firstString "Content-Disposition"
+	def contentDisposition(headers:Parameters):Tried[String,Option[ContentDisposition]]	=
+			(headers firstString "Content-Disposition")
+			.map { it =>
+				HttpParser parseContentDisposition it toWin so"invalid content disposition ${it}"
+			}
+			.sequenceTried
 	
 	// @see https://www.ietf.org/rfc/rfc2047.txt
 	def fileName(headers:Parameters):Tried[String,Option[String]]	=
-			contentDisposition(headers)
-			.map { it:String =>
-				(HttpParser parseContentDisposition it)
-				.flatMap	{ _._2 firstString "filename" }
-				.toWin		(so"invalid content disposition ${it}")
+			contentDisposition(headers) map { _ map { _.parameters firstString "filename" } } match {
+				case Fail(x)			=> Fail(x)
+				case Win(None)			=> Win(None)
+				case Win(Some(None))	=> Win(None)
+				case Win(Some(Some(x)))	=> Win(Some(x))
 			}
-			.sequenceTried
+			
+	def parseRangeHeader(total:Long)(rangeHeader:String):Option[ISeq[HttpRange]]	= {
+		import scwebapp.parser.string._
+		
+		val last	= total - 1
+		
+		def mkRange(it:Either[(Long,Option[Long]),Long]):Option[HttpRange]	=
+				it matchOption {
+					case Left((start, Some(end)))	if start <= (end min last)		=> HttpRange(start,			end min last,	total)
+					case Left((start, None))		if start <= last				=> HttpRange(start,			last,			total)
+					case Right(count)				if count > 0 && count <= total	=> HttpRange(total - count,	last,			total)
+				}
+		
+		(HttpParser.rangeHeader parseStringOption rangeHeader)
+		.map	{ _.toVector flatMap mkRange }
+		.filter	{ _.nonEmpty }
+	}
 }
