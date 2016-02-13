@@ -3,6 +3,7 @@ package scwebapp.format
 import java.nio.charset.Charset
 
 import scutil.lang._
+import scutil.implicits._
 import scutil.io.Base64
 import scutil.io.Charsets
 
@@ -133,7 +134,7 @@ object HttpParsers {
 				bytes		<- valueCharBytes
 			}
 			yield {
-				charset map StringDecoder.decodeOption flatMap { _ apply bytes }
+				charset flatMap { it => (it decodeTried bytes).toOption }
 			}
 	
 	val extValue:CParser[String]	= (extValueOpt eating LWSP).filterSome
@@ -175,7 +176,7 @@ object HttpParsers {
 			ALPHA orElse DIGIT orElse in("+/=")
 			
 	def base64(charset:Charset):CParser[String]	=
-			(base64Char).seq.stringify filterMap Base64.decode filterMap (StringDecoder decodeOption charset)
+			(base64Char).seq.stringify filterMap Base64.decode filterMap { it => (charset decodeTried it).toOption }
 		
 	//------------------------------------------------------------------------------
 	
