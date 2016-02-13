@@ -18,13 +18,15 @@ private final class HttpPartImpl(peer:Part) extends HttpPart {
 	def name:String	= peer.getName
 	def size:Long	= peer.getSize
 	
-	def headers:NoCaseParameters	=
-			NoCaseParameters(
-				for {	
-					name	<- peer.getHeaderNames.asInstanceOf[JCollection[String]].asScala.toVector
-					value	<- (peer getHeaders name).asInstanceOf[JCollection[String]].asScala
-				}
-				yield name	-> value
+	def headers:HttpHeaders	=
+			HttpHeaders(
+				NoCaseParameters(
+					for {	
+						name	<- peer.getHeaderNames.asInstanceOf[JCollection[String]].asScala.toVector
+						value	<- (peer getHeaders name).asInstanceOf[JCollection[String]].asScala
+					}
+					yield name	-> value
+				)
 			)
 	
 	def body:HttpInput	=

@@ -49,7 +49,7 @@ object HttpIO {
 			case None			=> servletResponse setStatus response.status.id
 		}
 		
-		response.headers foreach { case (k, v) =>
+		response.headers foreach { case HeaderValue(k, v) =>
 			servletResponse addHeader (k, v)
 		}
 		

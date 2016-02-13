@@ -8,6 +8,7 @@ import scutil.implicits._
 import scutil.io._
 
 import scwebapp.factory.mimeType
+import scwebapp.header._
 import scwebapp.data._
 import scwebapp.format._
 
@@ -74,32 +75,17 @@ trait HttpRequest {
 	//------------------------------------------------------------------------------
 	//## headers
 	
-	def headers:NoCaseParameters
+	def headers:HttpHeaders
 	
-	final def cookies:Tried[String,Option[CaseParameters]]	=
-			HeaderParser cookies headers
-	
-	final def contentLength:Tried[String,Option[Long]]	=
-			HeaderParser contentLength headers
-	
-	final def contentType:Tried[String,Option[MimeType]]	=
-			HeaderParser contentType headers
-	
-	final def encoding:Tried[String,Option[Charset]]	=
-			HeaderParser encoding headers
-	
-	final def authorizationBasic(encoding:Charset):Tried[String,Option[BasicCredentials]]	=
-			HeaderParser authorizationBasic (headers, encoding)
-			
 	//------------------------------------------------------------------------------
 	//## content
 	
 	final def formParameters(defaultEncoding:Charset):Tried[String,CaseParameters]	=
 			for {
-				mimeOpt		<- contentType
-				mime		<- mimeOpt											toWin	so"missing content type"
+				contentType	<- (headers first ContentType):Tried[String,Option[ContentType]]
+				mime		<- contentType map { _.typ }						toWin	so"missing content type"
 				_			<- mime sameMajorAndMinor mimeType.application_form	trueWin	so"unexpected content type ${mime.value}"
-				encodingOpt	<- HeaderParser parseEncoding mime
+				encodingOpt	<- mime.charset
 			}
 			yield {
 				val string		= body readString Charsets.us_ascii

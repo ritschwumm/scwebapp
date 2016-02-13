@@ -12,8 +12,9 @@ import scwebapp.method._
 import scwebapp.status._
 import scwebapp.data._
 import scwebapp.format._
-import scwebapp.factory.header._
+import scwebapp.header._
 import scwebapp.factory.mimeType._
+import scwebapp.factory.header._
 
 object SourceHandler {
 	private val defaultExpireTime	= HttpDuration.week
@@ -35,57 +36,59 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 		var contentType		= source.mimeType
 		val lastModified	= HttpDate fromMilliInstant source.lastModified
 		// with URL-encoding we're safe with whitespace and line separators
-		val eTag			= Quoting quoteSimple so"${URIComponent.utf_8 encode source.fileName}_${source.size.toString}_${source.lastModified.millis.toString}"
+		val eTag			= ETagValue(false, HttpUnparsers quotedString so"${URIComponent.utf_8 encode source.fileName}_${source.size.toString}_${source.lastModified.millis.toString}")
 		val expires			= HttpDate.now + SourceHandler.defaultExpireTime
 
 		val requestHeaders	= request.headers
 		
-		val ifNoneMatch		= requestHeaders firstString	"If-None-Match"
-		val ifModifiedSince	= requestHeaders firstDate		"If-Modified-Since"
-		val notModified	=
-				(ifNoneMatch		exists (Matchers xmatch eTag))	||
-				ifNoneMatch.isEmpty &&
-				(ifModifiedSince	exists (Matchers lastModified lastModified))
+		val ifNoneMatch		= (requestHeaders first IfNoneMatch).toOption.flatten
+		val ifModifiedSince	= (requestHeaders first IfModifiedSince).toOption.flatten
+		val notModified		=
+				ifNoneMatch cata (
+					(ifModifiedSince	exists { it => (it wasModified lastModified) }),
+					it => (it matches eTag)
+				)
 		if (notModified) {
 			return HttpResponse(
 				NOT_MODIFIED,	None,
-				Vector(
+				HeaderValues(
 					ETag(eTag),
 					Expires(expires)
 				)
 			)
 		}
 
-		val ifMatch				= requestHeaders firstString	"If-Match"
-		val ifUnmodifiedSince	= requestHeaders firstDate		"If-Unmodified-Since"
+		val ifMatch				= (requestHeaders first IfMatch).toOption.flatten
+		val ifUnmodifiedSince	= (requestHeaders first IfUnmodifiedSince).toOption.flatten
 		val preconditionFailed	=
-				(ifMatch			exists !(Matchers xmatch eTag))	||
-				ifMatch.isEmpty &&
-				(ifUnmodifiedSince	exists !(Matchers lastModified lastModified))
+				ifMatch cata (
+					(ifUnmodifiedSince	exists { it => !(it wasModified lastModified) }),
+					it => !(it matches eTag)
+				)
 		if (preconditionFailed) {
 			return HttpResponse(PRECONDITION_FAILED)
 		}
 
-		// TODO should check format first
-		val ifRange		= requestHeaders firstString	"If-Range"
-		val ifRangeTime	= requestHeaders firstDate		"If-Range"
 		val needsFull	=
-				(ifRange		exists { _ != eTag	}) ||
-				(ifRangeTime	exists { _ + HttpDuration.second < lastModified	})
-				
-		val range		= requestHeaders firstString "Range"
-		val rangesRaw	= range map (HttpParser parseRangeHeader source.size)
+				requestHeaders first IfRange match {
+					case Fail(_)		=> true
+					case Win(None)		=> false
+					case Win(Some(x))	=> x needsFull (eTag, lastModified)
+				}
+			
+		val total		= source.size
+		val range		= requestHeaders first Range
+		val rangesRaw	= range map { _ map { _ inclusiveRanges total } }
 		
 		// TODO should we fail when needsFull but range headers are invalid?
-		// TODO should we return full when there is a range header, but without any valid range?
-		val full:RequestRange			= RequestRange full source.size
-		val ranges:ISeq[RequestRange]	=
+		val full:InclusiveRange			= InclusiveRange full total
+		val ranges:ISeq[InclusiveRange]	=
 				(needsFull, rangesRaw) match {
 					case (true,		_)										=> Vector(full)
-					case (false,	None)									=> Vector(full)
-					case (false,	Some(Some(ranges)))	if ranges.nonEmpty	=> ranges
+					case (false,	Win(None))								=> Vector(full)
+					case (false,	Win(Some(ranges)))	if ranges.nonEmpty	=> ranges
 					case _	=>
-						val outRange	= ResponseRange total source.size
+						val outRange	= ContentRangeValue total source.size
 						return HttpResponse(
 							REQUESTED_RANGE_NOT_SATISFIABLE,	None,
 							Vector(
@@ -94,26 +97,26 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 						)
 				}
 		
-		val acceptEncoding		= requestHeaders firstString "Accept-Encoding"
+		val acceptEncoding		= (requestHeaders first AcceptEncoding).toOption.flatten
 		val acceptsGzip:Boolean	=
 				enableGZIP &&
-				(acceptEncoding exists (Matchers acceptEncoding "gzip"))
+				(acceptEncoding exists { _ accepts AcceptEncodingOther(ContentEncodingGzip) })
 		
-		val accept	= requestHeaders firstString "Accept"
+		val accept	= (requestHeaders first Accept).toOption.flatten
 		val inline	=
 				enableInline &&
-				(accept exists (Matchers accept contentType))
+				(accept exists { _ accepts contentType })
 			
-		val disposition		=
-				Disposition(
-					inline cata (DispositionAttachment, DispositionInline),
+		val contentDisposition		=
+				ContentDisposition(
+					inline cata (ContentDispositionAttachment, ContentDispositionInline),
 					Some(source.fileName)
 				)
 
 		val standardHeaders	=
-				Vector(
+				HeaderValues(
 					XContentTypeOptions("nosniff"),
-					ContentDisposition(disposition),
+					contentDisposition,
 					AcceptRanges(RangeTypeBytes),
 					ETag(eTag),
 					LastModified(lastModified),
@@ -125,42 +128,42 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 		// apply to the body data before or after compression
 		ranges match {
 			case x if x forall { _ == full }	=>
-				val r:RequestRange	= full
+				val r:InclusiveRange	= full
 				HttpResponse(
 					OK,	None,
 					standardHeaders ++
-					Vector(
+					HeaderValues(
 						ContentType(contentType),
-						ContentRange(r.toResponseRange),
+						ContentRange(ContentRangeValue full (r, total)),
 						if (acceptsGzip)		ContentEncoding(ContentEncodingGzip)
 						else					ContentLength(r.length)
 					),
 						 if (!includeContent)	HttpOutput.empty
-					else if (acceptsGzip)		rangeOutput(r.range) gzip SourceHandler.gzipBufferSize
-					else						rangeOutput(r.range)
+					else if (acceptsGzip)		rangeOutput(r) gzip SourceHandler.gzipBufferSize
+					else						rangeOutput(r)
 				)
 			case ISeq(r)	=>
 				HttpResponse(
 					PARTIAL_CONTENT, None,
 					standardHeaders ++
-					Vector(
+					HeaderValues(
 						ContentType(contentType),
-						ContentRange(r.toResponseRange),
+						ContentRange(ContentRangeValue full (r, total)),
 						ContentLength(r.length)
 					),
-					if (includeContent)	rangeOutput(r.range)
+					if (includeContent)	rangeOutput(r)
 					else				HttpOutput.empty
 				)
 			case ranges	=>
 				val boundary	= MultipartUtil.multipartBoundary()
 				val ct			= multipart_byteranges_boundary(boundary)
 				
-				def boundaryOutput(r:ResponseRange):HttpOutput	=
+				def boundaryOutput(r:ContentRangeValue):HttpOutput	=
 						crlfOutput(
 							"",
 							so"--${boundary}",
-							so"Content-Type: ${contentType.value}",
-							so"Content-Range: ${ResponseRange unparse r}"
+							ContentType unparse ContentType(contentType),
+							ContentRange unparse ContentRange(r)
 						)
 				
 				def finishOutput:HttpOutput	=
@@ -178,7 +181,7 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 				val body	=
 						if (includeContent) {
 							ranges
-							.flatMap	{ r => Vector(boundaryOutput(r.toResponseRange), rangeOutput(r.range)) }
+							.flatMap	{ r => Vector(boundaryOutput(ContentRangeValue full (r, total)), rangeOutput(r)) }
 							.append		(finishOutput)
 							.into		(HttpOutput.concat)
 						}
@@ -187,7 +190,7 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 				HttpResponse(
 					PARTIAL_CONTENT, None,
 					standardHeaders ++
-					Vector(
+					HeaderValues(
 						ContentType(ct)
 					),
 					body
@@ -201,45 +204,4 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 			HttpOutput withOutputStream {
 				source range (range.start, range.length) transferTo _
 			}
-	
-	//------------------------------------------------------------------------------
-	// TODO use HttpParser for these
-	
-	private object Matchers {
-		// TODO eTag is quoted and may be prefixed with W/
-		def xmatch(requirement:String):Predicate[String]	=
-				header	=>
-						splitList(header).toSet	containsAny
-						Set(requirement, "*")
-				
-		def lastModified(requirement:HttpDate):Predicate[HttpDate]	=
-				header =>
-						header + HttpDuration.second > requirement
-						
-		def acceptEncoding(encoding:String):Predicate[String]	=
-				header	=> {
-					splitListParameterless(header).toSet containsAny
-					Set(encoding, "*")
-				}
-				
-		def accept(contentType:MimeType):Predicate[String]	=
-				header => {
-					// TODO should this match mime type parameters, too?
-					splitListParameterless(header).toSet containsAny
-					Set(
-						so"${contentType.major}/${contentType.minor}",
-						so"${contentType.major}/*",
-						so"*/*"
-					)
-				}
-						
-		private def splitList(s:String):ISeq[String]	=
-				s splitAroundChar ',' map { _.trim } filter { _.nonEmpty }
-			
-		private def splitListParameterless(s:String):ISeq[String]	=
-				splitList(s) flatMap stripParam
-			
-		private def stripParam(s:String):Option[String]	=
-				s replaceAll ("\\s*;.*", "") guardBy { _.nonEmpty }
-	}
 }

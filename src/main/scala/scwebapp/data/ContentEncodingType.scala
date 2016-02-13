@@ -1,6 +1,11 @@
 package scwebapp.data
 
+import scwebapp.format._
+import scwebapp.parser.string._
+
 object ContentEncodingType {
+	lazy val parser:CParser[ContentEncodingType]	= parsers.value
+	
 	def unparse(it:ContentEncodingType):String	=
 			it match {
 				case ContentEncodingGzip		=> "gzip"
@@ -9,6 +14,17 @@ object ContentEncodingType {
 				case ContentEncodingBr			=> "br"
 			}
 			
+	private object parsers {
+		import HttpParsers._
+		
+		val value:CParser[ContentEncodingType]	=
+				token map CaseUtil.lowerCase collect {
+					case "gzip"		=> ContentEncodingGzip
+					case "compress"	=> ContentEncodingCompress
+					case "deflate"	=> ContentEncodingDeflate
+					case "br"		=> ContentEncodingBr
+				}
+	}
 }
 
 // NOTE no identity here, that's only allowed for acceptance checks

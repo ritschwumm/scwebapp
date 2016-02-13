@@ -130,6 +130,25 @@ case class Parser[S,+T](parse:Input[S]=>Result[S,T]) { self =>
 	def nes:Parser[S,Nes[T]]	=
 			self next self.seq map { case (x, xs) => Nes(x, xs) }
 		
+	def minmax(min:Int, max:Int):Parser[S,ISeq[T]]	=
+			self upto max filter { _.size >= min }
+		
+	def times(count:Int):Parser[S,ISeq[T]]	=
+			self upto count filter { _.size == count }
+			
+	def upto(count:Int):Parser[S,ISeq[T]]	=
+			Parser { i =>
+				@tailrec def loop(in:Input[S], accu:ISeq[T]):Result[S,ISeq[T]]	=
+						if (accu.size == count)	Success(in, accu)
+						else {
+							self parse in match {
+								case Success(nextIn, value)	=> loop(nextIn, accu :+ value)
+								case Failure(_)				=> Success(in, accu)
+							}
+						}
+				loop(i, Vector.empty[T])
+			}
+		
 	def sepSeq(sepa:Parser[S,Any]):Parser[S,ISeq[T]]	=
 			sepNes(sepa) map { _.toVector } orElse (Parser success Vector.empty)
 		
@@ -147,7 +166,7 @@ case class Parser[S,+T](parse:Input[S]=>Result[S,T]) { self =>
 				}
 			}
 		
-	def token(ws:Parser[S,Any]):Parser[S,T]	=
+	def eating(ws:Parser[S,Any]):Parser[S,T]	=
 			ws.option right self
 		
 	def finish(ws:Parser[S,Any]):Parser[S,T]	=

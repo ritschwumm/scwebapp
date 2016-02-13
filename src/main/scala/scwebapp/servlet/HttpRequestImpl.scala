@@ -43,19 +43,20 @@ private final class HttpRequestImpl(peer:HttpServletRequest) extends HttpRequest
 	//------------------------------------------------------------------------------
 	//## headers
 	
-	def headers:NoCaseParameters	=
-			NoCaseParameters(
-				for {	
-					name	<- peer.getHeaderNames.asInstanceOf[JEnumeration[String]].asScala.toVector
-					value	<- (peer getHeaders name).asInstanceOf[JEnumeration[String]].asScala
-				}
-				yield name -> value
+	def headers:HttpHeaders	=
+			HttpHeaders(
+				NoCaseParameters(
+					for {	
+						name	<- peer.getHeaderNames.asInstanceOf[JEnumeration[String]].asScala.toVector
+						value	<- (peer getHeaders name).asInstanceOf[JEnumeration[String]].asScala
+					}
+					yield name -> value
+				)
 			)
 	
 	//------------------------------------------------------------------------------
 	//## content
 	
-	// TODO parameters, parts and body belong together, more or less
 	def parameters:CaseParameters	=
 			CaseParameters(
 				for {	
