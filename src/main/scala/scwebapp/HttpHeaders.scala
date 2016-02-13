@@ -36,7 +36,7 @@ final case class HttpHeaders(params:NoCaseParameters) {
 			
 	// TODO for HttpPart, this is wrong per rfc:
 	// Parameters is for regular headers, not for multipart parts
-	def fileName(headers:Parameters):Tried[String,Option[String]]	=
+	def fileName:Tried[String,Option[String]]	=
 			first(ContentDisposition)
 			.map {
 				_ map {
