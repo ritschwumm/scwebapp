@@ -19,19 +19,18 @@ import scwebapp.factory.header._
 object SourceHandler {
 	private val defaultExpireTime	= HttpDuration.week
 	private val gzipBufferSize		= 8192
-}
 
-final class SourceHandler(source:SourceData) extends HttpHandler {
-	def apply(request:HttpRequest):HttpResponder	=
+	def plan(source:SourceData):HttpHandler	=
+			request =>
 			HttpResponder(
 				request.method match {
-					case Win(GET)	=> respond(request, true)
-					case Win(HEAD)	=> respond(request, false)
+					case Win(GET)	=> respond(request, source, true)
+					case Win(HEAD)	=> respond(request, source, false)
 					case _			=> HttpResponse(METHOD_NOT_ALLOWED)
 				}
 			)
 			
-	private def respond(request:HttpRequest, includeContent:Boolean):HttpResponse	= {
+	private def respond(request:HttpRequest, source:SourceData, includeContent:Boolean):HttpResponse	= {
 		var contentType		= source.mimeType
 		val lastModified	= HttpDate fromMilliInstant source.lastModified
 		// with URL-encoding we're safe with whitespace and line separators

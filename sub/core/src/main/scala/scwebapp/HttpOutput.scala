@@ -32,6 +32,12 @@ object HttpOutput {
 				ost write (data, 0, data.length)
 			}
 			
+	// TODO toInt is questionable
+	def writeByteArrayRange(data:Array[Byte], range:InclusiveRange):HttpOutput	=
+			withOutputStream { ost =>
+				ost write (data, range.start.toInt, range.length.toInt)
+			}
+			
 	def writeFile(data:File):HttpOutput	=
 			withOutputStream { ost =>
 				new FileInputStream(data) use { ist =>
