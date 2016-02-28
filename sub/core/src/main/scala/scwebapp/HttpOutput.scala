@@ -4,10 +4,16 @@ import java.io._
 import java.nio.charset.Charset
 import java.util.zip.GZIPOutputStream
 
+import scala.annotation.tailrec
+
 import scutil.lang._
 import scutil.implicits._
 
+import scwebapp.data.InclusiveRange
+
 object HttpOutput {
+	private val bufferSize = 16384
+	
 	val empty:HttpOutput	=
 			withOutputStream(constant(()))
 		
@@ -37,6 +43,27 @@ object HttpOutput {
 			withOutputStream { ost =>
 				data() use { ist =>
 					ist transferTo ost
+				}
+			}
+			
+	def writeFileRange(data:File, range:InclusiveRange):HttpOutput	=
+			new HttpOutput {
+				def intoOutputStream(ost:OutputStream):Unit	=  {
+					new RandomAccessFile(data, "r") use { input =>
+						val buffer	= new Array[Byte](bufferSize)
+						input seek range.start
+						@tailrec
+						def loop(todo:Long) {
+							if (todo != 0) {
+								val read	= input read (buffer, 0, (todo min buffer.length).toInt)
+								if (read >= 0) {
+									ost write (buffer, 0, read)
+									loop(todo - read)
+								}
+							}
+						}
+						loop(range.length)
+					}
 				}
 			}
 			

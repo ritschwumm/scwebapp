@@ -22,7 +22,7 @@ object SourceHandler {
 }
 
 // @see https://github.com/apache/tomcat/blob/trunk/java/org/apache/catalina/servlets/DefaultServlet.java
-final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolean) extends HttpHandler {
+final class SourceHandler(source:Source) extends HttpHandler {
 	def apply(request:HttpRequest):HttpResponder	=
 			HttpResponder(
 				request.method match {
@@ -36,10 +36,18 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 		var contentType		= source.mimeType
 		val lastModified	= HttpDate fromMilliInstant source.lastModified
 		// with URL-encoding we're safe with whitespace and line separators
-		val eTag			= ETagValue(false, HttpUnparsers quotedString so"${URIComponent.utf_8 encode source.fileName}_${source.size.toString}_${source.lastModified.millis.toString}")
+		val eTag			= ETagValue(false, HttpUnparsers quotedString (URIComponent.utf_8 encode source.entityId))
 		val expires			= HttpDate.now + SourceHandler.defaultExpireTime
 
 		val requestHeaders	= request.headers
+		
+		val accept		= (requestHeaders first Accept).toOption.flatten
+		val notAccepted	= !(accept forall { _ accepts contentType })
+		if (notAccepted) {
+			return HttpResponse(
+				NOT_ACCEPTABLE,	None
+			)
+		}
 		
 		val ifNoneMatch		= (requestHeaders first IfNoneMatch).toOption.flatten
 		val ifModifiedSince	= (requestHeaders first IfModifiedSince).toOption.flatten
@@ -99,28 +107,24 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 		
 		val acceptEncoding		= (requestHeaders first AcceptEncoding).toOption.flatten
 		val acceptsGzip:Boolean	=
-				enableGZIP &&
+				source.enableGZIP &&
 				(acceptEncoding exists { _ accepts AcceptEncodingOther(ContentEncodingGzip) })
 		
-		val accept	= (requestHeaders first Accept).toOption.flatten
-		val inline	=
-				enableInline &&
-				(accept exists { _ accepts contentType })
-			
-		val contentDisposition		=
-				ContentDisposition(
-					inline cata (ContentDispositionAttachment, ContentDispositionInline),
-					Some(source.fileName)
-				)
+		// TODO ugly
+		val contentDisposition:Option[HeaderValue]		=
+				source.disposition
+				.map ((ContentDisposition.apply _).tupled)
+				.map { (it:ContentDisposition) => HeaderValue fromHeader it }
 
-		val standardHeaders	=
+		val standardHeaders:HeaderValues	=
 				HeaderValues(
 					XContentTypeOptions("nosniff"),
-					contentDisposition,
 					AcceptRanges(RangeTypeBytes),
 					ETag(eTag),
 					LastModified(lastModified),
 					Expires(expires)
+				) ++ (
+					contentDisposition.toVector
 				)
 			
 		// NOTE does not GZIP except for full range
@@ -139,8 +143,8 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 						else					ContentLength(r.length)
 					),
 						 if (!includeContent)	HttpOutput.empty
-					else if (acceptsGzip)		rangeOutput(r) gzip SourceHandler.gzipBufferSize
-					else						rangeOutput(r)
+					else if (acceptsGzip)		source range r gzip SourceHandler.gzipBufferSize
+					else						source range r
 				)
 			case ISeq(r)	=>
 				HttpResponse(
@@ -151,7 +155,7 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 						ContentRange(ContentRangeValue full (r, total)),
 						ContentLength(r.length)
 					),
-					if (includeContent)	rangeOutput(r)
+					if (includeContent)	source range r
 					else				HttpOutput.empty
 				)
 			case ranges	=>
@@ -181,7 +185,7 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 				val body	=
 						if (includeContent) {
 							ranges
-							.flatMap	{ r => Vector(boundaryOutput(ContentRangeValue full (r, total)), rangeOutput(r)) }
+							.flatMap	{ r => Vector(boundaryOutput(ContentRangeValue full (r, total)), source range r) }
 							.append		(finishOutput)
 							.into		(HttpOutput.concat)
 						}
@@ -197,11 +201,4 @@ final class SourceHandler(source:Source, enableInline:Boolean, enableGZIP:Boolea
 				)
 		}
 	}
-	
-	//------------------------------------------------------------------------------
-	
-	private def rangeOutput(range:InclusiveRange):HttpOutput	=
-			HttpOutput withOutputStream {
-				source range (range.start, range.length) transferTo _
-			}
 }
