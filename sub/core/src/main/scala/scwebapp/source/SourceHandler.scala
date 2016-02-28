@@ -21,8 +21,7 @@ object SourceHandler {
 	private val gzipBufferSize		= 8192
 }
 
-// @see https://github.com/apache/tomcat/blob/trunk/java/org/apache/catalina/servlets/DefaultServlet.java
-final class SourceHandler(source:Source) extends HttpHandler {
+final class SourceHandler(source:SourceData) extends HttpHandler {
 	def apply(request:HttpRequest):HttpResponder	=
 			HttpResponder(
 				request.method match {
@@ -36,7 +35,7 @@ final class SourceHandler(source:Source) extends HttpHandler {
 		var contentType		= source.mimeType
 		val lastModified	= HttpDate fromMilliInstant source.lastModified
 		// with URL-encoding we're safe with whitespace and line separators
-		val eTag			= ETagValue(false, HttpUnparsers quotedString (URIComponent.utf_8 encode source.entityId))
+		val eTag			= ETagValue(false, HttpUnparsers quotedString (URIComponent.utf_8 encode source.contentId))
 		val expires			= HttpDate.now + SourceHandler.defaultExpireTime
 
 		val requestHeaders	= request.headers
@@ -110,11 +109,13 @@ final class SourceHandler(source:Source) extends HttpHandler {
 				source.enableGZIP &&
 				(acceptEncoding exists { _ accepts AcceptEncodingOther(ContentEncodingGzip) })
 		
-		// TODO ugly
 		val contentDisposition:Option[HeaderValue]		=
-				source.disposition
-				.map ((ContentDisposition.apply _).tupled)
-				.map { (it:ContentDisposition) => HeaderValue fromHeader it }
+				source.disposition map { case SourceDisposition(attachment, fileName) =>
+					HeaderValue fromHeader ContentDisposition(
+						attachment cata (ContentDispositionInline, ContentDispositionAttachment),
+						fileName
+					)
+				}
 
 		val standardHeaders:HeaderValues	=
 				HeaderValues(

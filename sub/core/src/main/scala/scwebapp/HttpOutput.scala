@@ -39,31 +39,29 @@ object HttpOutput {
 				}
 			}
 			
+	def writeFileRange(data:File, range:InclusiveRange):HttpOutput	=
+			withOutputStream { ost =>
+				new RandomAccessFile(data, "r") use { input =>
+					val buffer	= new Array[Byte](bufferSize)
+					input seek range.start
+					@tailrec
+					def loop(todo:Long) {
+						if (todo != 0) {
+							val read	= input read (buffer, 0, (todo min buffer.length).toInt)
+							if (read >= 0) {
+								ost write (buffer, 0, read)
+								loop(todo - read)
+							}
+						}
+					}
+					loop(range.length)
+				}
+			}
+			
 	def pipeInputStream(data:Thunk[InputStream]):HttpOutput	=
 			withOutputStream { ost =>
 				data() use { ist =>
 					ist transferTo ost
-				}
-			}
-			
-	def writeFileRange(data:File, range:InclusiveRange):HttpOutput	=
-			new HttpOutput {
-				def intoOutputStream(ost:OutputStream):Unit	=  {
-					new RandomAccessFile(data, "r") use { input =>
-						val buffer	= new Array[Byte](bufferSize)
-						input seek range.start
-						@tailrec
-						def loop(todo:Long) {
-							if (todo != 0) {
-								val read	= input read (buffer, 0, (todo min buffer.length).toInt)
-								if (read >= 0) {
-									ost write (buffer, 0, read)
-									loop(todo - read)
-								}
-							}
-						}
-						loop(range.length)
-					}
 				}
 			}
 			
