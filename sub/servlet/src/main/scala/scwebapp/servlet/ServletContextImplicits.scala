@@ -8,6 +8,7 @@ import javax.servlet._
 
 import scutil.lang._
 import scutil.implicits._
+import scutil.io.ResourceProvider
 
 import scwebapp._
 import scwebapp.data._
@@ -40,12 +41,9 @@ final class ServletContextExtension(peer:ServletContext) {
 	def realPath(path:String):Option[String]	=
 			Option(peer getRealPath path)
 	
-	def resourceOption(path:String):Option[URL]	=
-			Option(peer getResource path)
-
-	def resourceAsStreamOption(path:String):Option[InputStream]	=
-			Option(peer getResourceAsStream path)
-			
+	def resources:ResourceProvider	=
+			new ResourceProvider(path => Option(peer getResource path))
+		
 	def resourcePaths(base:String):Option[Set[String]]	=
 			Option(peer getResourcePaths base) map { _.asInstanceOf[JSet[String]].toSet }
 }

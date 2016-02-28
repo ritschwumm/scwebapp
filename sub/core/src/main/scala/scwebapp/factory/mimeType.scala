@@ -7,35 +7,47 @@ import scwebapp.data._
 object mimeType extends mimeType
 
 trait mimeType {
-	val text_plain					= MimeType("text",			"plain")
-	val text_html					= MimeType("text",			"html")
-	val text_javascript				= MimeType("text",			"javascript")
-	val text_css					= MimeType("text",			"css")
+	//------------------------------------------------------------------------------
+	//## text
+	
+	val text_plain		= text("plain",			None)
+	val text_html		= text("html",			None)
+	val text_javascript	= text("javascript",	None)
+	val text_css		= text("css",			None)
+	
+	def text_plain_charset(charset:Charset):MimeType		= text("plain",			Some(charset))
+	def text_html_charset(charset:Charset):MimeType			= text("html",			Some(charset))
+	def text_javascript_charset(charset:Charset):MimeType	= text("javascript",	Some(charset))
+	def text_css_charset(charset:Charset):MimeType			= text("css",			Some(charset))
+		
+	def text(minor:String, charset:Option[Charset]):MimeType	=
+			MimeType("text", minor,
+				NoCaseParameters(charset.toVector map { it =>
+					("charset" -> it.name)
+				})
+			)
+
+	//------------------------------------------------------------------------------
+	//## application
+	
 	val application_javascript		= MimeType("application",	"javascript")
 	val application_json			= MimeType("application",	"json")
 	val application_octetStream		= MimeType("application",	"octet-stream")
 	// NOTE this doesn't officially exist, but some browsers do support it
 	val application_forceDownload	= MimeType("application",	"force-download")
 	val application_form			= MimeType("application",	"x-www-form-urlencoded")
-	val audio_mpeg					= MimeType("audio",			"mpeg")
-	val image_jpeg					= MimeType("image",			"jpeg")
-	val multipart_byteranges		= MimeType("multipart",		"byteranges")
 	
-	def text_plain_charset(encoding:Charset):MimeType	=
-			addCharset(text_plain, encoding)
-		
-	def text_html_charset(encoding:Charset):MimeType	=
-			addCharset(text_html, encoding)
-		
-	def text_javascript_charset(encoding:Charset):MimeType	=
-			addCharset(text_javascript, encoding)
-		
-	def text_css_charset(encoding:Charset):MimeType	=
-			addCharset(text_css, encoding)
-		
-	private def addCharset(mimeType:MimeType, encoding:Charset):MimeType	=
-			mimeType addParameter ("charset", encoding.name)
-		
+	//------------------------------------------------------------------------------
+	//## media
+	
+	val audio_mpeg	= MimeType("audio",	"mpeg")
+	val image_jpeg	= MimeType("image",	"jpeg")
+	
+	//------------------------------------------------------------------------------
+	//## multipart
+	
+	val multipart_byteranges	= MimeType("multipart",		"byteranges")
+	
 	def multipart_byteranges_boundary(boundary:String):MimeType	=
 			multipart_byteranges addParameter ("boundary", boundary)
 }
