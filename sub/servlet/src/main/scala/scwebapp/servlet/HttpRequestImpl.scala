@@ -84,15 +84,4 @@ private final class HttpRequestImpl(peer:HttpServletRequest) extends HttpRequest
 				case e:IOException				=> Fail(InputOutputFailed(e))
 				case e:IllegalStateException	=> Fail(SizeLimitExceeded(e))
 			}
-	
-	//------------------------------------------------------------------------------
-	
-	// TODO session data
-	
-	//------------------------------------------------------------------------------
-	//## servlet context
-	
-	// NOTE without the toLowerCase hack this returns application/octet-stream for files with uppercase name extensions
-	def mimeTypeFor(path:String):Option[MimeType]	=
-			Option(peer.getServletContext getMimeType path.toLowerCase) flatMap MimeType.parse
 }

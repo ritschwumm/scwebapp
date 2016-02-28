@@ -101,14 +101,4 @@ trait HttpRequest {
 	def body:HttpInput
 	
 	def parts:Tried[HttpPartsProblem,ISeq[HttpPart]]
-	
-	//------------------------------------------------------------------------------
-	//## session
-	
-	// TODO
-	
-	//------------------------------------------------------------------------------
-	//## servlet context
-	
-	def mimeTypeFor(path:String):Option[MimeType]
 }

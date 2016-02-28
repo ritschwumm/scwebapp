@@ -14,7 +14,7 @@ trait mimeType {
 	val application_javascript		= MimeType("application",	"javascript")
 	val application_json			= MimeType("application",	"json")
 	val application_octetStream		= MimeType("application",	"octet-stream")
-	// NOTe this doesn't officially exist, but some browsers do support it
+	// NOTE this doesn't officially exist, but some browsers do support it
 	val application_forceDownload	= MimeType("application",	"force-download")
 	val application_form			= MimeType("application",	"x-www-form-urlencoded")
 	val audio_mpeg					= MimeType("audio",			"mpeg")
