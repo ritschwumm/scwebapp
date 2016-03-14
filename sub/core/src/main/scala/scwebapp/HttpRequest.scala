@@ -1,6 +1,5 @@
 package scwebapp
 
-import java.io.InputStream
 import java.nio.charset.Charset
 
 import scutil.lang._

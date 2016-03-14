@@ -1,7 +1,5 @@
 package scwebapp.source
 
-import java.util.zip.GZIPOutputStream
-
 import scutil.lang._
 import scutil.implicits._
 import scutil.io.Charsets

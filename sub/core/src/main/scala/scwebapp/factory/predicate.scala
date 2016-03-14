@@ -1,7 +1,5 @@
 package scwebapp.factory
 
-import java.nio.charset.Charset
-
 import scutil.implicits._
 
 import scwebapp._

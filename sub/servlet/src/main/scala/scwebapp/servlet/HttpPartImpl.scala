@@ -2,14 +2,12 @@ package scwebapp.servlet
 
 import java.util.{ Collection=>JCollection }
 import java.io.InputStream
-import java.nio.charset.Charset
 
 import javax.servlet.http.Part
 
 import scala.collection.JavaConverters._
 
 import scutil.implicits._
-import scutil.io.Charsets
 
 import scwebapp._
 import scwebapp.data._

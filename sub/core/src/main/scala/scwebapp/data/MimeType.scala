@@ -2,8 +2,6 @@ package scwebapp.data
 
 import java.nio.charset.Charset
 
-import scala.annotation.tailrec
-
 import scutil.lang._
 import scutil.implicits._
 import scutil.io.Charsets

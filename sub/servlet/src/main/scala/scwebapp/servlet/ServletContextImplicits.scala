@@ -1,8 +1,6 @@
 package scwebapp.servlet
 
-import java.util.{  Enumeration=>JEnumeration, Set=>JSet }
-import java.io.InputStream
-import java.net.URL
+import java.util.{ Set=>JSet }
 
 import javax.servlet._
 
