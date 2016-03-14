@@ -138,7 +138,6 @@ object SourceHandler {
 					standardHeaders ++
 					HeaderValues(
 						ContentType(contentType),
-						ContentRange(ContentRangeValue full (r, total)),
 						if (acceptsGzip)		ContentEncoding(ContentEncodingGzip)
 						else					ContentLength(r.length)
 					),
