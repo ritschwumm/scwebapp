@@ -45,8 +45,10 @@ object SetCookie extends HeaderType[SetCookie] {
 					it.secure	guard	SecureAv,
 					it.httpOnly	guard	HttpOnlyAv
 				)
-		it.name + "=" + it.value +
-		(avs.collapse map CookieAv.unparse mkString ";")
+				
+		val headPart	= it.name + "=" + it.value
+		val tailParts	= avs.collapse map CookieAv.unparse
+		headPart +: tailParts mkString ";"
 	}
 	
 	private object parsers {

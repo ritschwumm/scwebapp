@@ -55,7 +55,7 @@ final class CaseParameters(values:ISeq[(String,String)]) extends Parameters {
 			}
 			
 	override def toString:String	=
-			"CaseParameters(" + (values map { case (k, v) => k + "=" + v } mkString " ,") + ")"
+			"CaseParameters(" + (values map { case (k, v) => k + "=" + v } mkString ", ") + ")"
 }
 
 //------------------------------------------------------------------------------
@@ -90,5 +90,5 @@ final class NoCaseParameters(values:ISeq[(String,String)]) extends Parameters {
 			}
 		
 	override def toString:String	=
-			"NoCaseParameters(" + (values map { case (k, v) => k + "=" + v } mkString " ,") + ")"
+			"NoCaseParameters(" + (values map { case (k, v) => k + "=" + v } mkString ", ") + ")"
 }

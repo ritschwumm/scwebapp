@@ -2,6 +2,8 @@ package scwebapp.factory
 
 import java.nio.charset.Charset
 
+import scutil.implicits._
+
 import scwebapp.data._
 
 object mimeType extends mimeType
@@ -22,7 +24,7 @@ trait mimeType {
 		
 	def text(minor:String, charset:Option[Charset]):MimeType	=
 			MimeType("text", minor,
-				NoCaseParameters(charset.toList map { it =>
+				NoCaseParameters(charset.toVector map { it =>
 					("charset" -> it.name)
 				})
 			)

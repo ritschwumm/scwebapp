@@ -47,5 +47,4 @@ final case class HttpHeaders(params:NoCaseParameters) {
 				case Fail(x)	=> Fail(x)
 				case Win(x)		=> Win(x.flatten)
 			}
-		
 }
