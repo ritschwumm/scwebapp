@@ -20,7 +20,7 @@ package object string {
 	
 	def stringInput(s:String):Input[Char]	=  StringInput(s, 0)
 	
-	case class StringInput(s:String, i:Int) extends Input[Char] {
+	final case class StringInput(s:String, i:Int) extends Input[Char] {
 		def next:Option[(Input[Char],Char)]	=
 				if (i < s.length)	Some((StringInput(s, i+1)), s charAt i)
 				else				None

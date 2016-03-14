@@ -1,6 +1,7 @@
 package scwebapp.header
 
 import scutil.lang._
+import scutil.implicits._
 
 import scwebapp.HeaderType
 import scwebapp.data._
@@ -31,5 +32,5 @@ object Range extends HeaderType[Range] {
 
 final case class Range(patterns:Nes[RangePattern]) {
 	def inclusiveRanges(total:Long):ISeq[InclusiveRange]	=
-			patterns.toVector flatMap { _ toInclusiveRange total }
+			patterns.toVector collapseMap { _ toInclusiveRange total }
 }

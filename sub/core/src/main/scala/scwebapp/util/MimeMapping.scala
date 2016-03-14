@@ -1025,7 +1025,7 @@ object MimeMapping {
 final case class MimeMapping(table:ISeq[(String,String)]) {
 	private val byExtension	=
 			table
-			.flatMap { case (extension, typ) =>
+			.collapseMap { case (extension, typ) =>
 				MimeType parse typ map (extension -> _)
 			}
 			.toMap

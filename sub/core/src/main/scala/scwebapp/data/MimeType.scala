@@ -40,7 +40,7 @@ object MimeType {
 	}
 }
 
-case class MimeType(major:String, minor:String, parameters:NoCaseParameters = NoCaseParameters.empty) {
+final case class MimeType(major:String, minor:String, parameters:NoCaseParameters = NoCaseParameters.empty) {
 	def value:String =
 			MimeType unparse this
 			

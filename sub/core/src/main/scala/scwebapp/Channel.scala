@@ -4,10 +4,10 @@ import scutil.lang._
 
 object Channel {
 	private sealed trait State[T]
-	private case class Initial[T]()						extends State[T]
-	private case class HasValue[T](value:T)				extends State[T]
-	private case class HasHandler[T](handler:Effect[T])	extends State[T]
-	private case class Final[T]()						extends State[T]
+	private final case class Initial[T]()						extends State[T]
+	private final case class HasValue[T](value:T)				extends State[T]
+	private final case class HasHandler[T](handler:Effect[T])	extends State[T]
+	private final case class Final[T]()							extends State[T]
 }
 
 final class Channel[T] {

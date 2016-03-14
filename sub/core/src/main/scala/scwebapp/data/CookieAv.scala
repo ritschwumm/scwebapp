@@ -49,10 +49,10 @@ object CookieAv {
 }
 
 sealed trait CookieAv
-case class ExpiresAv(date:HttpDate)			extends CookieAv
-case class MaxAgeAv(duration:HttpDuration)	extends CookieAv
-case class DomainAv(domain:String)			extends CookieAv
-case class PathAv(path:String)				extends CookieAv
-case object SecureAv						extends CookieAv
-case object HttpOnlyAv						extends CookieAv
-case class ExtensionAv(extension:String)	extends CookieAv
+final	case class ExpiresAv(date:HttpDate)			extends CookieAv
+final	case class MaxAgeAv(duration:HttpDuration)	extends CookieAv
+final	case class DomainAv(domain:String)			extends CookieAv
+final	case class PathAv(path:String)				extends CookieAv
+		case object SecureAv						extends CookieAv
+		case object HttpOnlyAv						extends CookieAv
+final	case class ExtensionAv(extension:String)	extends CookieAv

@@ -42,5 +42,5 @@ sealed trait Result[+S,+T] {
 			}
 }
 
-case class Success[S,T](i:Input[S], t:T)	extends Result[S,T]
-case class Failure[S](i:Input[S])			extends Result[S,Nothing]
+final case class Success[S,T](i:Input[S], t:T)	extends Result[S,T]
+final case class Failure[S](i:Input[S])			extends Result[S,Nothing]

@@ -18,7 +18,7 @@ object MediaRange {
 	}
 }
 
-case class MediaRange(value:MediaValue, parameters:NoCaseParameters) {
+final case class MediaRange(value:MediaValue, parameters:NoCaseParameters) {
 	// TODO include parameters in the match of the pattern?
 	def acceptance(typ:MimeType):Option[(Int,QValue)]	=
 			value acceptance typ

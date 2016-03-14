@@ -27,5 +27,5 @@ object AcceptEncodingType {
 }
 
 sealed trait AcceptEncodingType
-case object AcceptEncodingIdentity							extends AcceptEncodingType
-case class  AcceptEncodingOther(typ:ContentEncodingType)	extends AcceptEncodingType
+		case object AcceptEncodingIdentity							extends AcceptEncodingType
+final	case class  AcceptEncodingOther(typ:ContentEncodingType)	extends AcceptEncodingType

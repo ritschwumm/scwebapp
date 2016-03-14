@@ -4,7 +4,7 @@ import scutil.lang._
 
 import scwebapp.status._
 
-case class HttpResponse(
+final case class HttpResponse(
 	status:HttpStatus			= OK,
 	reason:Option[String]		= None,
 	headers:ISeq[HeaderValue]	= Vector.empty,

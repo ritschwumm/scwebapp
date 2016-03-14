@@ -1,3 +1,3 @@
 package scwebapp.data
 
-case class DocType(id:String)
+final case class DocType(id:String)

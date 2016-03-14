@@ -41,7 +41,7 @@ object Parser {
 			any[S].prevent
 }
 	
-case class Parser[S,+T](parse:Input[S]=>Result[S,T]) { self =>
+final case class Parser[S,+T](parse:Input[S]=>Result[S,T]) { self =>
 	def filter(pred:Predicate[T]):Parser[S,T]	=
 			Parser { i => self parse i filter pred }
 		

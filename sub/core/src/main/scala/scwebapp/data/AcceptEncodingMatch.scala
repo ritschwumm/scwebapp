@@ -22,7 +22,7 @@ object AcceptEncodingMatch {
 	}
 }
 
-case class AcceptEncodingMatch(
+final case class AcceptEncodingMatch(
 	pattern:AcceptEncodingPattern,
 	quality:Option[QValue]
 ) {

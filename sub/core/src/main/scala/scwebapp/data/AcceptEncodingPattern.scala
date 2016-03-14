@@ -36,5 +36,5 @@ sealed trait AcceptEncodingPattern {
 				case AcceptEncodingFixed(`typ`)	=> 1
 			}
 }
-case object AcceptEncodingWildcard						extends AcceptEncodingPattern
-case class  AcceptEncodingFixed(typ:AcceptEncodingType)	extends AcceptEncodingPattern
+		case object AcceptEncodingWildcard						extends AcceptEncodingPattern
+final	case class  AcceptEncodingFixed(typ:AcceptEncodingType)	extends AcceptEncodingPattern

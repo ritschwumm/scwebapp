@@ -1,6 +1,6 @@
 package scwebapp.source
 
-case class SourceDisposition(
+final case class SourceDisposition(
 	attachment:Boolean,
 	fileName:Option[String]
 )

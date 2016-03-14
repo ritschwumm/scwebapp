@@ -23,7 +23,7 @@ object SourceData {
 			)
 }
 
-case class SourceData(
+final case class SourceData(
 	size:Long,
 	range:InclusiveRange=>HttpOutput,
 	contentId:String,

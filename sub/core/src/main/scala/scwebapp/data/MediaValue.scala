@@ -25,7 +25,7 @@ object MediaValue {
 	}
 }
 
-case class MediaValue(pattern:MediaPattern, parameters:NoCaseParameters, quality:Option[QValue]) {
+final case class MediaValue(pattern:MediaPattern, parameters:NoCaseParameters, quality:Option[QValue]) {
 	// TODO include parameters in the match of the pattern?
 	val totalQuality	= quality getOrElse QValue.one
 	
