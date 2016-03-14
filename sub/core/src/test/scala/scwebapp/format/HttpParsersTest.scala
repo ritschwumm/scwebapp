@@ -63,5 +63,9 @@ class HttpParsersTest extends Specification {
 			HttpParsers.quotedString parseStringOption "\"test\"" mustEqual
 			Some("test")
 		}
+		"parse a positive long" in {
+			HttpParsers.longPositive parseStringOption "147" mustEqual
+			Some(147L)
+		}
 	}
 }

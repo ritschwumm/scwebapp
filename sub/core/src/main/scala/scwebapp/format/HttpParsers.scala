@@ -165,8 +165,10 @@ object HttpParsers {
 
 	val longZero:CParser[Long]	= cis('0') tag 0L
 	val longPositive:CParser[Long]	=
-			rng('1', '9') next DIGIT.seq map {
-				case (h, t)	=> (h +: t).toString.toLong
+			rng('1', '9') next DIGIT.seq map { case (h, t)	=>
+				((h +: t) foldLeft 0L) { (o, d) =>
+					o * 10 + (d - '0')
+				}
 			}
 	val longUnsigned:CParser[Long]	= longZero orElse longPositive
 		
