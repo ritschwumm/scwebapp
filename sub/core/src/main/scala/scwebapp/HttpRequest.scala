@@ -51,24 +51,24 @@ trait HttpRequest {
 	final def pathInfoRaw:String	=
 			fullPathRaw	cutPrefix servletPath getOrError so"expected uri ${uri} to start with context path ${contextPath} and servlet path ${servletPath}"
 
-	final def fullPath(encoding:Charset):String	=
+	final def fullPath(encoding:Charset):Tried[URIComponentProblem,String]	=
 			URIComponent forCharset encoding decode fullPathRaw
 		
-	final def pathInfo(encoding:Charset):String	=
+	final def pathInfo(encoding:Charset):Tried[URIComponentProblem,String]	=
 			URIComponent forCharset encoding decode pathInfoRaw
 		
-	final def fullPathUTF8:String	=
+	final def fullPathUTF8:Tried[URIComponentProblem,String]	=
 			fullPath(Charsets.utf_8)
 		
-	final def pathInfoUTF8:String	=
+	final def pathInfoUTF8:Tried[URIComponentProblem,String]	=
 			pathInfo(Charsets.utf_8)
 		
 	def queryString:Option[String]
 	
-	final def queryParameters(encoding:Charset):CaseParameters	=
-			queryString cata (CaseParameters.empty, UrlEncoding parseQueryParameters (_, encoding))
+	final def queryParameters(encoding:Charset):Tried[String,CaseParameters]	=
+			queryString cata (Win(CaseParameters.empty), UrlEncoding parseQueryParameters (_, encoding))
 	
-	final def queryParametersUTF8:CaseParameters	=
+	final def queryParametersUTF8:Tried[String,CaseParameters]	=
 			queryParameters(Charsets.utf_8)
 
 	//------------------------------------------------------------------------------
@@ -85,12 +85,11 @@ trait HttpRequest {
 				mime		<- contentType map { _.typ }						toWin	so"missing content type"
 				_			<- mime sameMajorAndMinor mimeType.application_form	trueWin	so"unexpected content type ${mime.value}"
 				encodingOpt	<- mime.charset
+				string		= body readString Charsets.us_ascii
+				encoding	= encodingOpt getOrElse defaultEncoding
+				params		<- UrlEncoding parseForm (string, encoding)
 			}
-			yield {
-				val string		= body readString Charsets.us_ascii
-				val encoding	= encodingOpt getOrElse defaultEncoding
-				UrlEncoding parseForm (string, encoding)
-			}
+			yield params
 			
 	final def formParametersUTF8:Tried[String,CaseParameters]	=
 			formParameters(Charsets.utf_8)
