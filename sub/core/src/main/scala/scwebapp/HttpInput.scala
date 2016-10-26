@@ -4,8 +4,8 @@ import java.io._
 import java.nio.charset.Charset
 import java.util.zip.GZIPInputStream
 
+import scutil.core.implicits._
 import scutil.lang._
-import scutil.implicits._
 
 object HttpInput {
 	def outofInputStream(ist:Thunk[InputStream]):HttpInput	=

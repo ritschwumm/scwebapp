@@ -1,7 +1,7 @@
 package scwebapp.source
 
+import scutil.base.implicits._
 import scutil.lang._
-import scutil.implicits._
 import scutil.codec._
 
 import scwebapp._

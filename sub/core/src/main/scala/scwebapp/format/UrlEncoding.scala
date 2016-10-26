@@ -4,8 +4,8 @@ import java.net.URLDecoder
 import java.nio.charset.Charset
 import java.io.UnsupportedEncodingException
 
+import scutil.base.implicits._
 import scutil.lang._
-import scutil.implicits._
 import scutil.codec._
 
 import scwebapp.data._

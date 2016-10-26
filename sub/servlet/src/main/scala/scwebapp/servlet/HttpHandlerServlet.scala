@@ -2,7 +2,7 @@ package scwebapp.servlet
 
 import javax.servlet.http._
 
-import scutil.codec.Charsets
+import scutil.lang.Charsets
 
 import scwebapp._
 

@@ -11,7 +11,7 @@ scalacOptions	++= Seq(
 )
 
 libraryDependencies	++= Seq(
-	"de.djini"		%%	"scutil-core"		% "0.85.0"	% "compile",
+	"de.djini"		%%	"scutil-core"		% "0.86.0"	% "compile",
 	"javax.servlet"	%	"javax.servlet-api"	% "3.1.0"	% "provided"
 )
 

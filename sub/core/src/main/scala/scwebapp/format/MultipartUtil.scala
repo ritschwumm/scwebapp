@@ -2,7 +2,7 @@ package scwebapp.format
 
 import java.util.Random
 
-import scutil.implicits._
+import scutil.core.implicits._
 
 object MultipartUtil {
 	private val multipartChars	= "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"

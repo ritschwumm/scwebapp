@@ -9,8 +9,8 @@ import javax.servlet.http.HttpServletRequest
 
 import scala.collection.JavaConverters._
 
+import scutil.base.implicits._
 import scutil.lang._
-import scutil.implicits._
 
 import scwebapp._
 import scwebapp.data._

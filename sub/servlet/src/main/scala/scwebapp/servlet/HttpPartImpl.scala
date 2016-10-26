@@ -7,7 +7,7 @@ import javax.servlet.http.Part
 
 import scala.collection.JavaConverters._
 
-import scutil.implicits._
+import scutil.base.implicits._
 
 import scwebapp._
 import scwebapp.data._

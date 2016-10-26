@@ -1,7 +1,7 @@
 package scwebapp.data
 
+import scutil.base.implicits._
 import scutil.lang._
-import scutil.implicits._
 
 import scwebapp.format.CaseUtil
 

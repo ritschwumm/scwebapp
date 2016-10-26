@@ -2,8 +2,8 @@ package scwebapp.util
 
 import java.util.Locale
 
+import scutil.base.implicits._
 import scutil.lang._
-import scutil.implicits._
 
 import scwebapp.data.MimeType
 

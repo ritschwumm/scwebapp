@@ -1,7 +1,7 @@
 package scwebapp
 
+import scutil.base.implicits._
 import scutil.lang._
-import scutil.implicits._
 import scutil.time._
 
 import scwebapp.status._
