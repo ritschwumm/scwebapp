@@ -1,6 +1,6 @@
 inThisBuild(Seq(
 	organization	:= "de.djini",
-	version			:= "0.114.0",
+	version			:= "0.115.0",
 	
 	scalaVersion	:= "2.11.8",
 	scalacOptions	++= Seq(
@@ -12,11 +12,7 @@ inThisBuild(Seq(
 	),
 	
 	conflictManager	:= ConflictManager.strict,
-	resolvers		+= "Scalaz Bintray Repo" at "http://dl.bintray.com/scalaz/releases",
-	dependencyOverrides	++= Set(
-		"org.scala-lang"	% "scala-library"	% scalaVersion.value,
-		"org.scala-lang"	% "scala-reflect"	% scalaVersion.value
-	)
+	resolvers		+= "Scalaz Bintray Repo" at "http://dl.bintray.com/scalaz/releases"
 ))
 
 //------------------------------------------------------------------------------
