@@ -20,12 +20,6 @@ package object string {
 	
 	def stringInput(s:String):Input[Char]	=  StringInput(s, 0)
 	
-	final case class StringInput(s:String, i:Int) extends Input[Char] {
-		def next:Option[(Input[Char],Char)]	=
-				if (i < s.length)	Some((StringInput(s, i+1)), s charAt i)
-				else				None
-	}
-	
 	//------------------------------------------------------------------------------
 
 	implicit class RichStringNest[S](peer:Parser[S,String]) {
