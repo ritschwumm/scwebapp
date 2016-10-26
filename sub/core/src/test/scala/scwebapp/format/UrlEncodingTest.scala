@@ -3,7 +3,7 @@ package scwebapp.format
 import org.specs2.mutable._
 
 import scutil.lang._
-import scutil.io.Charsets.utf_8
+import scutil.codec.Charsets.utf_8
 
 import scwebapp.data._
 

@@ -6,7 +6,7 @@ import java.io.UnsupportedEncodingException
 
 import scutil.lang._
 import scutil.implicits._
-import scutil.io._
+import scutil.codec._
 
 import scwebapp.data._
 

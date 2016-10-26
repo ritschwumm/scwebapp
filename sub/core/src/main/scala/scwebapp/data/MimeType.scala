@@ -4,7 +4,7 @@ import java.nio.charset.Charset
 
 import scutil.lang._
 import scutil.implicits._
-import scutil.io.Charsets
+import scutil.codec.Charsets
 
 import scwebapp.format._
 import scwebapp.parser.string._

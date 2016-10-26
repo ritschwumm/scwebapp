@@ -6,7 +6,7 @@ import javax.servlet._
 
 import scutil.lang._
 import scutil.implicits._
-import scutil.io.ResourceProvider
+import scutil.resource._
 
 import scwebapp._
 import scwebapp.data._

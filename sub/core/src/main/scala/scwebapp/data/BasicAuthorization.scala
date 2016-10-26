@@ -2,8 +2,7 @@ package scwebapp.data
 
 import java.nio.charset.Charset
 
-import scutil.io.Base64
-import scutil.io.Charsets
+import scutil.codec._
 
 import scwebapp.format._
 import scwebapp.parser.string._

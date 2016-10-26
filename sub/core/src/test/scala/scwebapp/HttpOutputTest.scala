@@ -4,7 +4,7 @@ import org.specs2.mutable._
 
 import java.io.ByteArrayOutputStream
 
-import scutil.io.Charsets
+import scutil.codec.Charsets
 
 class HttpOutputTest extends Specification {
 	"HttpOutput" should {

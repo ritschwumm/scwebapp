@@ -4,7 +4,7 @@ import java.nio.charset.Charset
 
 import scutil.lang._
 import scutil.implicits._
-import scutil.io._
+import scutil.codec._
 
 import scwebapp.factory.mimeType
 import scwebapp.header._

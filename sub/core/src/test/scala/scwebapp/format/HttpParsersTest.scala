@@ -2,7 +2,7 @@ package scwebapp.format
 
 import org.specs2.mutable._
 
-import scutil.io.Charsets
+import scutil.codec.Charsets
 
 import scwebapp.parser.string._
 

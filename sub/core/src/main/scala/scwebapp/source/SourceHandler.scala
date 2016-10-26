@@ -2,8 +2,7 @@ package scwebapp.source
 
 import scutil.lang._
 import scutil.implicits._
-import scutil.io.Charsets
-import scutil.io.URIComponent
+import scutil.codec._
 
 import scwebapp._
 import scwebapp.method._
