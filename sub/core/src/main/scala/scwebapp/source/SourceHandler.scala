@@ -14,8 +14,7 @@ import scwebapp.factory.mimeType._
 import scwebapp.factory.header._
 
 object SourceHandler {
-	private val defaultExpireTime	= HttpDuration.week
-	private val gzipBufferSize		= 8192
+	private val gzipBufferSize	= 8192
 
 	def plan(source:SourceData):HttpHandler	=
 			request =>
@@ -32,7 +31,17 @@ object SourceHandler {
 		val lastModified	= HttpDate fromMilliInstant source.lastModified
 		// with URL-encoding we're safe with whitespace and line separators
 		val eTag			= ETagValue(false, HttpUnparsers quotedString (URIComponent.utf_8 encode source.contentId))
-		val expires			= HttpDate.now + SourceHandler.defaultExpireTime
+		
+		val cacheHeaders:ISeq[HeaderValue]	=
+				source.expires cata (
+					HeaderValues(
+						// browsers tend to misunderstand this as "do not cache at all"
+						// where it really means "revalidate before serving from the cache"
+						// which they do anyway even without this header
+						//CacheControl(ISeq("no-cache"))
+					),
+					it => HeaderValues(Expires(it(HttpDate.now)))
+				)
 
 		val requestHeaders	= request.headers
 		
@@ -55,8 +64,9 @@ object SourceHandler {
 			return HttpResponse(
 				NOT_MODIFIED,	None,
 				HeaderValues(
-					ETag(eTag),
-					Expires(expires)
+					ETag(eTag)
+				) ++ (
+					cacheHeaders
 				)
 			)
 		}
@@ -118,8 +128,9 @@ object SourceHandler {
 					XContentTypeOptions("nosniff"),
 					AcceptRanges(RangeTypeBytes),
 					ETag(eTag),
-					LastModified(lastModified),
-					Expires(expires)
+					LastModified(lastModified)
+				) ++ (
+					cacheHeaders
 				) ++ (
 					contentDisposition.toVector
 				)
