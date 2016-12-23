@@ -11,12 +11,12 @@ scalacOptions	++= Seq(
 )
 
 libraryDependencies	++= Seq(
-	"de.djini"		%%	"scutil-core"	% "0.92.0"	% "compile",
+	"de.djini"		%%	"scutil-core"	% "0.93.0"	% "compile",
 	"org.specs2"	%%	"specs2-core"	% "3.8.6"	% "test"
 )
 
 wartremoverErrors ++= Seq(
-	Wart.Any2StringAdd,
+	Wart.StringPlusAny,
 	Wart.EitherProjectionPartial,
 	Wart.OptionPartial,
 	Wart.Enumeration,

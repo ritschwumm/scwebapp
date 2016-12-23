@@ -42,7 +42,7 @@ object HttpUnparsers {
 					case '\n'	=> "\\\n"
 					case x		=> x.toString
 				}
-			) +
+			).toString +
 			"\""
 		
 	def quoteStar_UTF8(s:String):String	=

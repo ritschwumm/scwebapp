@@ -11,9 +11,9 @@ object RangePattern {
 		
 	def unparse(it:RangePattern):String	=
 			it match {
-				case RangeBegin(s)		=> s + "-"
-				case RangeEnd(c)		=> "-" + c
-				case RangeFromTo(s,e)	=> s + "-" + e
+				case RangeBegin(s)		=> s.toString + "-"
+				case RangeEnd(c)		=> "-" + c.toString
+				case RangeFromTo(s,e)	=> s.toString + "-" + e.toString
 			}
 			
 	private object parsers {
