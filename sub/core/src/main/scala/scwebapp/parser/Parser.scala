@@ -78,6 +78,7 @@ final case class Parser[S,+T](parse:Input[S]=>Result[S,T]) { self =>
 	def collect[U](pfunc:PartialFunction[T,U]):Parser[S,U]	=
 			filterMap(pfunc.lift)
 		
+	// function effect first
 	def ap[U,V](that:Parser[S,U])(implicit ev:T=>(U=>V)):Parser[S,V]	=
 			for { a	<- self; b	<- that } yield a(b)
 			

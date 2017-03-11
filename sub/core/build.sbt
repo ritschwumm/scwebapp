@@ -11,7 +11,7 @@ scalacOptions	++= Seq(
 )
 
 libraryDependencies	++= Seq(
-	"de.djini"		%%	"scutil-core"	% "0.95.0"	% "compile",
+	"de.djini"		%%	"scutil-core"	% "0.96.0"	% "compile",
 	"org.specs2"	%%	"specs2-core"	% "3.8.7"	% "test"
 )
 
