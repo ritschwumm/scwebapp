@@ -11,8 +11,8 @@ scalacOptions	++= Seq(
 )
 
 libraryDependencies	++= Seq(
-	"de.djini"		%%	"scutil-core"	% "0.94.1"	% "compile",
-	"org.specs2"	%%	"specs2-core"	% "3.8.6"	% "test"
+	"de.djini"		%%	"scutil-core"	% "0.95.0"	% "compile",
+	"org.specs2"	%%	"specs2-core"	% "3.8.7"	% "test"
 )
 
 wartremoverErrors ++= Seq(
