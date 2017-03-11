@@ -5,8 +5,11 @@ import scutil.lang._
 object Property {
 	def lens[C,V](key:String, lens:TLens[C,V], parse:String=>Tried[String,V]):Property[C]	=
 			Property(
-				key, 
-				raw => parse(raw) map (lens.putter)
+				key		= key,
+				mod		= raw => parse(raw) map (lens.putter),
+				visible	= true
 			)
 }
-final case class Property[C](key:String, mod:String=>Tried[String,Endo[C]])
+final case class Property[C](key:String, mod:String=>Tried[String,Endo[C]], visible:Boolean) {
+	def hidden:Property[C]	= copy(visible = false)
+}

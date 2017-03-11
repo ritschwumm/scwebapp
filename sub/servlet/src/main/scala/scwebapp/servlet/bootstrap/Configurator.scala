@@ -25,7 +25,7 @@ object Configurator extends Logging {
 				State { s => (s, NoteDefault(prop.key, s.toString)) },
 				raw => prop mod raw cata (
 					error	=> State { s => (s, 		NoteError(prop.key, raw.toString, error)) },
-					change	=> State { s => (change(s),	NoteChange(prop.key, raw.toString)) }
+					change	=> State { s => (change(s),	NoteChange(prop.key, if (prop.visible) raw.toString else "<redacted>")) }
 				)
 			)
 }
