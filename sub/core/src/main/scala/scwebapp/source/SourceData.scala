@@ -2,7 +2,6 @@ package scwebapp.source
 
 import java.io._
 
-import scutil.lang._
 import scutil.time.MilliInstant
 
 import scwebapp.HttpOutput
@@ -16,7 +15,7 @@ object SourceData {
 		file:File,
 		contentId:String,
 		lastModified:MilliInstant,
-		expires:Option[Endo[HttpDate]],
+		caching:Option[SourceCaching],
 		mimeType:MimeType,
 		disposition:Option[SourceDisposition],
 		enableGZIP:Boolean
@@ -25,8 +24,8 @@ object SourceData {
 				size			= file.length,
 				range			= HttpOutput writeFileRange (file, _),
 				contentId		= contentId,
-				lastModified	= lastModified,
-				expires			= expires,
+				lastModified	= HttpDate fromMilliInstant lastModified,
+				caching			= caching,
 				mimeType		= mimeType,
 				disposition		= disposition,
 				enableGZIP		= enableGZIP
@@ -37,9 +36,8 @@ final case class SourceData(
 	size:Long,
 	range:InclusiveRange=>HttpOutput,
 	contentId:String,
-	lastModified:MilliInstant,
-	// Some to keep stuff in the cache for some time
-	expires:Option[Endo[HttpDate]],
+	lastModified:HttpDate,
+	caching:Option[SourceCaching],
 	mimeType:MimeType,
 	disposition:Option[SourceDisposition],
 	enableGZIP:Boolean

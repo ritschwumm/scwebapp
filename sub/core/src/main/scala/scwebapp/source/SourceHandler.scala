@@ -28,20 +28,24 @@ object SourceHandler {
 			
 	private def respond(request:HttpRequest, source:SourceData, includeContent:Boolean):HttpResponse	= {
 		val contentType		= source.mimeType
-		val lastModified	= HttpDate fromMilliInstant source.lastModified
+		val lastModified	= source.lastModified
 		// with URL-encoding we're safe with whitespace and line separators
 		val eTag			= ETagValue(false, HttpUnparsers quotedString (URIComponent.utf_8 encode source.contentId))
 		
 		val cacheHeaders:ISeq[HeaderValue]	=
-				source.expires cata (
-					HeaderValues(
-						// browsers tend to misunderstand this as "do not cache at all"
-						// where it really means "revalidate before serving from the cache"
-						// which they do anyway even without this header
-						//CacheControl(ISeq("no-cache"))
-					),
-					it => HeaderValues(Expires(it(HttpDate.now)))
-				)
+				source.caching match {
+					case None	=>
+						HeaderValues(
+							// browsers tend to misunderstand this as "do not cache at all"
+							// where it really means "revalidate before serving from the cache"
+							// which they do anyway even without this header
+							//CacheControl(ISeq("no-cache"))
+						)
+					case Some(SourceNotCached)	=>
+						NoCache
+					case Some(SourceExpires(when))	=>
+						HeaderValues(Expires(when(HttpDate.now)))
+				}
 
 		val requestHeaders	= request.headers
 		
