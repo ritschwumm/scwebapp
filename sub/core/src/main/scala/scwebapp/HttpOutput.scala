@@ -41,7 +41,7 @@ object HttpOutput {
 			
 	def writeFile(data:File):HttpOutput	=
 			withOutputStream { ost =>
-				new FileInputStream(data) use { ist =>
+				data withInputStream { ist =>
 					ist transferTo ost
 				}
 			}
