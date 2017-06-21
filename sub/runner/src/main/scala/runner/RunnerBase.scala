@@ -75,12 +75,18 @@ object RunnerBase extends Logging {
 			sys exit 1
 		}
 		
-		INFO("press enter to stop")
-		val read	= System.in.read()
-		if (read != -1) {
+		def stop() {
 			INFO("stopping server")
 			server.stop()
 			disposable.dispose()
+		}
+		
+		Runtime.getRuntime addShutdownHook new Thread(() => stop())
+		
+		INFO("press enter to stop")
+		val read	= System.in.read()
+		if (read != -1) {
+			stop()
 		}
 		
 		server.join()
