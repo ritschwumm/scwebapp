@@ -133,7 +133,7 @@ object HttpParsers {
 				bytes		<- valueCharBytes
 			}
 			yield {
-				charset flatMap { it => (it decodeTried bytes).toOption }
+				charset flatMap { it => (it decodeEither bytes).toOption }
 			}
 	
 	val extValue:CParser[String]	= (extValueOpt eating LWSP).filterSome
@@ -177,7 +177,7 @@ object HttpParsers {
 			ALPHA orElse DIGIT orElse in("+/=")
 			
 	def base64(charset:Charset):CParser[String]	=
-			(base64Char).seq.stringify filterMap Base64.decode filterMap { it => (charset decodeTried it).toOption }
+			(base64Char).seq.stringify filterMap Base64.decode filterMap { it => (charset decodeEither it).toOption }
 		
 	//------------------------------------------------------------------------------
 	

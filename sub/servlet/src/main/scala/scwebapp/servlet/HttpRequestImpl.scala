@@ -22,8 +22,8 @@ private final class HttpRequestImpl(peer:HttpServletRequest) extends HttpRequest
 	def remoteUser:Option[String]	=
 			Option(peer.getRemoteUser)
 	
-	def method:Tried[String,HttpMethod]	=
-			HttpMethod lookup peer.getMethod toWin peer.getMethod
+	def method:Either[String,HttpMethod]	=
+			HttpMethod lookup peer.getMethod toRight peer.getMethod
 	
 	def secure:Boolean	= peer.isSecure
 
@@ -69,16 +69,16 @@ private final class HttpRequestImpl(peer:HttpServletRequest) extends HttpRequest
 						peer.getInputStream use handler
 			}
 	
-	def parts:Tried[HttpPartsProblem,ISeq[HttpPart]]	=
+	def parts:Either[HttpPartsProblem,ISeq[HttpPart]]	=
 			catchHttpPartsProblem(peer.getParts.asScala.toVector) map { _ map { new HttpPartImpl(_) } }
 			
-	private def catchHttpPartsProblem[T](it: =>T):Tried[HttpPartsProblem,T]	=
+	private def catchHttpPartsProblem[T](it: =>T):Either[HttpPartsProblem,T]	=
 			try {
-				Win(it)
+				Right(it)
 			}
 			catch {
-				case e:ServletException			=> Fail(NotMultipart(e))
-				case e:IOException				=> Fail(InputOutputFailed(e))
-				case e:IllegalStateException	=> Fail(SizeLimitExceeded(e))
+				case e:ServletException			=> Left(NotMultipart(e))
+				case e:IOException				=> Left(InputOutputFailed(e))
+				case e:IllegalStateException	=> Left(SizeLimitExceeded(e))
 			}
 }

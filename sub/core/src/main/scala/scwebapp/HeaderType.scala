@@ -1,7 +1,6 @@
 package scwebapp
 
 import scutil.base.implicits._
-import scutil.lang._
 
 trait HeaderType[T] {
 	implicit val HT:HeaderType[T]	= this
@@ -10,8 +9,8 @@ trait HeaderType[T] {
 	def parse(it:String):Option[T]
 	def unparse(it:T):String
 	
-	def parseTried(it:String):Tried[String,T]	=
-			parse(it) toWin so"invalid ${key} header value ${it}"
+	def parseEither(it:String):Either[String,T]	=
+			parse(it) toRight so"invalid ${key} header value ${it}"
 	
 	def headerValue(it:T):HeaderValue	=
 			HeaderValue(key, unparse(it))

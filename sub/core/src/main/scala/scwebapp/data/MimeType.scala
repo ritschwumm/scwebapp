@@ -50,10 +50,10 @@ final case class MimeType(major:String, minor:String, parameters:NoCaseParameter
 			this.major == that.major &&
 			this.minor == that.minor
 			
-	def charset:Tried[String,Option[Charset]]	=
+	def charset:Either[String,Option[Charset]]	=
 			(parameters firstString "charset")
 			.map { it =>
-				Charsets byName it mapFail constant(so"invalid charset ${it}")
+				Charsets byName it mapLeft constant(so"invalid charset ${it}")
 			}
-			.sequenceTried
+			.sequenceEither
 }

@@ -20,9 +20,9 @@ object SourceHandler {
 			request =>
 			HttpResponder(
 				request.method match {
-					case Win(GET)	=> respond(request, source, true)
-					case Win(HEAD)	=> respond(request, source, false)
-					case _			=> HttpResponse(METHOD_NOT_ALLOWED)
+					case Right(GET)		=> respond(request, source, true)
+					case Right(HEAD)	=> respond(request, source, false)
+					case _				=> HttpResponse(METHOD_NOT_ALLOWED)
 				}
 			)
 			
@@ -84,9 +84,9 @@ object SourceHandler {
 
 		val needsFull	=
 				requestHeaders first IfRange match {
-					case Fail(_)		=> true
-					case Win(None)		=> false
-					case Win(Some(x))	=> x needsFull (eTag, lastModified)
+					case Left(_)		=> true
+					case Right(None)	=> false
+					case Right(Some(x))	=> x needsFull (eTag, lastModified)
 				}
 			
 		val total		= source.size
@@ -97,9 +97,9 @@ object SourceHandler {
 		val full:InclusiveRange			= InclusiveRange full total
 		val ranges:ISeq[InclusiveRange]	=
 				(needsFull, rangesRaw) match {
-					case (true,		_)										=> Vector(full)
-					case (false,	Win(None))								=> Vector(full)
-					case (false,	Win(Some(ranges)))	if ranges.nonEmpty	=> ranges
+					case (true,		_)											=> Vector(full)
+					case (false,	Right(None))								=> Vector(full)
+					case (false,	Right(Some(ranges)))	if ranges.nonEmpty	=> ranges
 					case _	=>
 						val outRange	= ContentRangeValue total source.size
 						return HttpResponse(

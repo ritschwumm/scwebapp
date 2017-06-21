@@ -18,7 +18,7 @@ trait HttpRequest {
 	def remoteUser:Option[String]
 	def secure:Boolean
 	
-	def method:Tried[String,HttpMethod]
+	def method:Either[String,HttpMethod]
 
 	// requestURI		always contains contextPath, servletPath and pathInfo but is still URL-encoded
 	// ROOT context	contextPath is empty
@@ -51,24 +51,24 @@ trait HttpRequest {
 	final def pathInfoRaw:String	=
 			fullPathRaw	cutPrefix servletPath getOrError so"expected uri ${uri} to start with context path ${contextPath} and servlet path ${servletPath}"
 
-	final def fullPath(encoding:Charset):Tried[URIComponentProblem,String]	=
+	final def fullPath(encoding:Charset):Either[URIComponentProblem,String]	=
 			URIComponent forCharset encoding decode fullPathRaw
 		
-	final def pathInfo(encoding:Charset):Tried[URIComponentProblem,String]	=
+	final def pathInfo(encoding:Charset):Either[URIComponentProblem,String]	=
 			URIComponent forCharset encoding decode pathInfoRaw
 		
-	final def fullPathUTF8:Tried[URIComponentProblem,String]	=
+	final def fullPathUTF8:Either[URIComponentProblem,String]	=
 			fullPath(Charsets.utf_8)
 		
-	final def pathInfoUTF8:Tried[URIComponentProblem,String]	=
+	final def pathInfoUTF8:Either[URIComponentProblem,String]	=
 			pathInfo(Charsets.utf_8)
 		
 	def queryString:Option[String]
 	
-	final def queryParameters(encoding:Charset):Tried[String,CaseParameters]	=
-			queryString cata (Win(CaseParameters.empty), UrlEncoding parseQueryParameters (_, encoding))
+	final def queryParameters(encoding:Charset):Either[String,CaseParameters]	=
+			queryString cata (Right(CaseParameters.empty), UrlEncoding parseQueryParameters (_, encoding))
 	
-	final def queryParametersUTF8:Tried[String,CaseParameters]	=
+	final def queryParametersUTF8:Either[String,CaseParameters]	=
 			queryParameters(Charsets.utf_8)
 
 	//------------------------------------------------------------------------------
@@ -79,11 +79,11 @@ trait HttpRequest {
 	//------------------------------------------------------------------------------
 	//## content
 	
-	final def formParameters(defaultEncoding:Charset):Tried[String,CaseParameters]	=
+	final def formParameters(defaultEncoding:Charset):Either[String,CaseParameters]	=
 			for {
-				contentType	<- (headers first ContentType):Tried[String,Option[ContentType]]
-				mime		<- contentType map { _.typ }						toWin	so"missing content type"
-				_			<- mime sameMajorAndMinor mimeType.application_form	trueWin	so"unexpected content type ${mime.value}"
+				contentType	<- (headers first ContentType):Either[String,Option[ContentType]]
+				mime		<- contentType map { _.typ }						toRight		so"missing content type"
+				_			<- mime sameMajorAndMinor mimeType.application_form	trueRight	so"unexpected content type ${mime.value}"
 				encodingOpt	<- mime.charset
 				string		= body readString Charsets.us_ascii
 				encoding	= encodingOpt getOrElse defaultEncoding
@@ -91,12 +91,12 @@ trait HttpRequest {
 			}
 			yield params
 			
-	final def formParametersUTF8:Tried[String,CaseParameters]	=
+	final def formParametersUTF8:Either[String,CaseParameters]	=
 			formParameters(Charsets.utf_8)
 		
 	def parameters:CaseParameters
 	
 	def body:HttpInput
 	
-	def parts:Tried[HttpPartsProblem,ISeq[HttpPart]]
+	def parts:Either[HttpPartsProblem,ISeq[HttpPart]]
 }
