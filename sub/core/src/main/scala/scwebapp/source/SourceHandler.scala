@@ -27,7 +27,7 @@ object SourceHandler {
 			)
 			
 	private def respond(request:HttpRequest, source:SourceData, includeContent:Boolean):HttpResponse	= {
-		var contentType		= source.mimeType
+		val contentType		= source.mimeType
 		val lastModified	= HttpDate fromMilliInstant source.lastModified
 		// with URL-encoding we're safe with whitespace and line separators
 		val eTag			= ETagValue(false, HttpUnparsers quotedString (URIComponent.utf_8 encode source.contentId))
