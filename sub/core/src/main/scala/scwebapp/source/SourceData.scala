@@ -8,8 +8,11 @@ import scwebapp.HttpOutput
 import scwebapp.data._
 
 object SourceData {
-	def simpleContentId(lastModified:MilliInstant, size:Long):String	=
-			lastModified.millis.toString + "-" + size.toString
+	def httpDateContentId(lastModified:HttpDate, size:Long):String	=
+			lastModified.seconds.toString + "-" + size.toString
+	
+	def milliInstantContentId(lastModified:MilliInstant, size:Long):String	=
+		lastModified.millis.toString + "-" + size.toString
 	
 	def forFile(
 		file:File,
