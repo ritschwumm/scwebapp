@@ -25,6 +25,7 @@ object ContentDisposition extends HeaderType[ContentDisposition] {
 	private object parsers {
 		import HttpParsers._
 		
+		// TODO handle *filename
 		val value:CParser[ContentDisposition]	=
 				ContentDispositionType.parser next parameterList map { case (kind, params)	=>
 					val filename	= params firstString "filename"
