@@ -83,7 +83,7 @@ trait HttpRequest {
 			for {
 				contentType	<- (headers first ContentType):Either[String,Option[ContentType]]
 				mime		<- contentType map { _.typ }						toRight		so"missing content type"
-				_			<- mime sameMajorAndMinor mimeType.application_form	trueRight	so"unexpected content type ${mime.value}"
+				_			<- mime sameMajorAndMinor mimeType.application_form	guardEither	so"unexpected content type ${mime.value}"
 				encodingOpt	<- mime.charset
 				string		= body readString Charsets.us_ascii
 				encoding	= encodingOpt getOrElse defaultEncoding
