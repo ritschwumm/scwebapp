@@ -42,8 +42,8 @@ object SetCookie extends HeaderType[SetCookie] {
 					it.path		map		PathAv.apply,
 					it.maxAge	map		MaxAgeAv.apply,
 					it.expires	map		ExpiresAv.apply,
-					it.secure	guard	SecureAv,
-					it.httpOnly	guard	HttpOnlyAv
+					it.secure	option	SecureAv,
+					it.httpOnly	option	HttpOnlyAv
 				)
 				
 		val headPart	= it.name + "=" + it.value
