@@ -42,7 +42,7 @@ object HttpOutput {
 	def writeFile(data:File):HttpOutput	=
 			withOutputStream { ost =>
 				data withInputStream { ist =>
-					ist transferTo ost
+					ist transferToPre9 ost
 				}
 			}
 			
@@ -68,7 +68,7 @@ object HttpOutput {
 	def pipeInputStream(data:Thunk[InputStream]):HttpOutput	=
 			withOutputStream { ost =>
 				data() use { ist =>
-					ist transferTo ost
+					ist transferToPre9 ost
 				}
 			}
 			
