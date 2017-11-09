@@ -18,7 +18,7 @@ trait HttpInput { self =>
 	def withInputStream[T](handler:InputStream=>T):T
 	
 	final def readByteString():ByteString	=
-			ByteString unsafeFromByteArray readByteArray()
+			withInputStream { _.readFullyByteString() }
 		
 	final def readByteArray():Array[Byte]	=
 			withInputStream { _.readFully }

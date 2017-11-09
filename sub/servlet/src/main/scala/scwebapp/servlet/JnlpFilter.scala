@@ -1,12 +1,15 @@
 package scwebapp.servlet
 
 import java.io._
+import java.nio.charset.Charset
 
 import javax.servlet._
 import javax.servlet.http._
 
 import scala.collection.mutable
 
+//import scutil.base.implicits._
+import scutil.lang._
 import scutil.log._
 
 /**
@@ -25,13 +28,15 @@ final class JnlpFilter extends Filter with Logging {
 		this.filterConfig	= None
 	}
 	
-	private def charset:String	=
-			configCharset getOrElse "UTF-8"
+	private def charset:Charset	=
+			configCharset getOrElse Charsets.utf_8
 		
-	private def configCharset:Option[String]	=
+	private def configCharset:Option[Charset]	=
 			for {
 				config	<- filterConfig
-				charset	<- Option(config getInitParameter "charset")
+				name	<- Option(config getInitParameter "charset")
+				// TODO what if this fails?
+				charset	<- (Charsets byName name).toOption
 			}
 			yield charset
 			
@@ -47,7 +52,7 @@ final class JnlpFilter extends Filter with Logging {
 			ERROR("wrapped failed")
 		}
 		else {
-			val input		= new String(wrapper.written, charset)
+			val input		= wrapper.written asString charset
 			val codeBase	= httpRequest.getRequestURL.toString replaceAll ("/[^/]*$", "/")
 			val patched		= input replace ("$$codebase", codeBase)
 			val output		= patched getBytes charset
@@ -76,7 +81,7 @@ final class JnlpFilter extends Filter with Logging {
 				response.getStatus != 304
 		
 		/** provide the response string */
-		def written:Array[Byte]	= buffer.toArray
+		def written:ByteString	= ByteString fromArrayBuffer buffer
 		
 		override def getWriter():PrintWriter				= writer
 		override def getOutputStream():ServletOutputStream	= outputStream

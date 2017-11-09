@@ -2,6 +2,7 @@ package scwebapp.data
 
 import java.nio.charset.Charset
 
+import scutil.lang.implicits._
 import scutil.lang._
 import scutil.codec._
 
@@ -17,14 +18,12 @@ object BasicAuthorization {
 	
 	lazy val parser:CParser[BasicAuthorization]	= parsers.value
 		
-	// TODO scutil use LangStringExt#toByteString
-	// TODO use ByteString#single
 	def unparse(it:BasicAuthorization):String	=
 			"Basic " + (
 				Base64 encodeByteString (
-					(ByteString fromString (it.name, encoding)) 		concat
-					ByteString(':'.toByte)								concat
-					(ByteString fromString (it.password, encoding))
+					(it.name toByteString encoding) 	concat
+					(ByteString single ':')				concat
+					(it.password toByteString encoding)
 				)
 			)
 		
