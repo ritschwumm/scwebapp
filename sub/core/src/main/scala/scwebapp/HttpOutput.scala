@@ -28,11 +28,17 @@ object HttpOutput {
 				def intoOutputStream(ost:OutputStream):Unit	= handler(ost)
 			}
 			
+	def writeByteString(data:ByteString):HttpOutput	=
+			writeByteArray(data.unsafeValue)
+		
 	def writeByteArray(data:Array[Byte]):HttpOutput	=
 			withOutputStream { ost =>
 				ost write (data, 0, data.length)
 			}
 			
+	def writeByteStringRange(data:ByteString, range:InclusiveRange):HttpOutput	=
+			writeByteArrayRange(data.unsafeValue, range)
+		
 	// TODO toInt is questionable
 	def writeByteArrayRange(data:Array[Byte], range:InclusiveRange):HttpOutput	=
 			withOutputStream { ost =>
