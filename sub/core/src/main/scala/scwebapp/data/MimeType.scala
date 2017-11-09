@@ -53,7 +53,7 @@ final case class MimeType(major:String, minor:String, parameters:NoCaseParameter
 	def charset:Either[String,Option[Charset]]	=
 			(parameters firstString "charset")
 			.map { it =>
-				Charsets byName it mapLeft constant(so"invalid charset ${it}")
+				Charsets byName it mapLeft constant(show"invalid charset ${it}")
 			}
 			.sequenceEither
 }

@@ -46,10 +46,10 @@ trait HttpRequest {
 	
 	/** the full path after the context path, not yet url-decoded */
 	final def fullPathRaw:String	=
-			uri	cutPrefix contextPath getOrError so"expected uri ${uri} to start with context path ${contextPath}"
+			uri	cutPrefix contextPath getOrError show"expected uri ${uri} to start with context path ${contextPath}"
 
 	final def pathInfoRaw:String	=
-			fullPathRaw	cutPrefix servletPath getOrError so"expected uri ${uri} to start with context path ${contextPath} and servlet path ${servletPath}"
+			fullPathRaw	cutPrefix servletPath getOrError show"expected uri ${uri} to start with context path ${contextPath} and servlet path ${servletPath}"
 
 	final def fullPath(encoding:Charset):Either[URIComponentProblem,String]	=
 			URIComponent forCharset encoding decode fullPathRaw
@@ -82,8 +82,8 @@ trait HttpRequest {
 	final def formParameters(defaultEncoding:Charset):Either[String,CaseParameters]	=
 			for {
 				contentType	<- (headers first ContentType):Either[String,Option[ContentType]]
-				mime		<- contentType map { _.typ }						toRight		so"missing content type"
-				_			<- mime sameMajorAndMinor mimeType.application_form	guardEither	so"unexpected content type ${mime.value}"
+				mime		<- contentType map { _.typ }						toRight		show"missing content type"
+				_			<- mime sameMajorAndMinor mimeType.application_form	guardEither	show"unexpected content type ${mime.value}"
 				encodingOpt	<- mime.charset
 				string		= body readString Charsets.us_ascii
 				encoding	= encodingOpt getOrElse defaultEncoding

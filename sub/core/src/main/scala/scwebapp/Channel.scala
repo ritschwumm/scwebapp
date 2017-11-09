@@ -14,7 +14,7 @@ final class Channel[T] {
 	import Channel._
 	
 	private val state	= Synchronized[ChannelState[T]](Initial())
-	private val ok		= task(())
+	private val ok		= thunk(())
 	
 	/** must not be called more than once */
 	def put(v:T) {
@@ -26,17 +26,17 @@ final class Channel[T] {
 		state modify getter(h) apply ()
 	}
 	
-	private def putter(v:T):State[ChannelState[T],Task]	=
+	private def putter(v:T):State[ChannelState[T],Thunk[Unit]]	=
 			State {
 				case Initial()		=> HasValue(v)		-> ok
-				case HasHandler(h)	=> Final()			-> task(h(v))
-				case old			=> old				-> task(sys error "cannot put twice")
+				case HasHandler(h)	=> Final()			-> thunk(h(v))
+				case old			=> old				-> thunk(sys error "cannot put twice")
 			}
 			
-	private def getter(h:Effect[T]):State[ChannelState[T],Task]	=
+	private def getter(h:Effect[T]):State[ChannelState[T],Thunk[Unit]]	=
 			State {
 				case Initial()		=> HasHandler(h)	-> ok
-				case HasValue(v)	=> Final()			-> task(h(v))
-				case old			=> old				-> task(sys error "cannot get twice")
+				case HasValue(v)	=> Final()			-> thunk(h(v))
+				case old			=> old				-> thunk(sys error "cannot get twice")
 			}
 }

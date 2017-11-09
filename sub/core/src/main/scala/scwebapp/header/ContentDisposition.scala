@@ -16,8 +16,8 @@ object ContentDisposition extends HeaderType[ContentDisposition] {
 	def unparse(it:ContentDisposition):String	= {
 		// TODO filter out bad characters in value
 		val typ				= ContentDispositionType unparse it.typ
-		val fileName		= it.fileName 	map { it => so"filename=${HttpUnparsers value it}"	}
-		val fileNameStar	= it.fileName	map { it => so"filename*=${HttpUnparsers quoteStar_UTF8 it}"	}
+		val fileName		= it.fileName 	map { it => show"filename=${HttpUnparsers value it}"	}
+		val fileNameStar	= it.fileName	map { it => show"filename*=${HttpUnparsers quoteStar_UTF8 it}"	}
 		val parts			= Vector(typ) ++ fileName.toVector ++ fileNameStar.toVector
 		parts mkString ";"
 	}

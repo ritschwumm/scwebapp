@@ -177,7 +177,7 @@ object HttpParsers {
 			ALPHA orElse DIGIT orElse in("+/=")
 			
 	def base64(charset:Charset):CParser[String]	=
-			(base64Char).seq.stringify filterMap Base64.decode filterMap { it => (charset decodeEither it).toOption }
+			(base64Char).seq.stringify filterMap Base64.decodeByteArray filterMap { it => (charset decodeEither it).toOption }
 		
 	//------------------------------------------------------------------------------
 	

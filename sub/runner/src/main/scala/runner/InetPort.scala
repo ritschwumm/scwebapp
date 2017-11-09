@@ -9,6 +9,6 @@ object InetPort {
 
 final case class InetPort(value:Int) {
 	import InetPort._
-	require(value >= lowest,	so"must be >= ${lowest.toString}")
-	require(value <= highest,	so"must be <= ${highest.toString}")
+	require(value >= lowest,	show"must be >= $lowest")
+	require(value <= highest,	show"must be <= $highest")
 }

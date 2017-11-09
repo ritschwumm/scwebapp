@@ -18,9 +18,9 @@ object ContentRangeValue {
 		
 	def unparse(it:ContentRangeValue):String	=
 			it match {
-				case ContentRangeFull(InclusiveRange(start, end), total)	=> so"${RangeType.keys.bytes} ${start.toString}-${end.toString}/${total.toString}"
-				case ContentRangeBare(InclusiveRange(start, end))			=> so"${RangeType.keys.bytes} ${start.toString}-${end.toString}/*"
-				case ContentRangeTotal(total)								=> so"${RangeType.keys.bytes} */${total.toString}"
+				case ContentRangeFull(InclusiveRange(start, end), total)	=> show"${RangeType.keys.bytes} ${start}-${end}/${total}"
+				case ContentRangeBare(InclusiveRange(start, end))			=> show"${RangeType.keys.bytes} ${start}-${end}/*"
+				case ContentRangeTotal(total)								=> show"${RangeType.keys.bytes} */${total}"
 			}
 				
 	private object parsers {

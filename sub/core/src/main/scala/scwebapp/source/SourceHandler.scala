@@ -176,7 +176,7 @@ object SourceHandler {
 				def boundaryOutput(r:ContentRangeValue):HttpOutput	=
 						crlfOutput(
 							"",
-							so"--${boundary}",
+							show"--${boundary}",
 							ContentType unparse ContentType(contentType),
 							ContentRange unparse ContentRange(r)
 						)
@@ -184,7 +184,7 @@ object SourceHandler {
 				def finishOutput:HttpOutput	=
 						crlfOutput(
 							"",
-							so"--${boundary}--"
+							show"--${boundary}--"
 						)
 						
 				def crlfOutput(ss:String*):HttpOutput	=

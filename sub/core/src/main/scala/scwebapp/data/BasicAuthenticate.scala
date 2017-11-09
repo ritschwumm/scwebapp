@@ -10,7 +10,7 @@ object BasicAuthenticate {
 	lazy val parser:CParser[BasicAuthenticate]	= parsers.value
 	
 	def unparse(it:BasicAuthenticate):String	=
-			so"""Basic realm="${it.realm}""""
+			show"""Basic realm="${it.realm}""""
 		
 	private object parsers {
 		import HttpParsers._

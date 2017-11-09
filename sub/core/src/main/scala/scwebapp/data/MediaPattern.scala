@@ -11,8 +11,8 @@ object MediaPattern {
 	def unparse(it:MediaPattern):String	=
 			it match {
 				case MediaWildWild					=> "*/*"
-				case MediaTypeWild(major)			=> so"${major}/*"
-				case MediaTypeSubtype(major, minor)	=> so"${major}/${minor}"
+				case MediaTypeWild(major)			=> show"${major}/*"
+				case MediaTypeSubtype(major, minor)	=> show"${major}/${minor}"
 			}
 			
 	private object parsers {

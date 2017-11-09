@@ -10,7 +10,7 @@ trait HeaderType[T] {
 	def unparse(it:T):String
 	
 	def parseEither(it:String):Either[String,T]	=
-			parse(it) toRight so"invalid ${key} header value ${it}"
+			parse(it) toRight show"invalid ${key} header value ${it}"
 	
 	def headerValue(it:T):HeaderValue	=
 			HeaderValue(key, unparse(it))

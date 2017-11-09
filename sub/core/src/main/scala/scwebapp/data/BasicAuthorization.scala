@@ -18,7 +18,7 @@ object BasicAuthorization {
 	lazy val parser:CParser[BasicAuthorization]	= parsers.value
 		
 	def unparse(it:BasicAuthorization):String	=
-			"Basic " + (Base64 encode ((it.name getBytes encoding) ++ Array(':'.toByte) ++ (it.password getBytes encoding)))
+			"Basic " + (Base64 encodeByteArray ((it.name getBytes encoding) ++ Array(':'.toByte) ++ (it.password getBytes encoding)))
 		
 	private object parsers {
 		import HttpParsers._
