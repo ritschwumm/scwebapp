@@ -29,29 +29,23 @@ object HttpOutput {
 			}
 			
 	def writeByteString(data:ByteString):HttpOutput	=
-			writeByteArray(data.unsafeValue)
-			// TODO scutil
-			/*
 			withOutputStream { ost =>
-				ost writeByteString (data, 0, data.length)
+				ost writeByteString (data, 0, data.size)
 			}
-			*/
 		
+	@deprecated("use writeByteString", "0.165.0")
 	def writeByteArray(data:Array[Byte]):HttpOutput	=
 			withOutputStream { ost =>
 				ost write (data, 0, data.length)
 			}
 			
+	// TODO toInt is questionable
 	def writeByteStringRange(data:ByteString, range:InclusiveRange):HttpOutput	=
-			writeByteArrayRange(data.unsafeValue, range)
-			// TODO scutil
-			/*
 			withOutputStream { ost =>
 				ost writeByteString (data, range.start.toInt, range.length.toInt)
 			}
-			*/
 		
-	// TODO toInt is questionable
+	@deprecated("use writeByteStringRange", "0.165.0")
 	def writeByteArrayRange(data:Array[Byte], range:InclusiveRange):HttpOutput	=
 			withOutputStream { ost =>
 				ost write (data, range.start.toInt, range.length.toInt)

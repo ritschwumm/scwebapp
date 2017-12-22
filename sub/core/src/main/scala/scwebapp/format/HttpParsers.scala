@@ -101,7 +101,7 @@ object HttpParsers {
 			}
 	val pctEncoded:CParser[Byte]			= is('%') right hexByte
 	val attrCharByte:CParser[Byte]			= attrChar map { _.toByte }
-	val valueCharBytes:CParser[Array[Byte]]	= (pctEncoded orElse attrCharByte).seq map { _.toArray }
+	val valueCharBytes:CParser[ByteString]	= (pctEncoded orElse attrCharByte).seq map ByteString.fromISeq
 	
 	val mimeCharsetC:CParser[Char]			= ALPHA orElse DIGIT orElse in("!#$%&+-^_`{}~")
 	val mimeCharset:CParser[String]			= mimeCharsetC.nes.stringify
@@ -133,7 +133,7 @@ object HttpParsers {
 				bytes		<- valueCharBytes
 			}
 			yield {
-				charset flatMap { it => (it decodeEither bytes).toOption }
+				charset flatMap { it => (it decodeEitherByteString bytes).toOption }
 			}
 	
 	val extValue:CParser[String]	= (extValueOpt eating LWSP).filterSome
@@ -177,7 +177,7 @@ object HttpParsers {
 			ALPHA orElse DIGIT orElse in("+/=")
 			
 	def base64(charset:Charset):CParser[String]	=
-			(base64Char).seq.stringify filterMap Base64.decodeByteArray filterMap { it => (charset decodeEither it).toOption }
+			(base64Char).seq.stringify filterMap Base64.decodeByteString filterMap { it => (charset decodeEitherByteString it).toOption }
 		
 	//------------------------------------------------------------------------------
 	

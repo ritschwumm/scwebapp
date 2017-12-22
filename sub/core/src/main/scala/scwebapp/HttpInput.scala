@@ -19,7 +19,8 @@ trait HttpInput { self =>
 	
 	final def readByteString():ByteString	=
 			withInputStream { _.readFullyByteString() }
-		
+
+	@deprecated("use readByteString", "0.165.0")
 	final def readByteArray():Array[Byte]	=
 			withInputStream { _.readFully }
 		
