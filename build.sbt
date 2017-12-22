@@ -1,6 +1,6 @@
 inThisBuild(Seq(
 	organization	:= "de.djini",
-	version			:= "0.166.0",
+	version			:= "0.167.0",
 	
 	scalaVersion	:= "2.12.4",
 	scalacOptions	++= Seq(
@@ -42,26 +42,26 @@ lazy val `scwebapp`	=
 		)
 
 lazy val `scwebapp-core`	=
-		(project in file("sub/core"))
+		(project in file("modules/core"))
 		.settings(
 			scalacOptions	++= Seq(
 				"-language:implicitConversions"
 			),
 			libraryDependencies	++= Seq(
-				"de.djini"		%%	"scutil-core"	% "0.129.0"	% "compile",
-				"org.specs2"	%%	"specs2-core"	% "4.0.1"	% "test"
+				"de.djini"		%%	"scutil-core"	% "0.130.0"	% "compile",
+				"org.specs2"	%%	"specs2-core"	% "4.0.2"	% "test"
 			),
 			wartremoverErrors ++= warts
 		)
 		
 lazy val `scwebapp-servlet`	=
-		(project in file("sub/servlet"))
+		(project in file("modules/servlet"))
 		.settings(
 			scalacOptions	++= Seq(
 				"-language:implicitConversions"
 			),
 			libraryDependencies	++= Seq(
-				"de.djini"		%%	"scutil-core"		% "0.129.0"	% "compile",
+				"de.djini"		%%	"scutil-core"		% "0.130.0"	% "compile",
 				"javax.servlet"	%	"javax.servlet-api"	% "3.1.0"	% "provided"
 			),
 			wartremoverErrors ++= warts
@@ -71,10 +71,10 @@ lazy val `scwebapp-servlet`	=
 		)
 		
 lazy val `scwebapp-runner`	=
-		(project in file("sub/runner"))
+		(project in file("modules/runner"))
 		.settings(
 			libraryDependencies		++= Seq(
-				"org.eclipse.jetty"	%	"jetty-server"	% "9.4.7.v20170914"	% "compile"
+				"org.eclipse.jetty"	%	"jetty-server"	% "9.4.8.v20171121"	% "compile"
 			),
 			wartremoverErrors ++= warts
 		)
