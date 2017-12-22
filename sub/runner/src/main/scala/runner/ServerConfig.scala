@@ -5,7 +5,7 @@ import java.net._
 import scutil.lang._
 
 object ServerConfig {
-	val L	= TLens.Gen[ServerConfig]
+	val L	= Lens.Gen[ServerConfig]
 	
 	val default	=
 			ServerConfig(
