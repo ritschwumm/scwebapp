@@ -16,6 +16,13 @@ trait HttpRequest {
 	//## metadata
 	
 	def remoteUser:Option[String]
+	
+	def remoteIp:String
+	def remotePort:Int
+	
+	def localIp:String
+	def localPort:Int
+	
 	def secure:Boolean
 	
 	def method:Either[String,HttpMethod]

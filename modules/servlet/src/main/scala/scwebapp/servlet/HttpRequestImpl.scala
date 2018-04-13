@@ -21,6 +21,12 @@ private final class HttpRequestImpl(peer:HttpServletRequest) extends HttpRequest
 	
 	def remoteUser:Option[String]	=
 			Option(peer.getRemoteUser)
+		
+	def remoteIp:String	= peer.getRemoteAddr
+	def remotePort:Int	= peer.getRemotePort
+	
+	def localIp:String	= peer.getLocalAddr
+	def localPort:Int	= peer.getLocalPort
 	
 	def method:Either[String,HttpMethod]	=
 			HttpMethod lookup peer.getMethod toRight peer.getMethod
