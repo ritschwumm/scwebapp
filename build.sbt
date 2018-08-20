@@ -1,6 +1,6 @@
 inThisBuild(Seq(
 	organization	:= "de.djini",
-	version			:= "0.181.0",
+	version			:= "0.182.0",
 	
 	scalaVersion	:= "2.12.6",
 	scalacOptions	++= Seq(
@@ -13,20 +13,19 @@ inThisBuild(Seq(
 	),
 	
 	conflictManager	:= ConflictManager.strict,
-	resolvers		+= "Scalaz Bintray Repo" at "http://dl.bintray.com/scalaz/releases"
+	resolvers		+= "Scalaz Bintray Repo" at "http://dl.bintray.com/scalaz/releases",
+	
+	wartremoverErrors	++= Seq(
+		Wart.StringPlusAny,
+		Wart.EitherProjectionPartial,
+		Wart.OptionPartial,
+		Wart.Enumeration,
+		Wart.FinalCaseClass,
+		Wart.JavaConversions,
+		Wart.Option2Iterable,
+		Wart.TryPartial
+	)
 ))
-
-lazy val warts	=
-		Seq(
-			Wart.StringPlusAny,
-			Wart.EitherProjectionPartial,
-			Wart.OptionPartial,
-			Wart.Enumeration,
-			Wart.FinalCaseClass,
-			Wart.JavaConversions,
-			Wart.Option2Iterable,
-			Wart.TryPartial
-		)
 
 //------------------------------------------------------------------------------
 
@@ -48,10 +47,9 @@ lazy val `scwebapp-core`	=
 				"-language:implicitConversions"
 			),
 			libraryDependencies	++= Seq(
-				"de.djini"		%%	"scutil-core"	% "0.144.0"	% "compile",
-				"org.specs2"	%%	"specs2-core"	% "4.2.0"	% "test"
-			),
-			wartremoverErrors ++= warts
+				"de.djini"		%%	"scutil-core"	% "0.145.0"	% "compile",
+				"org.specs2"	%%	"specs2-core"	% "4.3.3"	% "test"
+			)
 		)
 		
 lazy val `scwebapp-servlet`	=
@@ -61,10 +59,9 @@ lazy val `scwebapp-servlet`	=
 				"-language:implicitConversions"
 			),
 			libraryDependencies	++= Seq(
-				"de.djini"		%%	"scutil-core"		% "0.144.0"	% "compile",
+				"de.djini"		%%	"scutil-core"		% "0.145.0"	% "compile",
 				"javax.servlet"	%	"javax.servlet-api"	% "3.1.0"	% "provided"
-			),
-			wartremoverErrors ++= warts
+			)
 		)
 		.dependsOn(
 			`scwebapp-core`
@@ -75,8 +72,7 @@ lazy val `scwebapp-runner`	=
 		.settings(
 			libraryDependencies		++= Seq(
 				"org.eclipse.jetty"	%	"jetty-server"	% "9.4.11.v20180605"	% "compile"
-			),
-			wartremoverErrors ++= warts
+			)
 		)
 		.dependsOn(
 			`scwebapp-servlet`
