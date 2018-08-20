@@ -41,7 +41,7 @@ object UrlEncoding {
 						.splitAroundChar ('&')
 						.map { part =>
 							part splitAroundFirstChar '=' match {
-								case Some((key, value))	=> Either zip2 (decode(key), decode(value))
+								case Some((key, value))	=> decode(key) zip decode(value)
 								case None				=> decode(part) map (_ -> "")
 							}
 						}
