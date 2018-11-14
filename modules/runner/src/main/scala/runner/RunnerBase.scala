@@ -6,6 +6,7 @@ import org.eclipse.jetty.server._
 import org.eclipse.jetty.server.handler.AbstractHandler
 
 import scutil.lang._
+import scutil.lang.implicits._
 import scutil.log._
 
 import scwebapp.HttpHandler
@@ -20,11 +21,11 @@ object RunnerBase extends Logging {
 
 		val (disposable, httpHandler)	=
 				try {
-					INFO("starting server")
+					INFO(s"starting application")
 					application()
 				}
 				catch { case e:Exception	=>
-					ERROR("cannot start server", e)
+					ERROR("cannot start application", e)
 					sys exit 1
 				}
 
@@ -82,6 +83,9 @@ object RunnerBase extends Logging {
 		}
 
 		Runtime.getRuntime addShutdownHook new Thread(() => stop())
+
+		val url	= show"http://${config.host cata ("localhost", _.toString)}:${config.port.value.toString}${config.path.value}"
+		INFO(show"point your browser to $url")
 
 		INFO("press enter to stop")
 		val read	= System.in.read()
