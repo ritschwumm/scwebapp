@@ -17,7 +17,7 @@ class MimeMappingTest extends Specification {
 			Some(MimeType("image", "png"))
 		}
 	}
-	
+
 	"forExtension" should {
 		"recognize a mixed case extension" in {
 			MimeMapping.default forExtension "JpEg" mustEqual

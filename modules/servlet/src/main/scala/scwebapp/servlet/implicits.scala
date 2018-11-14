@@ -1,6 +1,6 @@
 package scwebapp.servlet
 
-object implicits extends implicits		
+object implicits extends implicits
 
 trait implicits
 		extends HasInitParametersImplicits

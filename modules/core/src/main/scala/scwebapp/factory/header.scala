@@ -12,7 +12,7 @@ trait header {
 	// type helper
 	type HeaderValues	= ISeq[HeaderValue]
 	def HeaderValues(values:HeaderValue*):ISeq[HeaderValue]	= values.toVector
-	
+
 	def NoCache:HeaderValues	=
 			Vector[HeaderValue](
 				CacheControl(ISeq("no-cache", "no-store", "must-revalidate")),

@@ -1,8 +1,8 @@
 inThisBuild(Seq(
 	organization	:= "de.djini",
-	version			:= "0.182.0",
-	
-	scalaVersion	:= "2.12.6",
+	version			:= "0.183.0",
+
+	scalaVersion	:= "2.12.7",
 	scalacOptions	++= Seq(
 		"-deprecation",
 		"-unchecked",
@@ -11,10 +11,10 @@ inThisBuild(Seq(
 		"-Xfatal-warnings",
 		"-Xlint"
 	),
-	
+
 	conflictManager	:= ConflictManager.strict,
 	resolvers		+= "Scalaz Bintray Repo" at "http://dl.bintray.com/scalaz/releases",
-	
+
 	wartremoverErrors	++= Seq(
 		Wart.StringPlusAny,
 		Wart.EitherProjectionPartial,
@@ -47,11 +47,11 @@ lazy val `scwebapp-core`	=
 				"-language:implicitConversions"
 			),
 			libraryDependencies	++= Seq(
-				"de.djini"		%%	"scutil-core"	% "0.145.0"	% "compile",
-				"org.specs2"	%%	"specs2-core"	% "4.3.3"	% "test"
+				"de.djini"		%%	"scutil-core"	% "0.146.0"	% "compile",
+				"org.specs2"	%%	"specs2-core"	% "4.3.4"	% "test"
 			)
 		)
-		
+
 lazy val `scwebapp-servlet`	=
 		(project in file("modules/servlet"))
 		.settings(
@@ -59,19 +59,19 @@ lazy val `scwebapp-servlet`	=
 				"-language:implicitConversions"
 			),
 			libraryDependencies	++= Seq(
-				"de.djini"		%%	"scutil-core"		% "0.145.0"	% "compile",
+				"de.djini"		%%	"scutil-core"		% "0.146.0"	% "compile",
 				"javax.servlet"	%	"javax.servlet-api"	% "3.1.0"	% "provided"
 			)
 		)
 		.dependsOn(
 			`scwebapp-core`
 		)
-		
+
 lazy val `scwebapp-runner`	=
 		(project in file("modules/runner"))
 		.settings(
 			libraryDependencies		++= Seq(
-				"org.eclipse.jetty"	%	"jetty-server"	% "9.4.11.v20180605"	% "compile"
+				"org.eclipse.jetty"	%	"jetty-server"	% "9.4.12.v20180830"	% "compile"
 			)
 		)
 		.dependsOn(

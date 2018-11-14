@@ -37,7 +37,7 @@ class HttpParsersTest extends Specification {
 			Some((true, ("filename", "täst")))
 		}
 	}
-	
+
 	"basic parser should" should {
 		"parse an empty quoted string" in {
 			HttpParsers.quotedString parseStringOption "\"\"" mustEqual

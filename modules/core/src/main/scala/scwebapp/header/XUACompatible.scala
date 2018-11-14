@@ -6,10 +6,10 @@ import scwebapp.HeaderType
 
 object XUACompatible extends HeaderType[XUACompatible] {
 	val key	= "X-UA-Compatible"
-	
+
 	def parse(it:String):Option[XUACompatible]	=
 			Some(XUACompatible(it))
-		
+
 	def unparse(it:XUACompatible):String	=
 			it.value
 }

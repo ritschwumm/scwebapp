@@ -9,10 +9,10 @@ import scwebapp.status._
 object HttpResponder {
 	def apply(response:HttpResponse):HttpResponder	=
 			sync(response)
-	
+
 	def sync(response:HttpResponse):HttpResponder	=
 			HttpResponderSync(response)
-	
+
 	def async(
 		timeout:MilliDuration,
 		timeoutResponse:Thunk[HttpResponse]	= timeoutResponse,
@@ -28,7 +28,7 @@ object HttpResponder {
 				)
 		(resp, channel.put)
 	}
-	
+
 	/*
 	def sync2(response:HttpResponse):HttpResponder	= {
 		val channel	= new Channel[HttpResponse]

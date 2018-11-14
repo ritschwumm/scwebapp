@@ -5,14 +5,14 @@ import scwebapp.parser.string._
 
 object MediaRange {
 	lazy val parser:CParser[MediaRange]	= parsers.value
-		
+
 	def unparse(it:MediaRange):String	=
 			(MediaValue unparse it.value)	+
 			(HttpUnparsers parameterList it.parameters)
-			
+
 	private object parsers {
 		import HttpParsers._
-		
+
 		val value:CParser[MediaRange]	=
 				MediaValue.parser next parameterList map (MediaRange.apply _).tupled
 	}

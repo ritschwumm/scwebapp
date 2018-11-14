@@ -17,7 +17,7 @@ object RunnerBase extends Logging {
 		// does not end with /
 		// is "" for the root context
 		val contextPath	= config.path.value replaceAll ("/$", "")
-		
+
 		val (disposable, httpHandler)	=
 				try {
 					INFO("starting server")
@@ -27,7 +27,7 @@ object RunnerBase extends Logging {
 					ERROR("cannot start server", e)
 					sys exit 1
 				}
-		
+
 		val handler		= new AbstractHandler {
 			// throws IOException, ServletException
 			def handle(target:String, baseRequest:Request, request:HttpServletRequest, response:HttpServletResponse) {
@@ -42,30 +42,30 @@ object RunnerBase extends Logging {
 				}
 			}
 		}
-		
+
 		val server	= new Server(config.bindAdr)
-		
+
 		val httpConfig		= new HttpConfiguration
 		httpConfig	setSendServerVersion	false
 		httpConfig	setSendXPoweredBy		false
 		httpConfig	setSendDateHeader		false
-		
+
 		val	httpFactory		= new HttpConnectionFactory(httpConfig)
-		
+
 		val	httpConnector	= new ServerConnector(server, httpFactory)
 		httpConnector	setHost	config.bindAdr.getHostName
 		httpConnector	setPort	config.bindAdr.getPort
-		
+
 		server	setConnectors		Array(httpConnector)
 		server	setHandler			handler
 		server	setStopAtShutdown	true
 		server	setStopTimeout		7000
-		
+
 		// handles 404 outside the webapp's context
 		val errorHandler	= new LogErrorHandler
 		errorHandler	setServer	server
 		server			addBean		errorHandler
-		
+
 		INFO("starting server")
 		try {
 			server.start()
@@ -74,21 +74,21 @@ object RunnerBase extends Logging {
 			ERROR("cannot start server", e)
 			sys exit 1
 		}
-		
+
 		def stop() {
 			INFO("stopping server")
 			server.stop()
 			disposable.dispose()
 		}
-		
+
 		Runtime.getRuntime addShutdownHook new Thread(() => stop())
-		
+
 		INFO("press enter to stop")
 		val read	= System.in.read()
 		if (read != -1) {
 			stop()
 		}
-		
+
 		server.join()
 	}
 }

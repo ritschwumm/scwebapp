@@ -12,19 +12,19 @@ import scwebapp.data._
 
 object UrlEncoding {
 	// TODO String is not a great problem type
-	
+
 	def parseQueryParameters(queryString:String, encoding:Charset):Either[String,CaseParameters]	=
 			decode(queryString, uriDecode(encoding))
-			
+
 	def parseForm(formData:String, encoding:Charset):Either[String,CaseParameters]	=
 			decode(formData, urlDecode(encoding))
-		
+
 	private def uriDecode(encoding:Charset)(queryString:String):Either[String,String]	=
 			URIComponent forCharset encoding decode queryString leftMap {
 				case URIComponentInvalid(position)		=> show"invalid uri encoding at position ${position}"
 				case URIComponentException(underlying)	=> show"invalid character encoding: ${underlying.getMessage}"
 			}
-		
+
 	private def urlDecode(encoding:Charset)(formData:String):Either[String,String]	=
 			try {
 				Right(URLDecoder decode (formData, encoding.name))
@@ -32,7 +32,7 @@ object UrlEncoding {
 			catch { case e:UnsupportedEncodingException =>
 				Left(e.getMessage)
 			}
-		
+
 	private def decode(data:String, decode:String=>Either[String,String]):Either[String,CaseParameters]	=
 			if (data.isEmpty)	Right(CaseParameters.empty)
 			else {
@@ -45,7 +45,7 @@ object UrlEncoding {
 								case None				=> decode(part) map (_ -> "")
 							}
 						}
-						
+
 				triedPairs.sequenceEither map CaseParameters.apply
 			}
 }

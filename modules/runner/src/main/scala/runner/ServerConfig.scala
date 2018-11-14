@@ -6,7 +6,7 @@ import scutil.lang._
 
 object ServerConfig {
 	val L	= Lens.Gen[ServerConfig]
-	
+
 	val default	=
 			ServerConfig(
 				host	= None,

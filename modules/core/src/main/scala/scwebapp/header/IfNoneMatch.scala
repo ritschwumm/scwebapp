@@ -5,10 +5,10 @@ import scwebapp.data._
 
 object IfNoneMatch extends HeaderType[IfNoneMatch] {
 	val key	= "If-None-Match"
-	
+
 	def parse(it:String):Option[IfNoneMatch]	=
 			MatchValue parse it map IfNoneMatch.apply
-		
+
 	def unparse(it:IfNoneMatch):String	=
 			MatchValue unparse it.value
 }

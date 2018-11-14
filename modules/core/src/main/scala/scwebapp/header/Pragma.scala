@@ -6,10 +6,10 @@ import scwebapp.HeaderType
 
 object Pragma extends HeaderType[Pragma] {
 	val key	= "Pragma"
-	
+
 	def parse(it:String):Option[Pragma]	=
 			Some(Pragma(it))
-		
+
 	def unparse(it:Pragma):String	=
 			it.value
 }

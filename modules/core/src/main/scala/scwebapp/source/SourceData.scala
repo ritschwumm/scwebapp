@@ -10,10 +10,10 @@ import scwebapp.data._
 object SourceData {
 	def httpDateContentId(lastModified:HttpDate, size:Long):String	=
 			lastModified.seconds.toString + "-" + size.toString
-	
+
 	def milliInstantContentId(lastModified:MilliInstant, size:Long):String	=
 		lastModified.millis.toString + "-" + size.toString
-	
+
 	def forFile(
 		file:File,
 		contentId:String,

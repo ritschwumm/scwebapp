@@ -9,18 +9,18 @@ object RangeType {
 		val bytes	= "bytes"
 		val none	= "none"
 	}
-	
+
 	lazy val parser:CParser[RangeType]	= parsers.value
-			
+
 	def unparse(it:RangeType):String	=
 			it match {
 				case RangeTypeNone	=> "none"
 				case RangeTypeBytes	=> "bytes"
 			}
-			
+
 	private object parsers {
 		import HttpParsers._
-		
+
 		val value:CParser[RangeType]		=
 				token collect {
 					case "none"		=> RangeTypeNone

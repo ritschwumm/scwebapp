@@ -7,16 +7,16 @@ import scwebapp.parser.string._
 
 object IfModifiedSince extends HeaderType[IfModifiedSince] {
 	val key	= "If-Modified-Since"
-	
+
 	def parse(it:String):Option[IfModifiedSince]	=
 			parsers.finished parseStringOption it
-		
+
 	def unparse(it:IfModifiedSince):String	=
 			HttpDate unparse it.value
-		
+
 	private object parsers {
 		import HttpParsers._
-		
+
 		val value:CParser[IfModifiedSince]		= dateValue map IfModifiedSince.apply
 		val finished:CParser[IfModifiedSince]	= value finish LWSP
 	}

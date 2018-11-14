@@ -7,24 +7,24 @@ import scwebapp.parser.string._
 
 object MediaPattern {
 	lazy val parser:CParser[MediaPattern]	= parsers.value
-		
+
 	def unparse(it:MediaPattern):String	=
 			it match {
 				case MediaWildWild					=> "*/*"
 				case MediaTypeWild(major)			=> show"${major}/*"
 				case MediaTypeSubtype(major, minor)	=> show"${major}/${minor}"
 			}
-			
+
 	private object parsers {
 		import HttpParsers._
-		
+
 		val major:CParser[String]	= token
 		val minor:CParser[String]	= token
-		
+
 		val wildWild:CParser[MediaPattern]		= symbolN("*/*") tag MediaWildWild
 		val typeWild:CParser[MediaPattern]		= major left symbol('/') left symbol('*') map MediaTypeWild.apply
 		val typeSubtype:CParser[MediaPattern]	= major left symbol('/') next minor map MediaTypeSubtype.tupled
-		
+
 		val value:CParser[MediaPattern]			= wildWild orElse typeWild orElse typeSubtype eating LWSP
 	}
 }

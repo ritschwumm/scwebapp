@@ -26,7 +26,7 @@ class AcceptEncodingTest extends Specification {
 			AcceptEncoding parse "gzip" mustEqual
 			Some(AcceptEncoding(Vector(AcceptEncodingMatch(AcceptEncodingFixed(AcceptEncodingOther(ContentEncodingGzip)),None))))
 		}
-		
+
 		"accept identity when empty" in {
 			AcceptEncoding parse "" map { _ acceptance AcceptEncodingIdentity } mustEqual
 			Some(QValue(1000))

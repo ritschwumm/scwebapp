@@ -22,16 +22,16 @@ trait docType {
 	// val xhtml_mathml_svg_profile	= DocType("""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN" "http://www.w3.org/2002/04/xhtml-math-svg/xhtml-math-svg.dtd">""")
 	// svg host
 	// val xhtml_mathml_svg_profile	= DocType("""<!DOCTYPE svg:svg PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN" "http://www.w3.org/2002/04/xhtml-math-svg/xhtml-math-svg.dtd">""")
-			
+
 	// optional
-	
+
 	val svg_11_full				= DocType("""<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">""")
 	val svg_10					= DocType("""<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">""")
 	val svg_11_basic			= DocType("""<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1 Basic//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-basic.dtd">""")
 	val svg_11_tiny				= DocType("""<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1 Tiny//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-tiny.dtd">""")
-			
+
 	// historical
-	
+
 	val html_20					= DocType("""<!DOCTYPE html PUBLIC "-//IETF//DTD HTML 2.0//EN">""")
 	val html_32					= DocType("""<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">""")
 	val xhtml_basic_10			= DocType("""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.0//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic10.dtd">""")

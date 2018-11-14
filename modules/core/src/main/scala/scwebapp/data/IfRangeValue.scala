@@ -5,19 +5,19 @@ import scwebapp.parser.string._
 
 object IfRangeValue {
 	lazy val parser:CParser[IfRangeValue]	= parsers.value
-		
+
 	def unparse(it:IfRangeValue):String	=
 			it match {
 				case IfRangeHttpDate(x)		=> HttpDate unparse x
 				case IfRangeEntityTag(x)	=> ETagValue unparse x
 			}
-			
+
 	private object parsers {
 		import HttpParsers._
-		
+
 		val date:CParser[IfRangeValue]	= dateValue map IfRangeHttpDate.apply
 		val etag:CParser[IfRangeValue]	= ETagValue.parser map IfRangeEntityTag.apply
-		
+
 		val value:CParser[IfRangeValue]	= date orElse etag
 	}
 }

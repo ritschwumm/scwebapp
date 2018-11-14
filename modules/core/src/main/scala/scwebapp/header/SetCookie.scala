@@ -15,14 +15,14 @@ import scwebapp.parser.string._
 
 object SetCookie extends HeaderType[SetCookie] {
 	val key	= "Set-Cookie"
-	
+
 	def parse(it:String):Option[SetCookie]	=
 			parsers.finished parseStringOption it
-		
+
 	def unparse(it:SetCookie):String	= {
 		// NOTE if we have a comment or anything is quoted, we need version 1
 		// NOTE jetty seems to use "EEE, dd-MMM-yy HH:mm:ss zzz" for an expires header
-		
+
 		/*
 		// NOTE these are not quoted
 		val (maxAgeValue, expiresValue)	=
@@ -35,7 +35,7 @@ object SetCookie extends HeaderType[SetCookie] {
 				}
 				.unzip
 		*/
-		
+
 		val avs:Vector[Option[CookieAv]]	=
 				Vector(
 					it.domain	map		DomainAv.apply,
@@ -45,19 +45,19 @@ object SetCookie extends HeaderType[SetCookie] {
 					it.secure	option	SecureAv,
 					it.httpOnly	option	HttpOnlyAv
 				)
-				
+
 		val headPart	= it.name + "=" + it.value
 		val tailParts	= avs.collapse map CookieAv.unparse
 		headPart +: tailParts mkString ";"
 	}
-	
+
 	private object parsers {
 		import HttpParsers._
 		import CookieParsers._
-		
+
 		// TODO wrong
 		lazy val finished:CParser[SetCookie]	= value inside OWS
-		
+
 		lazy val value:CParser[SetCookie]	=
 				set_cookie_string map { case ((k, v), avs) =>
 					SetCookie(
@@ -70,11 +70,11 @@ object SetCookie extends HeaderType[SetCookie] {
 						httpOnly	= avs contains HttpOnlyAv
 					)
 				}
-		
+
 		/*
 		lazy val cookie_header:CParser[ISeq[(String,String)]]			= sis("Cookie:") right (cookie_string inside OWS)
 		lazy val cookie_string:CParser[ISeq[(String,String)]]			= cookie_pair sepSeq cis(';')
-		
+
 		lazy val set_cookie_header:CParser[((String,String),ISeq[CookieAv])]	= sis("Set-Cookie:") right SP right set_cookie_string
 		*/
 
@@ -87,7 +87,7 @@ final case class SetCookie(
 	name:String,
 	value:String,
 	domain:Option[String]		= None,
-	path:Option[String]			= None,	
+	path:Option[String]			= None,
 	maxAge:Option[HttpDuration]	= None,	// None deletes on browser exit, zero deletes immediately
 	expires:Option[HttpDate]	= None,
 	secure:Boolean				= false,

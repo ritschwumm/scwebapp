@@ -5,7 +5,7 @@ import scwebapp.parser.string._
 
 object ContentEncodingType {
 	lazy val parser:CParser[ContentEncodingType]	= parsers.value
-	
+
 	def unparse(it:ContentEncodingType):String	=
 			it match {
 				case ContentEncodingGzip		=> "gzip"
@@ -13,10 +13,10 @@ object ContentEncodingType {
 				case ContentEncodingDeflate		=> "deflate"
 				case ContentEncodingBr			=> "br"
 			}
-			
+
 	private object parsers {
 		import HttpParsers._
-		
+
 		val value:CParser[ContentEncodingType]	=
 				token map CaseUtil.lowerCase collect {
 					case "gzip"		=> ContentEncodingGzip

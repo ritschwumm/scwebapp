@@ -4,13 +4,13 @@ import scutil.lang._
 
 object HttpMethod {
 	import method._
-	
+
 	val all:ISeq[HttpMethod]	=
 			Vector (
 				OPTIONS, HEAD, GET, POST, PUT, DELETE, TRACE, CONNECT,
 				PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, LOCK, UNLOCK
 			)
-			
+
 	def lookup(caseless:String):Option[HttpMethod]	=
 			all find { _.id == caseless }
 }
@@ -27,7 +27,7 @@ package method {
 	case object DELETE		extends HttpMethod("DELETE")
 	case object TRACE		extends HttpMethod("TRACE")
 	case object CONNECT		extends HttpMethod("CONNECT")
-	
+
 	// webdav
 	case object PROPFIND	extends HttpMethod("PROPFIND")
 	case object PROPPATCH	extends HttpMethod("PROPPATCH")

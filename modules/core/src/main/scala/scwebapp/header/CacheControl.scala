@@ -9,10 +9,10 @@ import scwebapp.HeaderType
 
 object CacheControl extends HeaderType[CacheControl] {
 	val key	= "Cache-Control"
-	
+
 	def parse(it:String):Option[CacheControl]	=
 			Some(CacheControl(it splitAroundChar ','))
-		
+
 	def unparse(it:CacheControl):String	=
 			it.directives mkString ", "
 }

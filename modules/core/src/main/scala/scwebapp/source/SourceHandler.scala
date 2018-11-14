@@ -25,13 +25,13 @@ object SourceHandler {
 					case _				=> HttpResponse(METHOD_NOT_ALLOWED)
 				}
 			)
-			
+
 	private def respond(request:HttpRequest, source:SourceData, includeContent:Boolean):HttpResponse	= {
 		val contentType		= source.mimeType
 		val lastModified	= source.lastModified
 		// with URL-encoding we're safe with whitespace and line separators
 		val eTag			= ETagValue(false, HttpUnparsers quotedString (URIComponent.utf_8 encode source.contentId))
-		
+
 		val cacheHeaders:ISeq[HeaderValue]	=
 				source.caching match {
 					case None	=>
@@ -48,7 +48,7 @@ object SourceHandler {
 				}
 
 		val requestHeaders	= request.headers
-		
+
 		val accept		= (requestHeaders first Accept).toOption.flatten
 		val notAccepted	= !(accept forall { _ accepts contentType })
 		if (notAccepted) {
@@ -56,7 +56,7 @@ object SourceHandler {
 				NOT_ACCEPTABLE,	None
 			)
 		}
-		
+
 		val ifNoneMatch		= (requestHeaders first IfNoneMatch).toOption.flatten
 		val ifModifiedSince	= (requestHeaders first IfModifiedSince).toOption.flatten
 		val notModified		=
@@ -92,11 +92,11 @@ object SourceHandler {
 					case Right(None)	=> false
 					case Right(Some(x))	=> x needsFull (eTag, lastModified)
 				}
-			
+
 		val total		= source.size
 		val range		= requestHeaders first Range
 		val rangesRaw	= range map { _ map { _ inclusiveRanges total } }
-		
+
 		// TODO should we fail when needsFull but range headers are invalid?
 		val full:InclusiveRange			= InclusiveRange full total
 		val ranges:ISeq[InclusiveRange]	=
@@ -113,12 +113,12 @@ object SourceHandler {
 							)
 						)
 				}
-		
+
 		val acceptEncoding		= (requestHeaders first AcceptEncoding).toOption.flatten
 		val acceptsGzip:Boolean	=
 				source.enableGZIP &&
 				(acceptEncoding exists { _ accepts AcceptEncodingOther(ContentEncodingGzip) })
-		
+
 		val contentDisposition:Option[HeaderValue]		=
 				source.disposition map { case SourceDisposition(attachment, fileName) =>
 					HeaderValue fromHeader ContentDisposition(
@@ -138,7 +138,7 @@ object SourceHandler {
 				) ++ (
 					contentDisposition.toVector
 				)
-			
+
 		// NOTE does not GZIP except for full range
 		// servers and browsers seem to disagree on whether offsets should
 		// apply to the body data before or after compression
@@ -172,7 +172,7 @@ object SourceHandler {
 			case ranges	=>
 				val boundary	= MultipartUtil.multipartBoundary()
 				val ct			= multipart_byteranges_boundary(boundary)
-				
+
 				def boundaryOutput(r:ContentRangeValue):HttpOutput	=
 						crlfOutput(
 							"",
@@ -180,19 +180,19 @@ object SourceHandler {
 							ContentType unparse ContentType(contentType),
 							ContentRange unparse ContentRange(r)
 						)
-				
+
 				def finishOutput:HttpOutput	=
 						crlfOutput(
 							"",
 							show"--${boundary}--"
 						)
-						
+
 				def crlfOutput(ss:String*):HttpOutput	=
 						HttpOutput.writeString(
 							Charsets.us_ascii,
 							ss map (_ + "\r\n") mkString ""
 						)
-								
+
 				val body	=
 						if (includeContent) {
 							ranges
@@ -201,7 +201,7 @@ object SourceHandler {
 							.into		(HttpOutput.concat)
 						}
 						else HttpOutput.empty
-						
+
 				HttpResponse(
 					PARTIAL_CONTENT, None,
 					standardHeaders ++

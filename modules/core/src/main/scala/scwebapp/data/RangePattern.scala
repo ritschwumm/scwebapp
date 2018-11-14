@@ -8,17 +8,17 @@ import scwebapp.parser.string._
 object RangePattern {
 	lazy val parser:CParser[RangePattern]	=
 			parsers.value
-		
+
 	def unparse(it:RangePattern):String	=
 			it match {
 				case RangeBegin(s)		=> s.toString + "-"
 				case RangeEnd(c)		=> "-" + c.toString
 				case RangeFromTo(s,e)	=> s.toString + "-" + e.toString
 			}
-			
+
 	private object parsers {
 		import HttpParsers._
-		
+
 		val bytePos:CParser[Long]						= DIGIT.nes.stringify map { _.toLong } eating LWSP
 		val byteRangeSpec:CParser[(Long,Option[Long])]	= bytePos left symbol('-') next bytePos.option
 		val suffixByteRangeSpec:CParser[Long]			= symbol('-') right bytePos
@@ -40,7 +40,7 @@ sealed trait RangePattern {
 			case RangeEnd(count)			if count > 0  && count <= total					=> InclusiveRange(total - count,	last)
 		}
 	}
-			
+
 }
 final case class RangeBegin(start:Long)				extends RangePattern
 final case class RangeFromTo(start:Long, end:Long)	extends RangePattern

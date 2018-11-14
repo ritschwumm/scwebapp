@@ -8,7 +8,7 @@ import scwebapp.parser.string._
 class QValueTest extends Specification {
 	val parser	= QValue.parser finish HttpParsers.LWSP
 	def parseQValue(it:String):Option[QValue] = parser parseStringOption it
-		
+
 	"QValue" should {
 		"parse 0" in {
 			this parseQValue "0" mustEqual

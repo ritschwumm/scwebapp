@@ -15,18 +15,18 @@ import scwebapp.data._
 private final class HttpPartImpl(peer:Part) extends HttpPart {
 	def name:String	= peer.getName
 	def size:Long	= peer.getSize
-	
+
 	def headers:HttpHeaders	=
 			HttpHeaders(
 				NoCaseParameters(
-					for {	
+					for {
 						name	<- peer.getHeaderNames.asInstanceOf[JCollection[String]].asScala.toVector
 						value	<- (peer getHeaders name).asInstanceOf[JCollection[String]].asScala
 					}
 					yield name	-> value
 				)
 			)
-	
+
 	def body:HttpInput	=
 			new HttpInput {
 				def withInputStream[T](handler:InputStream=>T):T	=

@@ -19,18 +19,18 @@ the original jnlp file
 */
 final class JnlpFilter extends Filter with Logging {
 	@volatile private var filterConfig:Option[FilterConfig] 	= None
-	
+
 	def init(filterConfig:FilterConfig) {
 		this.filterConfig	= Some(filterConfig)
 	}
-	
+
 	def destroy() {
 		this.filterConfig	= None
 	}
-	
+
 	private def charset:Charset	=
 			configCharset getOrElse Charsets.utf_8
-		
+
 	private def configCharset:Option[Charset]	=
 			for {
 				config	<- filterConfig
@@ -39,13 +39,13 @@ final class JnlpFilter extends Filter with Logging {
 				charset	<- (Charsets byName name).toOption
 			}
 			yield charset
-			
+
 	//------------------------------------------------------------------------------
-		
+
 	def doFilter(request:ServletRequest, response:ServletResponse, filterChain:FilterChain) {
 		val	httpRequest		= request.asInstanceOf[HttpServletRequest]
 		val	httpResponse	= response.asInstanceOf[HttpServletResponse]
-		
+
 		val	wrapper	= new ResponseWrapper(httpResponse)
 		filterChain doFilter (httpRequest, wrapper)
 		if (wrapper.failed) {
@@ -56,13 +56,13 @@ final class JnlpFilter extends Filter with Logging {
 			val codeBase	= httpRequest.getRequestURL.toString replaceAll ("/[^/]*$", "/")
 			val patched		= input replace ("$$codebase", codeBase)
 			val output		= patched getBytes charset
-			
+
 			httpResponse setContentLength	output.size
 			httpResponse.getOutputStream	write	output
 			httpResponse.getOutputStream 	flush	()
 		}
 	}
-	
+
 	/** swallows the response and makes it accessible via the get method  */
 	private final class ResponseWrapper(response:HttpServletResponse) extends HttpServletResponseWrapper(response) with Logging {
 		private val buffer			= new mutable.ArrayBuffer[Byte]
@@ -74,15 +74,15 @@ final class JnlpFilter extends Filter with Logging {
 			def setWriteListener(it:WriteListener): Unit	= ()
 		}
 		private val writer	= new PrintWriter(new OutputStreamWriter(outputStream, charset))
-	
-		// BETTER use HttpStatus	
+
+		// BETTER use HttpStatus
 		def failed:Boolean	=
 				response.getStatus != 200	&&
 				response.getStatus != 304
-		
+
 		/** provide the response string */
 		def written:ByteString	= ByteString fromArrayBuffer buffer
-		
+
 		override def getWriter():PrintWriter				= writer
 		override def getOutputStream():ServletOutputStream	= outputStream
 	}

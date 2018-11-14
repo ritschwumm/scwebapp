@@ -9,10 +9,10 @@ import scwebapp.parser.string._
 
 object ContentDisposition extends HeaderType[ContentDisposition] {
 	val key	= "Content-Disposition"
-	
+
 	def parse(it:String):Option[ContentDisposition]	=
 			parsers.finished parseStringOption it
-		
+
 	def unparse(it:ContentDisposition):String	= {
 		// TODO filter out bad characters in value
 		val typ				= ContentDispositionType unparse it.typ
@@ -21,17 +21,17 @@ object ContentDisposition extends HeaderType[ContentDisposition] {
 		val parts			= Vector(typ) ++ fileName.toVector ++ fileNameStar.toVector
 		parts mkString ";"
 	}
-	
+
 	private object parsers {
 		import HttpParsers._
-		
+
 		// TODO handle *filename
 		val value:CParser[ContentDisposition]	=
 				ContentDispositionType.parser next parameterList map { case (kind, params)	=>
 					val filename	= params firstString "filename"
 					ContentDisposition(kind, filename)
 				}
-				
+
 		val finished:CParser[ContentDisposition]	= value finish LWSP
 	}
 }

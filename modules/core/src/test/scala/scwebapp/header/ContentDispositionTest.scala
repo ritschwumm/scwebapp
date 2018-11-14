@@ -10,7 +10,7 @@ class ContentDispositionTest extends Specification {
 			ContentDisposition unparse ContentDisposition(ContentDispositionAttachment, Some("ä")) mustEqual
 			"attachment;filename=ä;filename*=UTF-8''%c3%a4"
 		}
-		
+
 		"parse without parameters" in {
 			ContentDisposition parse "attachment" mustEqual
 			Some(ContentDisposition(ContentDispositionAttachment,  None))

@@ -18,13 +18,13 @@ trait predicate {
 
 	def FullPathRaw(path:String):HttpPredicate	=
 			_.fullPathRaw ==== path
-	
+
 	def FullPathUTF8(path:String):HttpPredicate	=
 			_.fullPathUTF8 exists (_ ==== path)
-		
+
 	def PathInfoRaw(path:String):HttpPredicate	=
 			_.pathInfoRaw ==== path
-		
+
 	def PathInfoUTF8(path:String):HttpPredicate	=
 			_.pathInfoUTF8 exists (_ ==== path)
 }

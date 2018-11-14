@@ -32,16 +32,16 @@ final class ServletContextExtension(peer:ServletContext) {
 		dynamic	setAsyncSupported true
 		dynamic
 	}
-	
+
 	def mimeTypeFor(path:String):Option[MimeType]	=
 			Option(peer getMimeType path) flatMap MimeType.parse
-		
+
 	def realPath(path:String):Option[String]	=
 			Option(peer getRealPath path)
-	
+
 	def resources:ResourceProvider	=
 			new ResourceProvider(path => Option(peer getResource path))
-		
+
 	def resourcePaths(base:String):Option[Set[String]]	=
 			Option(peer getResourcePaths base) map { _.asInstanceOf[JSet[String]].toSet }
 }

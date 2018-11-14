@@ -15,11 +15,11 @@ object Configurator extends Logging {
 		}
 		entries foreach {
 			case NoteError(_,_,_)	=>	sys error "invalid configuration"
-			case _					=>	
+			case _					=>
 		}
 		result
 	}
-	
+
 	def property[C](prop:Property[C], source:PFunction[String,String]):State[C,Note]	=
 			source apply prop.key cata (
 				State { s => (s, NoteDefault(prop.key, s.toString)) },

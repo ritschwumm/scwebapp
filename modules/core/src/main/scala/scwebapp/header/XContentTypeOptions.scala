@@ -6,10 +6,10 @@ import scwebapp.HeaderType
 
 object XContentTypeOptions extends HeaderType[XContentTypeOptions] {
 	val key	= "X-Content-Type-Options"
-	
+
 	def parse(it:String):Option[XContentTypeOptions]	=
 			Some(XContentTypeOptions(it))
-		
+
 	def unparse(it:XContentTypeOptions):String	=
 			it.value
 }

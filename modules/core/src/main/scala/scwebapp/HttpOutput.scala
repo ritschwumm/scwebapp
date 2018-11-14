@@ -14,38 +14,38 @@ import scwebapp.data.InclusiveRange
 
 object HttpOutput {
 	private val bufferSize = 16384
-	
+
 	val empty:HttpOutput	=
 			withOutputStream(constant(()))
-		
+
 	def concat(its:ISeq[HttpOutput]):HttpOutput	=
 			(its foldLeft empty)(_ ~> _)
-		
+
 	//------------------------------------------------------------------------------
-	
+
 	def withOutputStream(handler:Effect[OutputStream]):HttpOutput	=
 			new HttpOutput {
 				def intoOutputStream(ost:OutputStream):Unit	= handler(ost)
 			}
-			
+
 	def writeByteString(data:ByteString):HttpOutput	=
 			withOutputStream { ost =>
 				ost writeByteString (data, 0, data.size)
 			}
-		
+
 	// TODO toInt is questionable
 	def writeByteStringRange(data:ByteString, range:InclusiveRange):HttpOutput	=
 			withOutputStream { ost =>
 				ost writeByteString (data, range.start.toInt, range.length.toInt)
 			}
-		
+
 	def writeFile(data:File):HttpOutput	=
 			withOutputStream { ost =>
 				data withInputStream { ist =>
 					ist transferToPre9 ost
 				}
 			}
-			
+
 	def writeFileRange(data:File, range:InclusiveRange):HttpOutput	=
 			withOutputStream { ost =>
 				new RandomAccessFile(data, "r") use { input =>
@@ -64,26 +64,26 @@ object HttpOutput {
 					loop(range.length)
 				}
 			}
-			
+
 	def pipeInputStream(data:Thunk[InputStream]):HttpOutput	=
 			withOutputStream { ost =>
 				data() use { ist =>
 					ist transferToPre9 ost
 				}
 			}
-			
+
 	//------------------------------------------------------------------------------
-	
+
 	def withWriter(encoding:Charset)(handler:Effect[Writer]):HttpOutput	=
 			withOutputStream { ost =>
 				val wr	= new OutputStreamWriter(ost, encoding)
 				handler(wr)
 				wr.flush()
 			}
-			
+
 	def writeString(encoding:Charset, data:String):HttpOutput	=
 			withWriter(encoding)(_ write data)
-	
+
 	def pipeReader(encoding:Charset, data:Thunk[Reader]):HttpOutput	=
 			withWriter(encoding) { wr =>
 				data() use { rd =>
@@ -94,13 +94,13 @@ object HttpOutput {
 
 trait HttpOutput {
 	def intoOutputStream(ost:OutputStream):Unit
-	
+
 	final def ~> (that:HttpOutput):HttpOutput	=
 			HttpOutput withOutputStream { ost =>
 				this intoOutputStream ost
 				that intoOutputStream ost
 			}
-	
+
 	final def gzip(bufferSize:Int):HttpOutput	=
 			HttpOutput withOutputStream { ost =>
 				val stream	= new GZIPOutputStream(ost, bufferSize)

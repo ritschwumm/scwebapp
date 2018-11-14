@@ -7,22 +7,22 @@ import scwebapp.parser.string._
 
 object AcceptEncodingPattern {
 	lazy val parser:CParser[AcceptEncodingPattern]	= parsers.value
-		
+
 	def unparse(it:AcceptEncodingPattern):String	=
 			it match {
 				case AcceptEncodingWildcard	=> "*"
 				case AcceptEncodingFixed(x)	=> AcceptEncodingType unparse x
 			}
-			
+
 	private object parsers {
 		import HttpParsers._
-		
+
 		val wildcard:CParser[AcceptEncodingPattern]	=
 				token filter (_ == "*") tag AcceptEncodingWildcard
-			
+
 		val fixed:CParser[AcceptEncodingPattern]	=
 				AcceptEncodingType.parser map AcceptEncodingFixed.apply
-			
+
 		val value:CParser[AcceptEncodingPattern]	=
 				wildcard orElse fixed
 	}

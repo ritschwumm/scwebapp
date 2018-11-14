@@ -18,12 +18,12 @@ object HttpIO {
 				writeResponse(response, servletResponse)
 			case HttpResponderAsync(responseCont, timeout, timeoutResponse, errorResponse)	=>
 				typed[(HttpResponse=>Unit)=>Unit](responseCont)
-			
+
 				val asyncCtx	= servletRequest.startAsync()
 				asyncCtx setTimeout timeout.millis
-				
+
 				val alive	= new AtomicBoolean(true)
-				
+
 				def completeWith(response:HttpResponse) {
 					if (alive compareAndSet(true, false)) {
 						writeResponse(response, servletResponse)
@@ -33,26 +33,26 @@ object HttpIO {
 				asyncCtx addListener new AsyncListener {
 					def onStartAsync(ev:AsyncEvent)	{}
 					def onComplete(ev:AsyncEvent)	{ alive set false	}
-					def onTimeout(ev:AsyncEvent)	{ completeWith(timeoutResponse())	}	
+					def onTimeout(ev:AsyncEvent)	{ completeWith(timeoutResponse())	}
 					def onError(ev:AsyncEvent)		{ completeWith(errorResponse())		}
 				}
 				responseCont(completeWith)
 		}
 	}
-		
+
 	private def readRequest(servletRequest:HttpServletRequest):HttpRequest	=
 			new HttpRequestImpl(servletRequest)
-		
+
 	private def writeResponse(response:HttpResponse, servletResponse:HttpServletResponse) {
 		response.reason match {
 			case Some(reason)	=> servletResponse sendError (response.status.id, reason)
 			case None			=> servletResponse setStatus response.status.id
 		}
-		
+
 		response.headers foreach { case HeaderValue(k, v) =>
 			servletResponse addHeader (k, v)
 		}
-		
+
 		response.body intoOutputStream servletResponse.getOutputStream
 	}
 }
