@@ -8,27 +8,30 @@ object IfRangeValue {
 
 	def unparse(it:IfRangeValue):String	=
 			it match {
-				case IfRangeHttpDate(x)		=> HttpDate unparse x
-				case IfRangeEntityTag(x)	=> ETagValue unparse x
+				case IsHttpDate(x)	=> HttpDate unparse x
+				case EntityTag(x)	=> ETagValue unparse x
 			}
 
 	private object parsers {
 		import HttpParsers._
 
-		val date:CParser[IfRangeValue]	= dateValue map IfRangeHttpDate.apply
-		val etag:CParser[IfRangeValue]	= ETagValue.parser map IfRangeEntityTag.apply
+		val date:CParser[IfRangeValue]	= dateValue map IsHttpDate.apply
+		val etag:CParser[IfRangeValue]	= ETagValue.parser map EntityTag.apply
 
 		val value:CParser[IfRangeValue]	= date orElse etag
 	}
+
+	//------------------------------------------------------------------------------
+
+	final case class IsHttpDate(value:HttpDate)	extends IfRangeValue
+	final case class EntityTag(value:ETagValue)	extends IfRangeValue
 }
 
 sealed trait IfRangeValue {
 	// TODO why add a second here?
 	def needsFull(eTag:ETagValue, lastModified:HttpDate):Boolean	=
 			this match {
-				case IfRangeHttpDate(x)		=> x + HttpDuration.second < lastModified
-				case IfRangeEntityTag(x)	=> x != eTag
+				case IfRangeValue.IsHttpDate(x)	=> x + HttpDuration.second < lastModified
+				case IfRangeValue.EntityTag(x)	=> x != eTag
 			}
 }
-final case class IfRangeHttpDate(value:HttpDate)	extends IfRangeValue
-final case class IfRangeEntityTag(value:ETagValue)	extends IfRangeValue

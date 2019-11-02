@@ -46,13 +46,16 @@ object CookieAv {
 		lazy val duration:CParser[HttpDuration]			= longPositive map HttpDuration.apply
 		lazy val something:CParser[String]				= ((CTL orElse cis(';')).prevent right CHAR).seq.stringify
 	}
+
+	//------------------------------------------------------------------------------
+
+	final	case class ExpiresAv(date:HttpDate)			extends CookieAv
+	final	case class MaxAgeAv(duration:HttpDuration)	extends CookieAv
+	final	case class DomainAv(domain:String)			extends CookieAv
+	final	case class PathAv(path:String)				extends CookieAv
+			case object SecureAv						extends CookieAv
+			case object HttpOnlyAv						extends CookieAv
+	final	case class ExtensionAv(extension:String)	extends CookieAv
 }
 
 sealed trait CookieAv
-final	case class ExpiresAv(date:HttpDate)			extends CookieAv
-final	case class MaxAgeAv(duration:HttpDuration)	extends CookieAv
-final	case class DomainAv(domain:String)			extends CookieAv
-final	case class PathAv(path:String)				extends CookieAv
-		case object SecureAv						extends CookieAv
-		case object HttpOnlyAv						extends CookieAv
-final	case class ExtensionAv(extension:String)	extends CookieAv

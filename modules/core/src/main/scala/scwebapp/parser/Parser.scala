@@ -5,11 +5,13 @@ import scala.annotation.tailrec
 import scutil.lang._
 
 object Parser {
+	import Result.{Success,Failure}
+
 	def success[S,T](t:T):Parser[S,T]	=
-			Parser { i:Input[S] => Success(i, t) }
+			Parser { i:Input[S] => Result.Success(i, t) }
 
 	def failure[S]:Parser[S,Unit]	=
-			Parser { i => Failure(i) }
+			Parser { i => Result.Failure(i) }
 
 	def any[S]:Parser[S,S]	=
 			Parser { i =>
@@ -42,6 +44,8 @@ object Parser {
 }
 
 final case class Parser[S,+T](parse:Input[S]=>Result[S,T]) { self =>
+	import Result.{Success,Failure}
+
 	def filter(pred:Predicate[T]):Parser[S,T]	=
 			Parser { i => self parse i filter pred }
 

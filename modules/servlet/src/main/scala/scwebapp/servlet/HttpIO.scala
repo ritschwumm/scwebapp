@@ -14,9 +14,9 @@ object HttpIO {
 		val request		= readRequest(servletRequest)
 		val responder	= handler(request)
 		responder match {
-			case HttpResponderSync(response)	=>
+			case HttpResponder.Sync(response)	=>
 				writeResponse(response, servletResponse)
-			case HttpResponderAsync(responseCont, timeout, timeoutResponse, errorResponse)	=>
+			case HttpResponder.Async(responseCont, timeout, timeoutResponse, errorResponse)	=>
 				typed[(HttpResponse=>Unit)=>Unit](responseCont)
 
 				val asyncCtx	= servletRequest.startAsync()

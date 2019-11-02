@@ -10,9 +10,9 @@ object MediaPattern {
 
 	def unparse(it:MediaPattern):String	=
 			it match {
-				case MediaWildWild					=> "*/*"
-				case MediaTypeWild(major)			=> show"${major}/*"
-				case MediaTypeSubtype(major, minor)	=> show"${major}/${minor}"
+				case WildWild					=> "*/*"
+				case TypeWild(major)			=> show"${major}/*"
+				case TypeSubtype(major, minor)	=> show"${major}/${minor}"
 			}
 
 	private object parsers {
@@ -21,23 +21,26 @@ object MediaPattern {
 		val major:CParser[String]	= token
 		val minor:CParser[String]	= token
 
-		val wildWild:CParser[MediaPattern]		= symbolN("*/*") tag MediaWildWild
-		val typeWild:CParser[MediaPattern]		= major left symbol('/') left symbol('*') map MediaTypeWild.apply
-		val typeSubtype:CParser[MediaPattern]	= major left symbol('/') next minor map MediaTypeSubtype.tupled
+		val wildWild:CParser[MediaPattern]		= symbolN("*/*") tag WildWild
+		val typeWild:CParser[MediaPattern]		= major left symbol('/') left symbol('*') map TypeWild.apply
+		val typeSubtype:CParser[MediaPattern]	= major left symbol('/') next minor map TypeSubtype.tupled
 
 		val value:CParser[MediaPattern]			= wildWild orElse typeWild orElse typeSubtype eating LWSP
 	}
+
+	//------------------------------------------------------------------------------
+
+	final case object WildWild									extends MediaPattern
+	final case class TypeWild(major:String)						extends MediaPattern
+	final case class TypeSubtype(major:String, minor:String)	extends MediaPattern
 }
 
 sealed trait MediaPattern {
 	// returns rank, if any
 	def matches(typ:MimeType):Option[Int]	=
 			this matchOption {
-				case MediaWildWild																=> 0
-				case MediaTypeWild(major)			if major == typ.major						=> 1
-				case MediaTypeSubtype(major, minor)	if major == typ.major && minor == typ.minor	=> 2
+				case MediaPattern.WildWild																=> 0
+				case MediaPattern.TypeWild(major)			if major == typ.major						=> 1
+				case MediaPattern.TypeSubtype(major, minor)	if major == typ.major && minor == typ.minor	=> 2
 			}
 }
-final case object MediaWildWild									extends MediaPattern
-final case class MediaTypeWild(major:String)					extends MediaPattern
-final case class MediaTypeSubtype(major:String, minor:String)	extends MediaPattern

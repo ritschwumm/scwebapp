@@ -2,7 +2,14 @@ package scwebapp.parser
 
 import scutil.lang._
 
+object Result {
+	final case class Success[S,T](i:Input[S], t:T)	extends Result[S,T]
+	final case class Failure[S](i:Input[S])			extends Result[S,Nothing]
+}
+
 sealed trait Result[+S,+T] {
+	import Result.{Success,Failure}
+
 	def map[U](func:T=>U):Result[S,U]	=
 			this match {
 				case Success(i, t)	=> Success(i, func(t))
@@ -41,6 +48,3 @@ sealed trait Result[+S,+T] {
 				case Failure(i)		=> None
 			}
 }
-
-final case class Success[S,T](i:Input[S], t:T)	extends Result[S,T]
-final case class Failure[S](i:Input[S])			extends Result[S,Nothing]

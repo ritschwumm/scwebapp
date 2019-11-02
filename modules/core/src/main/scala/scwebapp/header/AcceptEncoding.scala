@@ -33,6 +33,6 @@ final case class AcceptEncoding(matches:ISeq[AcceptEncodingMatch]) {
 	def acceptance(typ:AcceptEncodingType):QValue	=
 			(AcceptanceUtil acceptance matches)(_ acceptance typ) getOrElse (
 				// NOTE this is not duplicate...
-				typ == AcceptEncodingIdentity cata (QValue.zero, QValue.one)
+				typ == AcceptEncodingType.Identity cata (QValue.zero, QValue.one)
 			)
 }

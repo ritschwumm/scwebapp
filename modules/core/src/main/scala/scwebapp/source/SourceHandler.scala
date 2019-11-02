@@ -41,10 +41,10 @@ object SourceHandler {
 							// which they do anyway even without this header
 							//CacheControl(ISeq("no-cache"))
 						)
-					case Some(SourceNotCached)	=>
+					case Some(SourceCaching.NotCached)	=>
 						NoCache
-					case Some(SourceExpires(when))	=>
-						HeaderValues(Expires(when(HttpDate.now)))
+					case Some(SourceCaching.Expires(when))	=>
+						HeaderValues(Expires(when(HttpDate.now())))
 				}
 
 		val requestHeaders	= request.headers
@@ -117,12 +117,12 @@ object SourceHandler {
 		val acceptEncoding		= (requestHeaders first AcceptEncoding).toOption.flatten
 		val acceptsGzip:Boolean	=
 				source.enableGZIP &&
-				(acceptEncoding exists { _ accepts AcceptEncodingOther(ContentEncodingGzip) })
+				(acceptEncoding exists { _ accepts AcceptEncodingType.Other(ContentEncodingType.Gzip) })
 
 		val contentDisposition:Option[HeaderValue]		=
 				source.disposition map { case SourceDisposition(attachment, fileName) =>
 					HeaderValue fromHeader ContentDisposition(
-						attachment cata (ContentDispositionInline, ContentDispositionAttachment),
+						attachment cata (ContentDispositionType.Inline, ContentDispositionType.Attachment),
 						fileName
 					)
 				}
@@ -130,7 +130,7 @@ object SourceHandler {
 		val standardHeaders:HeaderValues	=
 				HeaderValues(
 					XContentTypeOptions("nosniff"),
-					AcceptRanges(RangeTypeBytes),
+					AcceptRanges(RangeType.Bytes),
 					ETag(eTag),
 					LastModified(lastModified)
 				) ++ (
@@ -150,7 +150,7 @@ object SourceHandler {
 					standardHeaders ++
 					HeaderValues(
 						ContentType(contentType),
-						if (acceptsGzip)		ContentEncoding(ContentEncodingGzip)
+						if (acceptsGzip)		ContentEncoding(ContentEncodingType.Gzip)
 						else					ContentLength(r.length)
 					),
 						 if (!includeContent)	HttpOutput.empty

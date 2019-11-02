@@ -8,24 +8,28 @@ object AcceptEncodingType {
 
 	def unparse(it:AcceptEncodingType):String	=
 			it match {
-				case AcceptEncodingIdentity	=> "identity"
-				case AcceptEncodingOther(x)	=> ContentEncodingType unparse x
+				case Identity	=> "identity"
+				case Other(x)	=> ContentEncodingType unparse x
 			}
 
 	private object parsers {
 		import HttpParsers._
 
 		val identity:CParser[AcceptEncodingType]	=
-				token map CaseUtil.lowerCase  filter (_ == "identity") tag AcceptEncodingIdentity
+				token map CaseUtil.lowerCase  filter (_ == "identity") tag Identity
 
 		val other:CParser[AcceptEncodingType]	=
-				ContentEncodingType.parser map AcceptEncodingOther.apply
+				ContentEncodingType.parser map Other.apply
 
 		val value:CParser[AcceptEncodingType]	=
 				identity orElse other
 	}
+
+	//------------------------------------------------------------------------------
+
+	final case object Identity							extends AcceptEncodingType
+	final case class  Other(typ:ContentEncodingType)	extends AcceptEncodingType
+
 }
 
 sealed trait AcceptEncodingType
-		case object AcceptEncodingIdentity							extends AcceptEncodingType
-final	case class  AcceptEncodingOther(typ:ContentEncodingType)	extends AcceptEncodingType

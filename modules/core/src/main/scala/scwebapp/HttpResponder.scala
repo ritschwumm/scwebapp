@@ -11,7 +11,7 @@ object HttpResponder {
 			sync(response)
 
 	def sync(response:HttpResponse):HttpResponder	=
-			HttpResponderSync(response)
+			Sync(response)
 
 	def async(
 		timeout:MilliDuration,
@@ -20,7 +20,7 @@ object HttpResponder {
 	):(HttpResponder, Effect[HttpResponse])	= {
 		val channel	= new Channel[HttpResponse]
 		val resp	=
-				HttpResponderAsync(
+				Async(
 					channel.get,
 					timeout,
 					timeoutResponse,
@@ -50,27 +50,29 @@ object HttpResponder {
 				Vector.empty,
 				HttpOutput.empty
 			)
+
+	//------------------------------------------------------------------------------
+
+	final case class Sync(
+		response:HttpResponse
+	)
+	extends HttpResponder {
+		def modify(func:Endo[HttpResponse]):HttpResponder	=
+				Sync(func(response))
+	}
+
+	final case class Async(
+		response:Effect[Effect[HttpResponse]],
+		timeout:MilliDuration,
+		timeoutResponse:Thunk[HttpResponse],
+		errorResponse:Thunk[HttpResponse]
+	)
+	extends HttpResponder {
+		def modify(func:Endo[HttpResponse]):HttpResponder	=
+				copy(response	= _ compose func into response)
+	}
 }
 
 sealed trait HttpResponder {
 	def modify(func:Endo[HttpResponse]):HttpResponder
-}
-
-final case class HttpResponderSync(
-	response:HttpResponse
-)
-extends HttpResponder {
-	def modify(func:Endo[HttpResponse]):HttpResponder	=
-			HttpResponderSync(func(response))
-}
-
-final case class HttpResponderAsync(
-	response:Effect[Effect[HttpResponse]],
-	timeout:MilliDuration,
-	timeoutResponse:Thunk[HttpResponse],
-	errorResponse:Thunk[HttpResponse]
-)
-extends HttpResponder {
-	def modify(func:Endo[HttpResponse]):HttpResponder	=
-			copy(response	= _ compose func into response)
 }

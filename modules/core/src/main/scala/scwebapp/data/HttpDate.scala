@@ -13,7 +13,7 @@ import scutil.time.MilliInstant
 
 object HttpDate {
 	val zero:HttpDate	= HttpDate(0)
-	def now:HttpDate	= HttpDate(System.currentTimeMillis / 1000)
+	def now():HttpDate	= HttpDate(System.currentTimeMillis / 1000)
 
 	def fromDate(it:Date):HttpDate					= HttpDate(it.getTime / 1000)
 	def fromMilliInstant(it:MilliInstant):HttpDate	= HttpDate(it.millis / 1000)

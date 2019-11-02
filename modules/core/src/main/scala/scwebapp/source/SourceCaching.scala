@@ -4,6 +4,9 @@ import scutil.lang._
 
 import scwebapp.data._
 
+object SourceCaching {
+	case object			NotCached  						extends SourceCaching
+	final case class	Expires(when:Endo[HttpDate])	extends SourceCaching
+}
+
 sealed trait SourceCaching
-case object			SourceNotCached  					extends SourceCaching
-final case class	SourceExpires(when:Endo[HttpDate])	extends SourceCaching

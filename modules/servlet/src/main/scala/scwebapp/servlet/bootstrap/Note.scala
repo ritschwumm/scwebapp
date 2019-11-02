@@ -1,6 +1,9 @@
 package scwebapp.servlet.bootstrap
 
+object Note {
+	final case class Default(key:String, value:String)				extends Note
+	final case class Change(key:String, value:String)				extends Note
+	final case class Error(key:String, value:String, error:String)	extends Note
+}
+
 sealed trait Note
-final case class NoteDefault(key:String, value:String)				extends Note
-final case class NoteChange(key:String, value:String)				extends Note
-final case class NoteError(key:String, value:String, error:String)	extends Note

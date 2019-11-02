@@ -11,9 +11,9 @@ object RangePattern {
 
 	def unparse(it:RangePattern):String	=
 			it match {
-				case RangeBegin(s)		=> s.toString + "-"
-				case RangeEnd(c)		=> "-" + c.toString
-				case RangeFromTo(s,e)	=> s.toString + "-" + e.toString
+				case Begin(s)		=> s.toString + "-"
+				case End(c)		=> "-" + c.toString
+				case FromTo(s,e)	=> s.toString + "-" + e.toString
 			}
 
 	private object parsers {
@@ -24,24 +24,27 @@ object RangePattern {
 		val suffixByteRangeSpec:CParser[Long]			= symbol('-') right bytePos
 		val value:CParser[RangePattern]			=
 				byteRangeSpec either suffixByteRangeSpec map {
-					case Left((a, None))	=> RangeBegin(a)
-					case Left((a, Some(b)))	=> RangeFromTo(a, b)
-					case Right(b)			=> RangeEnd(b)
+					case Left((a, None))	=> Begin(a)
+					case Left((a, Some(b)))	=> FromTo(a, b)
+					case Right(b)			=> End(b)
 				}
 	}
+
+	//------------------------------------------------------------------------------
+
+	final case class Begin(start:Long)				extends RangePattern
+	final case class FromTo(start:Long, end:Long)	extends RangePattern
+	final case class End(size:Long)					extends RangePattern
 }
 
 sealed trait RangePattern {
 	def toInclusiveRange(total:Long):Option[InclusiveRange]	= {
 		val last	= total - 1
 		this matchOption {
-			case RangeFromTo(start, end)	if start >= 0 && start <= last && end < last	=> InclusiveRange(start,			end)
-			case RangeBegin(start)			if start >= 0 && start <= last					=> InclusiveRange(start,			last)
-			case RangeEnd(count)			if count > 0  && count <= total					=> InclusiveRange(total - count,	last)
+			case RangePattern.FromTo(start, end)	if start >= 0 && start <= last && end < last	=> InclusiveRange(start,			end)
+			case RangePattern.Begin(start)			if start >= 0 && start <= last					=> InclusiveRange(start,			last)
+			case RangePattern.End(count)			if count > 0  && count <= total					=> InclusiveRange(total - count,	last)
 		}
 	}
 
 }
-final case class RangeBegin(start:Long)				extends RangePattern
-final case class RangeFromTo(start:Long, end:Long)	extends RangePattern
-final case class RangeEnd(size:Long)				extends RangePattern

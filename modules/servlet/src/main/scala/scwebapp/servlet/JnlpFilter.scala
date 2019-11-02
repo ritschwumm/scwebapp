@@ -16,6 +16,19 @@ import scutil.log._
 replaces "$$codebase" with the parent of the JNLP file itself
 to allow deploying the application to different servers without changing
 the original jnlp file
+
+usage example:
+<code>
+final class BootServletContextListener extends ServletContextListener {
+	def contextInitialized(ev:ServletContextEvent) {
+		val sc			= ev.getServletContext
+		val jnlpFilter	= new JnlpFilter
+		val jnlpDynamic	= sc addFilter ("Jnlp", jnlpFilter)
+		jnlpDynamic addMappingForUrlPatterns	(null, false, "*.jnlp")
+		jnlpDynamic	setInitParameter			("charset",	"UTF-8")
+	}
+}
+</code>
 */
 final class JnlpFilter extends Filter with Logging {
 	@volatile private var filterConfig:Option[FilterConfig] 	= None

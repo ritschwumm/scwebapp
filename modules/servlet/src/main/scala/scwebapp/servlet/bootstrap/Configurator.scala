@@ -9,12 +9,12 @@ object Configurator extends Logging {
 		val states				= schema map (property(_, source))
 		val (result, entries)	= states.sequenceState run initial
 		entries foreach {
-			case NoteDefault(key, value)		=> INFO(key, "using default value", value)
-			case NoteChange(key, value)			=> INFO(key, "configured to", value)
-			case NoteError(key, value, message)	=> ERROR(key, "invalid value", value, message)
+			case Note.Default(key, value)			=> INFO(key, "using default value", value)
+			case Note.Change(key, value)			=> INFO(key, "configured to", value)
+			case Note.Error(key, value, message)	=> ERROR(key, "invalid value", value, message)
 		}
 		entries foreach {
-			case NoteError(_,_,_)	=>	sys error "invalid configuration"
+			case Note.Error(_,_,_)	=>	sys error "invalid configuration"
 			case _					=>
 		}
 		result
@@ -22,10 +22,10 @@ object Configurator extends Logging {
 
 	def property[C](prop:Property[C], source:PFunction[String,String]):State[C,Note]	=
 			source apply prop.key cata (
-				State { s => (s, NoteDefault(prop.key, s.toString)) },
+				State { s => (s, Note.Default(prop.key, s.toString)) },
 				raw => prop mod raw cata (
-					error	=> State { s => (s, 		NoteError(prop.key, raw.toString, error)) },
-					change	=> State { s => (change(s),	NoteChange(prop.key, if (prop.visible) raw.toString else "<redacted>")) }
+					error	=> State { s => (s, 		Note.Error(prop.key, raw.toString, error)) },
+					change	=> State { s => (change(s),	Note.Change(prop.key, if (prop.visible) raw.toString else "<redacted>")) }
 				)
 			)
 }

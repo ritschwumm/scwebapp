@@ -8,10 +8,10 @@ object ContentEncodingType {
 
 	def unparse(it:ContentEncodingType):String	=
 			it match {
-				case ContentEncodingGzip		=> "gzip"
-				case ContentEncodingCompress	=> "compress"
-				case ContentEncodingDeflate		=> "deflate"
-				case ContentEncodingBr			=> "br"
+				case Gzip		=> "gzip"
+				case Compress	=> "compress"
+				case Deflate	=> "deflate"
+				case Br			=> "br"
 			}
 
 	private object parsers {
@@ -19,17 +19,20 @@ object ContentEncodingType {
 
 		val value:CParser[ContentEncodingType]	=
 				token map CaseUtil.lowerCase collect {
-					case "gzip"		=> ContentEncodingGzip
-					case "compress"	=> ContentEncodingCompress
-					case "deflate"	=> ContentEncodingDeflate
-					case "br"		=> ContentEncodingBr
+					case "gzip"		=> Gzip
+					case "compress"	=> Compress
+					case "deflate"	=> Deflate
+					case "br"		=> Br
 				}
 	}
+
+	//------------------------------------------------------------------------------
+
+	// NOTE no identity here, that's only allowed for acceptance checks
+	case object Gzip		extends ContentEncodingType
+	case object Compress	extends ContentEncodingType
+	case object Deflate		extends ContentEncodingType
+	case object Br			extends ContentEncodingType
 }
 
-// NOTE no identity here, that's only allowed for acceptance checks
 sealed trait ContentEncodingType
-case object ContentEncodingGzip		extends ContentEncodingType
-case object ContentEncodingCompress	extends ContentEncodingType
-case object ContentEncodingDeflate	extends ContentEncodingType
-case object ContentEncodingBr		extends ContentEncodingType

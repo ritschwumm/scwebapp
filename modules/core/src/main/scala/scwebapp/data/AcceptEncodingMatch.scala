@@ -4,7 +4,7 @@ import scwebapp.format._
 import scwebapp.parser.string._
 
 object AcceptEncodingMatch {
-	val default	= AcceptEncodingMatch(AcceptEncodingFixed(AcceptEncodingIdentity), Some(QValue.one))
+	val default	= AcceptEncodingMatch(AcceptEncodingPattern.Fixed(AcceptEncodingType.Identity), Some(QValue.one))
 
 	//------------------------------------------------------------------------------
 

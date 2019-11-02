@@ -83,8 +83,8 @@ private final class HttpRequestImpl(peer:HttpServletRequest) extends HttpRequest
 				Right(it)
 			}
 			catch {
-				case e:ServletException			=> Left(NotMultipart(e))
-				case e:IOException				=> Left(InputOutputFailed(e))
-				case e:IllegalStateException	=> Left(SizeLimitExceeded(e))
+				case e:ServletException			=> Left(HttpPartsProblem.NotMultipart(e))
+				case e:IOException				=> Left(HttpPartsProblem.InputOutputFailed(e))
+				case e:IllegalStateException	=> Left(HttpPartsProblem.SizeLimitExceeded(e))
 			}
 }

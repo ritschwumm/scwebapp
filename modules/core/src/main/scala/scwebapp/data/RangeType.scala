@@ -14,8 +14,8 @@ object RangeType {
 
 	def unparse(it:RangeType):String	=
 			it match {
-				case RangeTypeNone	=> "none"
-				case RangeTypeBytes	=> "bytes"
+				case IsNone	=> "none"
+				case Bytes	=> "bytes"
 			}
 
 	private object parsers {
@@ -23,12 +23,13 @@ object RangeType {
 
 		val value:CParser[RangeType]		=
 				token collect {
-					case "none"		=> RangeTypeNone
-					case "bytes"	=> RangeTypeBytes
+					case "none"		=> IsNone
+					case "bytes"	=> Bytes
 				}
 	}
+
+	case object IsNone	extends RangeType
+	case object Bytes	extends RangeType
 }
 
 sealed trait RangeType
-case object RangeTypeNone	extends RangeType
-case object RangeTypeBytes	extends RangeType

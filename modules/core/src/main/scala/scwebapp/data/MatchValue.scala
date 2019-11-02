@@ -12,28 +12,30 @@ object MatchValue {
 
 	def unparse(it:MatchValue):String	=
 			it match {
-				case MatchWildcard		=> "*"
-				case MatchEntityTags(x)	=> x.toVector map ETagValue.unparse mkString ","
+				case Wildcard		=> "*"
+				case EntityTags(x)	=> x.toVector map ETagValue.unparse mkString ","
 			}
 
 	private object parsers {
 		import HttpParsers._
 
-		val wildcardValue:CParser[MatchValue]	= symbol('*') tag MatchWildcard
-		val etagsValue:CParser[MatchValue]		= hash1(ETagValue.parser) map MatchEntityTags.apply
+		val wildcardValue:CParser[MatchValue]	= symbol('*') tag Wildcard
+		val etagsValue:CParser[MatchValue]		= hash1(ETagValue.parser) map EntityTags.apply
 
 		val value:CParser[MatchValue]		= wildcardValue orElse etagsValue
 		val finished:CParser[MatchValue]	= value finish LWSP
 	}
+
+	//------------------------------------------------------------------------------
+
+	final case object Wildcard							extends MatchValue
+	final case class EntityTags(values:Nes[ETagValue])	extends MatchValue
 }
 
 sealed trait MatchValue {
 	def matches(it:ETagValue):Boolean	=
 			this match {
-				case MatchWildcard			=> true
-				case MatchEntityTags(xs)	=> xs.toVector.toSet contains it
+				case MatchValue.Wildcard		=> true
+				case MatchValue.EntityTags(xs)	=> xs.toVector.toSet contains it
 			}
 }
-
-final case object MatchWildcard							extends MatchValue
-final case class MatchEntityTags(values:Nes[ETagValue])	extends MatchValue

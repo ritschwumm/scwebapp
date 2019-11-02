@@ -30,7 +30,7 @@ object SetCookie extends HeaderType[SetCookie] {
 				.map { duration =>
 					val expiresDate	=
 							if (duration == HttpDuration.zero)	HttpDate.zero
-							else								HttpDate.now + duration
+							else								HttpDate.now() + duration
 					(HttpDuration unparse duration, HttpDate unparse expiresDate)
 				}
 				.unzip
@@ -38,12 +38,12 @@ object SetCookie extends HeaderType[SetCookie] {
 
 		val avs:Vector[Option[CookieAv]]	=
 				Vector(
-					it.domain	map		DomainAv.apply,
-					it.path		map		PathAv.apply,
-					it.maxAge	map		MaxAgeAv.apply,
-					it.expires	map		ExpiresAv.apply,
-					it.secure	option	SecureAv,
-					it.httpOnly	option	HttpOnlyAv
+					it.domain	map		CookieAv.DomainAv.apply,
+					it.path		map		CookieAv.PathAv.apply,
+					it.maxAge	map		CookieAv.MaxAgeAv.apply,
+					it.expires	map		CookieAv.ExpiresAv.apply,
+					it.secure	option	CookieAv.SecureAv,
+					it.httpOnly	option	CookieAv.HttpOnlyAv
 				)
 
 		val headPart	= it.name + "=" + it.value
@@ -63,11 +63,11 @@ object SetCookie extends HeaderType[SetCookie] {
 					SetCookie(
 						name		= k,
 						value		= v,
-						domain		= avs collectFirst { case DomainAv(x)	=> x},
-						path		= avs collectFirst { case PathAv(x)		=> x},
-						maxAge		= avs collectFirst { case MaxAgeAv(x)	=> x},
-						secure		= avs contains SecureAv,
-						httpOnly	= avs contains HttpOnlyAv
+						domain		= avs collectFirst { case CookieAv.DomainAv(x)	=> x},
+						path		= avs collectFirst { case CookieAv.PathAv(x)		=> x},
+						maxAge		= avs collectFirst { case CookieAv.MaxAgeAv(x)	=> x},
+						secure		= avs contains CookieAv.SecureAv,
+						httpOnly	= avs contains CookieAv.HttpOnlyAv
 					)
 				}
 

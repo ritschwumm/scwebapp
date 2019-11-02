@@ -8,8 +8,8 @@ object ContentDispositionType {
 
 	def unparse(it:ContentDispositionType):String	=
 			it match {
-				case ContentDispositionAttachment	=> "attachment"
-				case ContentDispositionInline		=> "inline"
+				case Attachment	=> "attachment"
+				case Inline		=> "inline"
 			}
 
 	private object parsers {
@@ -17,12 +17,15 @@ object ContentDispositionType {
 
 		val value:CParser[ContentDispositionType]	=
 				token map CaseUtil.lowerCase collect {
-					case "attachment"	=> ContentDispositionAttachment
-					case "inline"		=> ContentDispositionInline
+					case "attachment"	=> Attachment
+					case "inline"		=> Inline
 				}
 	}
+
+	//------------------------------------------------------------------------------
+
+	case object Attachment	extends ContentDispositionType
+	case object Inline		extends ContentDispositionType
 }
 
 sealed trait ContentDispositionType
-case object ContentDispositionAttachment	extends ContentDispositionType
-case object ContentDispositionInline		extends ContentDispositionType

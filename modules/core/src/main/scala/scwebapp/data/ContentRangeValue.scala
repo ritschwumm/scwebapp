@@ -7,10 +7,10 @@ import scwebapp.parser.string._
 
 object ContentRangeValue {
 	def total(size:Long):ContentRangeValue	=
-			ContentRangeTotal(size)
+			Total(size)
 
 	def full(range:InclusiveRange, size:Long):ContentRangeValue	=
-			ContentRangeFull(range, size)
+			Full(range, size)
 
 	//------------------------------------------------------------------------------
 
@@ -18,9 +18,9 @@ object ContentRangeValue {
 
 	def unparse(it:ContentRangeValue):String	=
 			it match {
-				case ContentRangeFull(InclusiveRange(start, end), total)	=> show"${RangeType.keys.bytes} ${start}-${end}/${total}"
-				case ContentRangeBare(InclusiveRange(start, end))			=> show"${RangeType.keys.bytes} ${start}-${end}/*"
-				case ContentRangeTotal(total)								=> show"${RangeType.keys.bytes} */${total}"
+				case Full(InclusiveRange(start, end), total)	=> show"${RangeType.keys.bytes} ${start}-${end}/${total}"
+				case Bare(InclusiveRange(start, end))			=> show"${RangeType.keys.bytes} ${start}-${end}/*"
+				case Total(total)								=> show"${RangeType.keys.bytes} */${total}"
 			}
 
 	private object parsers {
@@ -35,16 +35,19 @@ object ContentRangeValue {
 					InclusiveRange(s, e)
 				}
 
-		val full:CParser[ContentRangeValue]			= irange left SLASH next longUnsigned map ContentRangeFull.tupled
-		val fromTo:CParser[ContentRangeValue]		= irange left SLASH left STAR map ContentRangeBare.apply
-		val total:CParser[ContentRangeValue]		= STAR right longUnsigned map ContentRangeTotal.apply
+		val full:CParser[ContentRangeValue]			= irange left SLASH next longUnsigned map Full.tupled
+		val fromTo:CParser[ContentRangeValue]		= irange left SLASH left STAR map Bare.apply
+		val total:CParser[ContentRangeValue]		= STAR right longUnsigned map Total.apply
 		val rangeValue:CParser[ContentRangeValue]	= full orElse fromTo orElse total
 
 		val value:CParser[ContentRangeValue]		= symbolN(RangeType.keys.bytes) right rangeValue
 	}
+
+	//------------------------------------------------------------------------------
+
+	final case class Bare(irange:InclusiveRange)			extends ContentRangeValue
+	final case class Total(size:Long)						extends ContentRangeValue
+	final case class Full(irange:InclusiveRange, size:Long)	extends ContentRangeValue
 }
 
 sealed trait ContentRangeValue
-final case class ContentRangeBare(irange:InclusiveRange)			extends ContentRangeValue
-final case class ContentRangeTotal(size:Long)						extends ContentRangeValue
-final case class ContentRangeFull(irange:InclusiveRange, size:Long)	extends ContentRangeValue
