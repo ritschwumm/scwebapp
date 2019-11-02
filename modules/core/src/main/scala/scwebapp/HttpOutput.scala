@@ -87,7 +87,7 @@ object HttpOutput {
 	def pipeReader(encoding:Charset, data:Thunk[Reader]):HttpOutput	=
 			withWriter(encoding) { wr =>
 				data() use { rd =>
-					rd transferTo wr
+					rd transferToPre10 wr
 				}
 			}
 }
