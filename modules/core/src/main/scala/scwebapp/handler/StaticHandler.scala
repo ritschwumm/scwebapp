@@ -31,7 +31,8 @@ final class StaticHandler(
 extends Logging {
 	import StaticHandler.Path
 
-	private val cache	= new SimpleCache[Path,SourceData](loadSource)
+	private val lastModified	= HttpDate.now()
+	private val cache			= new SimpleCache[Path,SourceData](loadSource)
 
 	val plan:HttpPHandler	=
 			request => {
@@ -53,10 +54,10 @@ extends Logging {
 			if (serverCached(path))	cache fetch path
 			else					loadSource(path)
 
+	// TODO lastModified should be configurable, maybe
 	private def loadSource(path:Path):Option[SourceData]	=
 			path into resourcePath into readResource map { bytes =>
 				val mimeType		= mimeTypeFor(path)
-				val lastModified	= HttpDate.now
 				val contentId		= SourceData httpDateContentId (lastModified, bytes.size)
 				SourceData(
 					size			= bytes.size.toLong,
