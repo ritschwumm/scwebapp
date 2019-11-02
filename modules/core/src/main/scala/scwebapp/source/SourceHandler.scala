@@ -34,7 +34,7 @@ object SourceHandler {
 
 		val cacheHeaders:ISeq[HeaderValue]	=
 				source.caching match {
-					case SourceCaching.Slient			=>
+					case SourceCaching.Silent			=>
 						HeaderValues(
 							// browsers tend to misunderstand this as "do not cache at all"
 							// where it really means "revalidate before serving from the cache"
