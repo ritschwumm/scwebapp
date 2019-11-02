@@ -18,6 +18,7 @@ trait HasAttributesImplicits {
 	private final class HasAttributesImpl(getFunc:String=>AnyRef, setFunc:(String,AnyRef)=>Unit, removeFunc:String=>Unit) extends HasAttributes {
 		def attribute[T<:AnyRef](name:String):HttpAttribute[T]	=
 				new HttpAttribute[T] {
+					@SuppressWarnings(Array("org.wartremover.warts.AsInstanceOf"))
 					def get:Option[T] = Option(getFunc(name).asInstanceOf[T])
 					def set(t:Option[T]) {
 						t match {

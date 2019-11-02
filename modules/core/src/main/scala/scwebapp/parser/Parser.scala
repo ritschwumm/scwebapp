@@ -31,10 +31,14 @@ object Parser {
 			Parser { i =>
 				@tailrec
 				def loop(ii:Input[S], look:ISeq[S]):Result[S,ISeq[S]]	=
-						if (look.isEmpty)	Success(ii, cs)
-						else ii.next match {
-							case Some((rest, item)) if item == look.head	=> loop(rest, look.tail)
-							case _											=> Failure(ii)
+						look match {
+							case lookHead +: lookTail	=>
+								 ii.next match {
+									case Some((rest, item)) if item == lookHead	=> loop(rest, lookTail)
+									case _										=> Failure(ii)
+								}
+							case _	=>
+								Success(ii, cs)
 						}
 				loop(i, cs)
 			}

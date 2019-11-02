@@ -9,6 +9,7 @@ import scutil.log._
 
 final class LogErrorHandler extends ErrorHandler with Logging {
 	//@throws(classOf[IOException])
+	@SuppressWarnings(Array("org.wartremover.warts.ToString"))
 	override def handleErrorPage(request:HttpServletRequest, writer:Writer, code:Int, message:String):Unit = {
 		WARN log (
 			LogString("handling error") +:

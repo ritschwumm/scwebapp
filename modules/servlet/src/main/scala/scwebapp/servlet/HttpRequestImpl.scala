@@ -46,6 +46,7 @@ private final class HttpRequestImpl(peer:HttpServletRequest) extends HttpRequest
 	//------------------------------------------------------------------------------
 	//## headers
 
+	@SuppressWarnings(Array("org.wartremover.warts.AsInstanceOf"))
 	def headers:HttpHeaders	=
 			HttpHeaders(
 				NoCaseParameters(
@@ -60,6 +61,7 @@ private final class HttpRequestImpl(peer:HttpServletRequest) extends HttpRequest
 	//------------------------------------------------------------------------------
 	//## content
 
+	@SuppressWarnings(Array("org.wartremover.warts.AsInstanceOf"))
 	def parameters:CaseParameters	=
 			CaseParameters(
 				for {

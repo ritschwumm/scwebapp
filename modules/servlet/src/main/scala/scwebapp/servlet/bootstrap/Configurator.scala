@@ -20,6 +20,7 @@ object Configurator extends Logging {
 		result
 	}
 
+	@SuppressWarnings(Array("org.wartremover.warts.ToString"))
 	def property[C](prop:Property[C], source:PFunction[String,String]):State[C,Note]	=
 			source apply prop.key cata (
 				State { s => (s, Note.Default(prop.key, s.toString)) },

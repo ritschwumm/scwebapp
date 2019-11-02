@@ -56,7 +56,9 @@ final class JnlpFilter extends Filter with Logging {
 	//------------------------------------------------------------------------------
 
 	def doFilter(request:ServletRequest, response:ServletResponse, filterChain:FilterChain) {
+		@SuppressWarnings(Array("org.wartremover.warts.AsInstanceOf"))
 		val	httpRequest		= request.asInstanceOf[HttpServletRequest]
+		@SuppressWarnings(Array("org.wartremover.warts.AsInstanceOf"))
 		val	httpResponse	= response.asInstanceOf[HttpServletResponse]
 
 		val	wrapper	= new ResponseWrapper(httpResponse)

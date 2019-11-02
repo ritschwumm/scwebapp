@@ -6,6 +6,7 @@ import scutil.lang._
 import scwebapp.data._
 
 object AcceptanceUtil {
+	@SuppressWarnings(Array("org.wartremover.warts.TraversableOps"))
 	def acceptance[T](matches:ISeq[T])(extract:T=>Option[(Int,QValue)]):Option[QValue]	=
 			matches
 			.collapseMap	(extract)
@@ -17,5 +18,6 @@ object AcceptanceUtil {
 			.filter			{ _.nonEmpty	}
 			// highest rank only
 			.headOption
+			// NOTE this is safe, we filtered for nonEmpty before
 			.map			{ _.max			}
 }

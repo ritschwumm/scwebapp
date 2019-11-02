@@ -16,6 +16,7 @@ private final class HttpPartImpl(peer:Part) extends HttpPart {
 	def name:String	= peer.getName
 	def size:Long	= peer.getSize
 
+	@SuppressWarnings(Array("org.wartremover.warts.AsInstanceOf"))
 	def headers:HttpHeaders	=
 			HttpHeaders(
 				NoCaseParameters(

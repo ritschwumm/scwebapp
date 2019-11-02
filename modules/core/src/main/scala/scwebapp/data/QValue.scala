@@ -29,7 +29,7 @@ object QValue {
 
 		lazy val value:CParser[QValue]	=
 				low orElse high map { case (h,l) =>
-					QValue(digitVal(h) * 1000 + tail(l.flattenMany map digitVal, 100))
+					QValue(digitVal(h) * 1000 + tailing(l.flattenMany map digitVal, 100))
 				}
 
 		lazy val finished:CParser[QValue]	=
@@ -38,9 +38,14 @@ object QValue {
 		lazy val low:CParser[(Char,Option[ISeq[Char]])]		= cis('0') next (cis('.') right (DIGIT		upto 3)).option
 		lazy val high:CParser[(Char,Option[ISeq[Char]])]	= cis('1') next (cis('.') right (cis('0')	upto 3)).option
 
-		private def tail(digits:ISeq[Int], factor:Int):Int =
-				if (digits.isEmpty || factor == 0)	0
-				else digits.head * factor + tail(digits.tail, factor / 10)
+		private def tailing(digits:ISeq[Int], factor:Int):Int =
+				if (factor == 0)	0
+				else {
+					digits match {
+						case head +: tail	=> head * factor + tailing(tail, factor / 10)
+						case _				=> 0
+					}
+				}
 
 		private def digitVal(c:Char):Int	= c - '0'
 	}

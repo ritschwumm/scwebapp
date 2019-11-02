@@ -1,6 +1,6 @@
 inThisBuild(Seq(
 	organization	:= "de.djini",
-	version			:= "0.197.0",
+	version			:= "0.198.0",
 
 	scalaVersion	:= "2.12.8",
 	scalacOptions	++= Seq(
@@ -16,14 +16,29 @@ inThisBuild(Seq(
 	resolvers		+= "Scalaz Bintray Repo" at "http://dl.bintray.com/scalaz/releases",
 
 	wartremoverErrors	++= Seq(
+		Wart.AsInstanceOf,
+		Wart.IsInstanceOf,
 		Wart.StringPlusAny,
+		Wart.ToString,
 		Wart.EitherProjectionPartial,
 		Wart.OptionPartial,
+		Wart.TryPartial,
 		Wart.Enumeration,
 		Wart.FinalCaseClass,
 		Wart.JavaConversions,
 		Wart.Option2Iterable,
-		Wart.TryPartial
+		Wart.JavaSerializable,
+		//Wart.Any,
+		Wart.AnyVal,
+		//Wart.Nothing,
+		Wart.ArrayEquals,
+		Wart.ImplicitParameter,
+		Wart.ExplicitImplicitTypes,
+		Wart.LeakingSealed,
+		//Wart.DefaultArguments,
+		Wart.Overloading,
+		//Wart.PublicInference,
+		Wart.TraversableOps,
 	)
 ))
 
@@ -47,7 +62,7 @@ lazy val `scwebapp-core`	=
 				"-language:implicitConversions"
 			),
 			libraryDependencies	++= Seq(
-				"de.djini"		%%	"scutil-core"	% "0.155.0"	% "compile",
+				"de.djini"		%%	"scutil-core"	% "0.156.0"	% "compile",
 				"org.specs2"	%%	"specs2-core"	% "4.5.1"	% "test"
 			)
 		)
@@ -59,7 +74,7 @@ lazy val `scwebapp-servlet`	=
 				"-language:implicitConversions"
 			),
 			libraryDependencies	++= Seq(
-				"de.djini"		%%	"scutil-core"		% "0.155.0"	% "compile",
+				"de.djini"		%%	"scutil-core"		% "0.156.0"	% "compile",
 				"javax.servlet"	%	"javax.servlet-api"	% "3.1.0"	% "provided"
 			)
 		)
