@@ -1,7 +1,6 @@
 package scwebapp.header
 
 import scutil.base.implicits._
-import scutil.lang._
 
 import scwebapp.HeaderType
 import scwebapp.data._
@@ -72,13 +71,13 @@ object SetCookie extends HeaderType[SetCookie] {
 				}
 
 		/*
-		lazy val cookie_header:CParser[ISeq[(String,String)]]			= sis("Cookie:") right (cookie_string inside OWS)
-		lazy val cookie_string:CParser[ISeq[(String,String)]]			= cookie_pair sepSeq cis(';')
+		lazy val cookie_header:CParser[Seq[(String,String)]]			= sis("Cookie:") right (cookie_string inside OWS)
+		lazy val cookie_string:CParser[Seq[(String,String)]]			= cookie_pair sepSeq cis(';')
 
-		lazy val set_cookie_header:CParser[((String,String),ISeq[CookieAv])]	= sis("Set-Cookie:") right SP right set_cookie_string
+		lazy val set_cookie_header:CParser[((String,String),Seq[CookieAv])]	= sis("Set-Cookie:") right SP right set_cookie_string
 		*/
 
-		lazy val set_cookie_string:CParser[((String,String),ISeq[CookieAv])]	= cookie_pair next (cis(';') right CookieAv.parser).seq
+		lazy val set_cookie_string:CParser[((String,String),Seq[CookieAv])]	= cookie_pair next (cis(';') right CookieAv.parser).seq
 	}
 }
 

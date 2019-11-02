@@ -1,7 +1,5 @@
 package scwebapp.header
 
-import scutil.lang._
-
 import scwebapp.HeaderType
 import scwebapp.data._
 import scwebapp.format._
@@ -25,7 +23,7 @@ object Accept extends HeaderType[Accept] {
 	}
 }
 
-final case class Accept(ranges:ISeq[MediaRange]) {
+final case class Accept(ranges:Seq[MediaRange]) {
 	def accepts(typ:MimeType):Boolean	=
 			acceptance(typ) > QValue.zero
 

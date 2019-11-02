@@ -1,7 +1,5 @@
 package scwebapp.header
 
-import scutil.lang._
-
 import scwebapp.HeaderType
 import scwebapp.data._
 import scwebapp.format._
@@ -20,7 +18,7 @@ object Cookie extends HeaderType[Cookie] {
 		import HttpParsers._
 		import CookieParsers._
 
-		val cookie_string:CParser[ISeq[(String,String)]]	= cookie_pair sepSeq (cis(';') next SP)
+		val cookie_string:CParser[Seq[(String,String)]]	= cookie_pair sepSeq (cis(';') next SP)
 
 		// TODO inside OWS is stupid. revise whitespace handling.
 		val cookieParams:CParser[CaseParameters]	= cookie_string inside OWS map CaseParameters.apply

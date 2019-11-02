@@ -35,13 +35,13 @@ package object string {
 				peer parse stringInput(s)
 	}
 
-	implicit class RichCharISeqParser[T](peer:Parser[T,ISeq[Char]]) {
+	implicit class RichCharSeqParser[T](peer:Parser[T,Seq[Char]]) {
 		def stringify:Parser[T,String]	=
 				peer map { _.mkString }
 	}
 
 	implicit class RichCharNesParser[T](peer:Parser[T,Nes[Char]]) {
 		def stringify:Parser[T,String]	=
-				peer map { _.toISeq.mkString }
+				peer map { _.toSeq.mkString }
 	}
 }

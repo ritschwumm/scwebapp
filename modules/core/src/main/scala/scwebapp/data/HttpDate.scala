@@ -8,7 +8,6 @@ import java.util.Locale
 import java.util.TimeZone
 
 import scutil.base.implicits._
-import scutil.lang._
 import scutil.time.MilliInstant
 
 object HttpDate {
@@ -45,7 +44,7 @@ object HttpDate {
 			// RFC 822, updated by RFC 1123
 			mkFormat("EEE, dd MMM yyyy HH:mm:ss zzz")
 
-	private val allFormats:ISeq[DateFormat]	=
+	private val allFormats:Seq[DateFormat]	=
 			Vector(
 				standardFormat,
 				// RFC 850, obsoleted by RFC 1036

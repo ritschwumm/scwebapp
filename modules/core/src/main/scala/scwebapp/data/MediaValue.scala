@@ -1,7 +1,5 @@
 package scwebapp.data
 
-import scutil.lang._
-
 import scwebapp.format._
 import scwebapp.parser.string._
 
@@ -17,8 +15,8 @@ object MediaValue {
 		import HttpParsers._
 
 		// NOTE this is quite a hack in the RFC: the q-value separates media type parameters from media range parameters...
-		val manyParametersStopQ:CParser[ISeq[(Boolean,(String,String))]]	= (qParam.prevent right nextParameter).seq
-		val parameterListStopQ:CParser[NoCaseParameters]					= manyParametersStopQ map { list => NoCaseParameters(extendedFirst(list)) }
+		val manyParametersStopQ:CParser[Seq[(Boolean,(String,String))]]	= (qParam.prevent right nextParameter).seq
+		val parameterListStopQ:CParser[NoCaseParameters]				= manyParametersStopQ map { list => NoCaseParameters(extendedFirst(list)) }
 
 		val value:CParser[MediaValue]	=
 				MediaPattern.parser next parameterListStopQ next qParam.option map { case ((p, ps), q) => MediaValue(p, ps, q) }

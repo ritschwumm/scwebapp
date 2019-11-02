@@ -64,7 +64,7 @@ object HttpParsers {
 	val quotedString:CParser[String]	= (quotedChar.seq inside DQUOTE).stringify eating LWSP
 
 	val hashSepa:CParser[Char]	= symbol(',')
-	def hash[T](sub:CParser[T]):CParser[ISeq[T]]	= sub sepSeq	hashSepa
+	def hash[T](sub:CParser[T]):CParser[Seq[T]]	= sub sepSeq	hashSepa
 	def hash1[T](sub:CParser[T]):CParser[Nes[T]]	= sub sepNes	hashSepa
 
 	//------------------------------------------------------------------------------
@@ -101,7 +101,7 @@ object HttpParsers {
 			}
 	val pctEncoded:CParser[Byte]			= is('%') right hexByte
 	val attrCharByte:CParser[Byte]			= attrChar map { _.toByte }
-	val valueCharBytes:CParser[ByteString]	= (pctEncoded orElse attrCharByte).seq map ByteString.fromISeq
+	val valueCharBytes:CParser[ByteString]	= (pctEncoded orElse attrCharByte).seq map ByteString.fromSeq
 
 	val mimeCharsetC:CParser[Char]			= ALPHA orElse DIGIT orElse in("!#$%&+-^_`{}~")
 	val mimeCharset:CParser[String]			= mimeCharsetC.nes.stringify
@@ -145,10 +145,10 @@ object HttpParsers {
 
 	val parameter:CParser[(Boolean,(String,String))]			= (regParameter orElse extParameter) eating LWSP
 	val nextParameter:CParser[(Boolean,(String,String))]		= symbol(';') right parameter
-	val manyParameters:CParser[ISeq[(Boolean,(String,String))]]	= nextParameter.seq
+	val manyParameters:CParser[Seq[(Boolean,(String,String))]]	= nextParameter.seq
 
 	// moves extended parameters to the front
-	def extendedFirst(it:ISeq[(Boolean,(String,String))]):ISeq[(String,String)]	=
+	def extendedFirst(it:Seq[(Boolean,(String,String))]):Seq[(String,String)]	=
 			(it collect { case (true,	kv) => kv })	++
 			(it collect { case (false,	kv) => kv })
 

@@ -32,7 +32,7 @@ object SourceHandler {
 		// with URL-encoding we're safe with whitespace and line separators
 		val eTag			= ETagValue(false, HttpUnparsers quotedString (URIComponent.utf_8 encode source.contentId))
 
-		val cacheHeaders:ISeq[HeaderValue]	=
+		val cacheHeaders:Seq[HeaderValue]	=
 				source.caching match {
 					case SourceCaching.Silent			=>
 						HeaderValues(
@@ -42,11 +42,11 @@ object SourceHandler {
 							browsers tend to misunderstand this as "do not cache at all"
 							where it really means "revalidate before serving from the cache"
 							which they do anyway even without this header
-							CacheControl(ISeq("no-cache"))
+							CacheControl(Seq("no-cache"))
 
 							this is slightly different, but browsers seem to do that
 							automatically when ETag or LastModified is present
-							CacheControl(ISeq("must-revalidate"))
+							CacheControl(Seq("must-revalidate"))
 
 							if this is used, blink (chrome) still takes data from the memory
 							cache on programmatic reloads, though!
@@ -110,7 +110,7 @@ object SourceHandler {
 
 		// TODO should we fail when needsFull but range headers are invalid?
 		val full:InclusiveRange			= InclusiveRange full total
-		val ranges:ISeq[InclusiveRange]	=
+		val ranges:Seq[InclusiveRange]	=
 				(needsFull, rangesRaw) match {
 					case (true,		_)											=> Vector(full)
 					case (false,	Right(None))								=> Vector(full)
@@ -168,7 +168,7 @@ object SourceHandler {
 					else if (acceptsGzip)		source range r gzip SourceHandler.gzipBufferSize
 					else						source range r
 				)
-			case ISeq(r)	=>
+			case Seq(r)	=>
 				HttpResponse(
 					PARTIAL_CONTENT, None,
 					standardHeaders ++

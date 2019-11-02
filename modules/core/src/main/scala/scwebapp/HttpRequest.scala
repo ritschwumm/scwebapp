@@ -105,5 +105,5 @@ trait HttpRequest {
 
 	def body:HttpInput
 
-	def parts:Either[HttpPartsProblem,ISeq[HttpPart]]
+	def parts:Either[HttpPartsProblem,Seq[HttpPart]]
 }

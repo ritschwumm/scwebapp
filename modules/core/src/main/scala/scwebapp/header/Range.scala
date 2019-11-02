@@ -31,6 +31,6 @@ object Range extends HeaderType[Range] {
 }
 
 final case class Range(patterns:Nes[RangePattern]) {
-	def inclusiveRanges(total:Long):ISeq[InclusiveRange]	=
+	def inclusiveRanges(total:Long):Seq[InclusiveRange]	=
 			patterns.toVector collapseMap { _ toInclusiveRange total }
 }

@@ -1,7 +1,6 @@
 package scwebapp.header
 
 import scutil.base.implicits._
-import scutil.lang._
 
 import scwebapp.HeaderType
 import scwebapp.data._
@@ -26,7 +25,7 @@ object AcceptEncoding extends HeaderType[AcceptEncoding] {
 	}
 }
 
-final case class AcceptEncoding(matches:ISeq[AcceptEncodingMatch]) {
+final case class AcceptEncoding(matches:Seq[AcceptEncodingMatch]) {
 	def accepts(typ:AcceptEncodingType):Boolean	=
 			acceptance(typ) > QValue.zero
 

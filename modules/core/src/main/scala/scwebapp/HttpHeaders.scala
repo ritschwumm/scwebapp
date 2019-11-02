@@ -3,7 +3,6 @@ package scwebapp
 import java.nio.charset.Charset
 
 import scutil.base.implicits._
-import scutil.lang._
 
 import scwebapp.header._
 import scwebapp.data._
@@ -14,7 +13,7 @@ final case class HttpHeaders(params:NoCaseParameters) {
 			(params firstString typ.key map typ.parseEither).sequenceEither
 
 	/** Fail is invalid, Win(None) if missing, Win(Some) if valid */
-	def all[T](typ:HeaderType[T]):Either[String,ISeq[T]]	=
+	def all[T](typ:HeaderType[T]):Either[String,Seq[T]]	=
 			(params get typ.key map typ.parseEither).sequenceEither
 
 	//------------------------------------------------------------------------------

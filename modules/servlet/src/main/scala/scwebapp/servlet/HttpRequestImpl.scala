@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletRequest
 import scala.jdk.CollectionConverters._
 
 import scutil.base.implicits._
-import scutil.lang._
 
 import scwebapp._
 import scwebapp.data._
@@ -77,7 +76,7 @@ private final class HttpRequestImpl(peer:HttpServletRequest) extends HttpRequest
 						peer.getInputStream use handler
 			}
 
-	def parts:Either[HttpPartsProblem,ISeq[HttpPart]]	=
+	def parts:Either[HttpPartsProblem,Seq[HttpPart]]	=
 			catchHttpPartsProblem(peer.getParts.asScala.toVector) map { _ map { new HttpPartImpl(_) } }
 
 	private def catchHttpPartsProblem[T](it: =>T):Either[HttpPartsProblem,T]	=

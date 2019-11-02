@@ -1,11 +1,9 @@
 package scwebapp
 
-import scutil.lang._
-
 object HttpMethod {
 	import method._
 
-	val all:ISeq[HttpMethod]	=
+	val all:Seq[HttpMethod]	=
 			Vector[HttpMethod](
 				OPTIONS, HEAD, GET, POST, PUT, DELETE, TRACE, CONNECT,
 				PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, LOCK, UNLOCK

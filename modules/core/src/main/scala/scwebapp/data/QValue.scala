@@ -2,7 +2,6 @@ package scwebapp.data
 
 import scutil.base.implicits._
 import scutil.core.implicits._
-import scutil.lang._
 
 import scwebapp.format._
 import scwebapp.parser.string._
@@ -35,10 +34,10 @@ object QValue {
 		lazy val finished:CParser[QValue]	=
 				value.phrase
 
-		lazy val low:CParser[(Char,Option[ISeq[Char]])]		= cis('0') next (cis('.') right (DIGIT		upto 3)).option
-		lazy val high:CParser[(Char,Option[ISeq[Char]])]	= cis('1') next (cis('.') right (cis('0')	upto 3)).option
+		lazy val low:CParser[(Char,Option[Seq[Char]])]	= cis('0') next (cis('.') right (DIGIT		upto 3)).option
+		lazy val high:CParser[(Char,Option[Seq[Char]])]	= cis('1') next (cis('.') right (cis('0')	upto 3)).option
 
-		private def tailing(digits:ISeq[Int], factor:Int):Int =
+		private def tailing(digits:Seq[Int], factor:Int):Int =
 				if (factor == 0)	0
 				else {
 					digits match {

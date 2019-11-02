@@ -18,7 +18,7 @@ object HttpOutput {
 	val empty:HttpOutput	=
 			withOutputStream(constant(()))
 
-	def concat(its:ISeq[HttpOutput]):HttpOutput	=
+	def concat(its:Seq[HttpOutput]):HttpOutput	=
 			(its foldLeft empty)(_ ~> _)
 
 	//------------------------------------------------------------------------------

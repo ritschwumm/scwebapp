@@ -1,7 +1,6 @@
 package scwebapp.header
 
 import scutil.base.implicits._
-import scutil.lang._
 
 import scwebapp.HeaderType
 
@@ -17,4 +16,4 @@ object CacheControl extends HeaderType[CacheControl] {
 			it.directives mkString ", "
 }
 
-final case class CacheControl(directives:ISeq[String])
+final case class CacheControl(directives:Seq[String])

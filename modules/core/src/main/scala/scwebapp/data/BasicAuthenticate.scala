@@ -15,7 +15,7 @@ object BasicAuthenticate {
 	private object parsers {
 		import HttpParsers._
 
-		final case class Challenge(name:String, parameters:ISeq[(String,String)])
+		final case class Challenge(name:String, parameters:Seq[(String,String)])
 
 		val simpleParameter:CParser[(String,String)]	= regParameter map { _._2 }
 		val challenge:CParser[Challenge]				= token next hash(simpleParameter) map Challenge.tupled

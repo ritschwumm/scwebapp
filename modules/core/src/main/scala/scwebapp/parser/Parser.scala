@@ -27,10 +27,10 @@ object Parser {
 	def is[S](c:S):Parser[S,S]	=
 			sat(_ == c)
 
-	def iss[S](cs:ISeq[S]):Parser[S,ISeq[S]]	=
+	def iss[S](cs:Seq[S]):Parser[S,Seq[S]]	=
 			Parser { i =>
 				@tailrec
-				def loop(ii:Input[S], look:ISeq[S]):Result[S,ISeq[S]]	=
+				def loop(ii:Input[S], look:Seq[S]):Result[S,Seq[S]]	=
 						look match {
 							case lookHead +: lookTail	=>
 								 ii.next match {
@@ -125,10 +125,10 @@ final case class Parser[S,+T](parse:Input[S]=>Result[S,T]) { self =>
 				}
 			}
 
-	def seq:Parser[S,ISeq[T]]	=
+	def seq:Parser[S,Seq[T]]	=
 			Parser { i =>
 				@tailrec
-				def loop(ii:Input[S], accu:ISeq[T]):Result[S,ISeq[T]]	=
+				def loop(ii:Input[S], accu:Seq[T]):Result[S,Seq[T]]	=
 						self parse ii match {
 							case Success(i1, t)	=> loop(i1, accu :+ t)
 							case Failure(_)		=> Success(ii, accu)
@@ -139,15 +139,15 @@ final case class Parser[S,+T](parse:Input[S]=>Result[S,T]) { self =>
 	def nes:Parser[S,Nes[T]]	=
 			self next self.seq map { case (x, xs) => Nes(x, xs) }
 
-	def minmax(min:Int, max:Int):Parser[S,ISeq[T]]	=
+	def minmax(min:Int, max:Int):Parser[S,Seq[T]]	=
 			self upto max filter { _.size >= min }
 
-	def times(count:Int):Parser[S,ISeq[T]]	=
+	def times(count:Int):Parser[S,Seq[T]]	=
 			self upto count filter { _.size == count }
 
-	def upto(count:Int):Parser[S,ISeq[T]]	=
+	def upto(count:Int):Parser[S,Seq[T]]	=
 			Parser { i =>
-				@tailrec def loop(in:Input[S], accu:ISeq[T]):Result[S,ISeq[T]]	=
+				@tailrec def loop(in:Input[S], accu:Seq[T]):Result[S,Seq[T]]	=
 						if (accu.size == count)	Success(in, accu)
 						else {
 							self parse in match {
@@ -158,7 +158,7 @@ final case class Parser[S,+T](parse:Input[S]=>Result[S,T]) { self =>
 				loop(i, Vector.empty[T])
 			}
 
-	def sepSeq(sepa:Parser[S,Any]):Parser[S,ISeq[T]]	=
+	def sepSeq(sepa:Parser[S,Any]):Parser[S,Seq[T]]	=
 			sepNes(sepa) map { _.toVector } orElse (Parser success Vector.empty)
 
 	def sepNes(sepa:Parser[S,Any]):Parser[S,Nes[T]]	=

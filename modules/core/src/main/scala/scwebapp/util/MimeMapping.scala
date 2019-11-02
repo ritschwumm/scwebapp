@@ -3,7 +3,6 @@ package scwebapp.util
 import java.util.Locale
 
 import scutil.base.implicits._
-import scutil.lang._
 
 import scwebapp.data.MimeType
 
@@ -1022,7 +1021,7 @@ object MimeMapping {
 	))
 }
 
-final case class MimeMapping(table:ISeq[(String,String)]) {
+final case class MimeMapping(table:Seq[(String,String)]) {
 	private val byExtension	=
 			table
 			.collapseMap { case (extension, typ) =>

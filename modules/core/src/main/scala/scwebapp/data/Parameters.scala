@@ -1,13 +1,11 @@
 package scwebapp.data
 
-import scutil.lang._
-
 import scwebapp.format.CaseUtil
 
 sealed trait Parameters {
-	def all:ISeq[(String,String)]
+	def all:Seq[(String,String)]
 	def names:Set[String]
-	def get(name:String):ISeq[String]
+	def get(name:String):Seq[String]
 
 	//------------------------------------------------------------------------------
 
@@ -29,19 +27,19 @@ sealed trait Parameters {
 object CaseParameters {
 	val empty	= CaseParameters(Vector.empty)
 
-	def apply(values:ISeq[(String,String)]):CaseParameters	=
+	def apply(values:Seq[(String,String)]):CaseParameters	=
 			new CaseParameters(values)
 }
 
 /** case sensitive */
-final class CaseParameters(values:ISeq[(String,String)]) extends Parameters {
-	def all:ISeq[(String,String)]	=
+final class CaseParameters(values:Seq[(String,String)]) extends Parameters {
+	def all:Seq[(String,String)]	=
 			values
 
 	def names:Set[String]	=
 			(values map { _._1 }).toSet
 
-	def get(name:String):ISeq[String]	=
+	def get(name:String):Seq[String]	=
 			values collect	{ case (`name`, value) => value }
 
 	def append(name:String, value:String):CaseParameters	=
@@ -62,19 +60,19 @@ final class CaseParameters(values:ISeq[(String,String)]) extends Parameters {
 object NoCaseParameters {
 	val empty	= NoCaseParameters(Vector.empty)
 
-	def apply(values:ISeq[(String,String)]):NoCaseParameters	=
+	def apply(values:Seq[(String,String)]):NoCaseParameters	=
 			new NoCaseParameters(values)
 }
 
 /** case insensitive */
-final class NoCaseParameters(values:ISeq[(String,String)]) extends Parameters {
-	def all:ISeq[(String,String)]	=
+final class NoCaseParameters(values:Seq[(String,String)]) extends Parameters {
+	def all:Seq[(String,String)]	=
 			values map { case (k,v) => (CaseUtil lowerCase k, v) }
 
 	def names:Set[String]	=
 			(values map { it => CaseUtil lowerCase it._1 }).toSet
 
-	def get(name:String):ISeq[String]	=
+	def get(name:String):Seq[String]	=
 			values collect	{
 				case (k, v) if (CaseUtil lowerCase k) == (CaseUtil lowerCase name)	=> v
 			}

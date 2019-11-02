@@ -5,7 +5,6 @@ import java.util.{ Set=>JSet }
 import javax.servlet._
 
 import scutil.core.implicits._
-import scutil.lang._
 import scutil.resource._
 
 import scwebapp._
@@ -22,7 +21,7 @@ final class ServletContextExtension(peer:ServletContext) {
 	def mount(
 		name:String,
 		handler:HttpHandler,
-		mappings:ISeq[String],
+		mappings:Seq[String],
 		loadOnStartup:Option[Int]
 	):ServletRegistration.Dynamic	= {
 		val servlet	= new HttpHandlerServlet(handler)

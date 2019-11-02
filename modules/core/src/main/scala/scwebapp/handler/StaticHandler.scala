@@ -84,7 +84,7 @@ extends Logging {
 			getClass.getClassLoader.resourceProvider readByteString path
 
 	private def parsePath(it:String):Option[Path]	=
-			it splitAroundChar '/' optionBy { _ forall validPart } flatMap Nes.fromISeq
+			it splitAroundChar '/' optionBy { _ forall validPart } flatMap Nes.fromSeq
 
 	private def validPart(it:String):Boolean	=
 			it != ""	&&

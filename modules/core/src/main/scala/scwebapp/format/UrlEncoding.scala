@@ -5,7 +5,6 @@ import java.nio.charset.Charset
 import java.io.UnsupportedEncodingException
 
 import scutil.base.implicits._
-import scutil.lang._
 import scutil.codec._
 
 import scwebapp.data._
@@ -36,7 +35,7 @@ object UrlEncoding {
 	private def decode(data:String, decode:String=>Either[String,String]):Either[String,CaseParameters]	=
 			if (data.isEmpty)	Right(CaseParameters.empty)
 			else {
-				val triedPairs:ISeq[Either[String,(String,String)]]	=
+				val triedPairs:Seq[Either[String,(String,String)]]	=
 						data
 						.splitAroundChar ('&')
 						.map { part =>

@@ -1,13 +1,12 @@
 package scwebapp.util
 
 import scutil.base.implicits._
-import scutil.lang._
 
 import scwebapp.data._
 
 object AcceptanceUtil {
 	@SuppressWarnings(Array("org.wartremover.warts.TraversableOps"))
-	def acceptance[T](matches:ISeq[T])(extract:T=>Option[(Int,QValue)]):Option[QValue]	=
+	def acceptance[T](matches:Seq[T])(extract:T=>Option[(Int,QValue)]):Option[QValue]	=
 			matches
 			.collapseMap(extract)
 			// get the highest rank
