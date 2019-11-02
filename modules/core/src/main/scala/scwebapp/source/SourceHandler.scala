@@ -208,7 +208,7 @@ object SourceHandler {
 						if (includeContent) {
 							ranges
 							.flatMap	{ r => Vector(boundaryOutput(ContentRangeValue full (r, total)), source range r) }
-							.append		(finishOutput)
+							.appended	(finishOutput)
 							.into		(HttpOutput.concat)
 						}
 						else HttpOutput.empty
