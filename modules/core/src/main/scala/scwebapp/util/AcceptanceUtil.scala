@@ -9,15 +9,14 @@ object AcceptanceUtil {
 	@SuppressWarnings(Array("org.wartremover.warts.TraversableOps"))
 	def acceptance[T](matches:ISeq[T])(extract:T=>Option[(Int,QValue)]):Option[QValue]	=
 			matches
-			.collapseMap	(extract)
-			.groupMap		(identity)
+			.collapseMap(extract)
+			// get the highest rank
+			.groupBy	{ case (level, qvalue)	=> level 	}
 			.toVector
-			// highest rank first
-			.sortBy			{ case (level, _)	=> -level	}
-			.map			{ case (_, group)	=> group	}
-			.filter			{ _.nonEmpty	}
-			// highest rank only
-			.headOption
-			// NOTE this is safe, we filtered for nonEmpty before
-			.map			{ _.max			}
+			.sortBy		{ case (level, pairs)	=> level	}
+			.lastOption
+			.map(
+				// find maximum QValue in the highest rank
+				_._2.map(_._2).max
+			)
 }
