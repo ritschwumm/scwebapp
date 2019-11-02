@@ -34,16 +34,16 @@ object SourceHandler {
 
 		val cacheHeaders:ISeq[HeaderValue]	=
 				source.caching match {
-					case None	=>
+					case SourceCaching.Slient			=>
 						HeaderValues(
 							// browsers tend to misunderstand this as "do not cache at all"
 							// where it really means "revalidate before serving from the cache"
 							// which they do anyway even without this header
 							//CacheControl(ISeq("no-cache"))
 						)
-					case Some(SourceCaching.NotCached)	=>
+					case SourceCaching.NotCached		=>
 						NoCache
-					case Some(SourceCaching.Expires(when))	=>
+					case SourceCaching.Expires(when)	=>
 						HeaderValues(Expires(when(HttpDate.now())))
 				}
 

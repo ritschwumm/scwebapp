@@ -4,6 +4,8 @@ import scutil.base.implicits._
 import scutil.core.implicits._
 import scutil.lang._
 import scutil.log._
+import scutil.codec._
+import scutil.security._
 
 import scwebapp._
 import scwebapp.instances._
@@ -26,7 +28,7 @@ final class StaticHandler(
 	basePath:String,
 	alias:Map[String,String],
 	serverCached:StaticHandler.Path=>Boolean,
-	clientCached:StaticHandler.Path=>Option[SourceCaching]
+	clientCached:StaticHandler.Path=>SourceCaching
 )
 extends Logging {
 	import StaticHandler.Path
@@ -58,12 +60,10 @@ extends Logging {
 	private def loadSource(path:Path):Option[SourceData]	=
 			path into resourcePath into readResource map { bytes =>
 				val mimeType		= mimeTypeFor(path)
-				// TODO should use a hash of the content
-				val contentId		= SourceData httpDateContentId (lastModified, bytes.size)
 				SourceData(
 					size			= bytes.size.toLong,
 					range			= HttpOutput writeByteStringRange (bytes, _),
-					contentId		= contentId,
+					contentId		= hashString(bytes),
 					lastModified	= lastModified,
 					caching			= clientCached(path),
 					mimeType		= mimeType,
@@ -71,6 +71,11 @@ extends Logging {
 					enableGZIP		= doGzip(mimeType)
 				)
 			}
+
+	private def hashString(it:ByteString):String =
+			Hex encodeByteString (
+				Hashing hash ("SHA-256", 1, it)
+			)
 
 	private def resourcePath(path:Path):String	=
 			(basePath +: path).toVector mkString "/"

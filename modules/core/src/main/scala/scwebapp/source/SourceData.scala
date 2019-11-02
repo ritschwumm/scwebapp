@@ -18,7 +18,7 @@ object SourceData {
 		file:File,
 		contentId:String,
 		lastModified:MilliInstant,
-		caching:Option[SourceCaching],
+		caching:SourceCaching,
 		mimeType:MimeType,
 		disposition:Option[SourceDisposition],
 		enableGZIP:Boolean
@@ -40,7 +40,7 @@ final case class SourceData(
 	range:InclusiveRange=>HttpOutput,
 	contentId:String,
 	lastModified:HttpDate,
-	caching:Option[SourceCaching],
+	caching:SourceCaching,
 	mimeType:MimeType,
 	disposition:Option[SourceDisposition],
 	enableGZIP:Boolean
