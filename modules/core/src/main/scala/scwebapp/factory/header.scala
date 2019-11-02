@@ -19,7 +19,4 @@ trait header {
 				Pragma("no-cache"),
 				Expires(HttpDate.zero)
 			)
-
-	@deprecated("use DisableCaching", "0.200.0")
-	val NoCache:HeaderValues	= DisableCaching
 }

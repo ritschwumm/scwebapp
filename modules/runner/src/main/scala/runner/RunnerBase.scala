@@ -68,6 +68,7 @@ object RunnerBase extends Logging {
 		server			addBean		errorHandler
 
 		INFO("starting server")
+		@volatile var running:Boolean	= true
 		try {
 			server.start()
 		}
@@ -77,9 +78,13 @@ object RunnerBase extends Logging {
 		}
 
 		def stop() {
-			INFO("stopping server")
-			server.stop()
-			disposable.dispose()
+			if (running) {
+				running = false
+
+				INFO("stopping server")
+				server.stop()
+				disposable.dispose()
+			}
 		}
 
 		Runtime.getRuntime addShutdownHook new Thread(() => stop())

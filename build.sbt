@@ -1,6 +1,6 @@
 inThisBuild(Seq(
 	organization	:= "de.djini",
-	version			:= "0.200.0",
+	version			:= "0.201.0",
 
 	scalaVersion	:= "2.12.8",
 	scalacOptions	++= Seq(
@@ -86,7 +86,7 @@ lazy val `scwebapp-runner`	=
 		(project in file("modules/runner"))
 		.settings(
 			libraryDependencies		++= Seq(
-				"org.eclipse.jetty"	%	"jetty-server"	% "9.4.18.v20190429"	% "compile"
+				"org.eclipse.jetty"	%	"jetty-server"	% "9.4.19.v20190610"	% "compile"
 			)
 		)
 		.dependsOn(
