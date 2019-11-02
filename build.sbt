@@ -1,6 +1,6 @@
 inThisBuild(Seq(
 	organization	:= "de.djini",
-	version			:= "0.193.0",
+	version			:= "0.194.0",
 
 	scalaVersion	:= "2.12.8",
 	scalacOptions	++= Seq(
