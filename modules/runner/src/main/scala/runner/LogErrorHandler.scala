@@ -13,7 +13,7 @@ final class LogErrorHandler extends ErrorHandler with Logging {
 	override def handleErrorPage(request:HttpServletRequest, writer:Writer, code:Int, message:String):Unit = {
 		WARN log (
 			LogString("handling error") +:
-			Vector(
+			Vector[Option[LogValue]](
 				Option(message) map LogString.apply,
 				Option(request getAttribute "javax.servlet.error.exception") map {
 					case e:Throwable	=> LogThrowable(e)

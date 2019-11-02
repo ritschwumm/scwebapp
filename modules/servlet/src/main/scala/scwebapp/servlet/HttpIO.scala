@@ -10,7 +10,7 @@ import scutil.lang._
 import scwebapp._
 
 object HttpIO {
-	def execute(servletRequest:HttpServletRequest, servletResponse:HttpServletResponse, handler:HttpHandler) {
+	def execute(servletRequest:HttpServletRequest, servletResponse:HttpServletResponse, handler:HttpHandler):Unit	= {
 		val request		= readRequest(servletRequest)
 		val responder	= handler(request)
 		responder match {
@@ -24,17 +24,17 @@ object HttpIO {
 
 				val alive	= new AtomicBoolean(true)
 
-				def completeWith(response:HttpResponse) {
+				def completeWith(response:HttpResponse):Unit	= {
 					if (alive compareAndSet(true, false)) {
 						writeResponse(response, servletResponse)
 						asyncCtx.complete()
 					}
 				}
 				asyncCtx addListener new AsyncListener {
-					def onStartAsync(ev:AsyncEvent)	{}
-					def onComplete(ev:AsyncEvent)	{ alive set false	}
-					def onTimeout(ev:AsyncEvent)	{ completeWith(timeoutResponse())	}
-					def onError(ev:AsyncEvent)		{ completeWith(errorResponse())		}
+					def onStartAsync(ev:AsyncEvent):Unit	= {}
+					def onComplete(ev:AsyncEvent):Unit		= { alive set false	}
+					def onTimeout(ev:AsyncEvent):Unit		= { completeWith(timeoutResponse())	}
+					def onError(ev:AsyncEvent):Unit			= { completeWith(errorResponse())		}
 				}
 				responseCont(completeWith)
 		}
@@ -43,7 +43,7 @@ object HttpIO {
 	private def readRequest(servletRequest:HttpServletRequest):HttpRequest	=
 			new HttpRequestImpl(servletRequest)
 
-	private def writeResponse(response:HttpResponse, servletResponse:HttpServletResponse) {
+	private def writeResponse(response:HttpResponse, servletResponse:HttpServletResponse):Unit	= {
 		response.reason match {
 			case Some(reason)	=> servletResponse sendError (response.status.id, reason)
 			case None			=> servletResponse setStatus response.status.id

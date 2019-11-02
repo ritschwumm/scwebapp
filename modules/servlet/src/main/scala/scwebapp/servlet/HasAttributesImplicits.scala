@@ -20,7 +20,7 @@ trait HasAttributesImplicits {
 				new HttpAttribute[T] {
 					@SuppressWarnings(Array("org.wartremover.warts.AsInstanceOf"))
 					def get:Option[T] = Option(getFunc(name).asInstanceOf[T])
-					def set(t:Option[T]) {
+					def set(t:Option[T]):Unit	= {
 						t match {
 							case Some(tt)	=> setFunc(name, tt)
 							case None		=> removeFunc(name)

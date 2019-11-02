@@ -133,7 +133,7 @@ object SourceHandler {
 		val contentDisposition:Option[HeaderValue]		=
 				source.disposition map { case SourceDisposition(attachment, fileName) =>
 					HeaderValue fromHeader ContentDisposition(
-						attachment cata (ContentDispositionType.Inline, ContentDispositionType.Attachment),
+						attachment cata[ContentDispositionType] (ContentDispositionType.Inline, ContentDispositionType.Attachment),
 						fileName
 					)
 				}

@@ -7,13 +7,13 @@ final class Channel[T] {
 	private val ok		= thunk(())
 
 	/** must not be called more than once */
-	def put(v:T) {
-		state modify putter(v) apply ()
+	def put(v:T):Unit	= {
+		(state modify putter(v)).apply()
 	}
 
 	/** must not be called more than once */
-	def get(h:Effect[T]) {
-		state modify getter(h) apply ()
+	def get(h:Effect[T]):Unit	= {
+		(state modify getter(h)).apply()
 	}
 
 	private def putter(v:T):State[ChannelState[T],Thunk[Unit]]	=

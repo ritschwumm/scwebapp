@@ -37,7 +37,7 @@ object SetCookie extends HeaderType[SetCookie] {
 		*/
 
 		val avs:Vector[Option[CookieAv]]	=
-				Vector(
+				Vector[Option[CookieAv]](
 					it.domain	map		CookieAv.DomainAv.apply,
 					it.path		map		CookieAv.PathAv.apply,
 					it.maxAge	map		CookieAv.MaxAgeAv.apply,

@@ -16,7 +16,7 @@ trait BootstrapBase extends ServletContextListener with Logging {
 
 	@volatile private var disposable:Option[Disposable]	= None
 
-	def contextInitialized(ev:ServletContextEvent) {
+	def contextInitialized(ev:ServletContextEvent):Unit	= {
 		val sc	= ev.getServletContext
 
 		INFO("starting application")
@@ -32,7 +32,7 @@ trait BootstrapBase extends ServletContextListener with Logging {
 		)
 	}
 
-	def contextDestroyed(ev:ServletContextEvent) {
+	def contextDestroyed(ev:ServletContextEvent):Unit	= {
 		INFO("stopping application")
 		disposable	foreach { _.dispose() }
 	}

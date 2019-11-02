@@ -5,7 +5,7 @@ import java.io.InputStream
 
 import javax.servlet.http.Part
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 import scutil.base.implicits._
 

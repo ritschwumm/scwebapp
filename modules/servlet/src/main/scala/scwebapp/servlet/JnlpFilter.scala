@@ -33,11 +33,11 @@ final class BootServletContextListener extends ServletContextListener {
 final class JnlpFilter extends Filter with Logging {
 	@volatile private var filterConfig:Option[FilterConfig] 	= None
 
-	def init(filterConfig:FilterConfig) {
+	def init(filterConfig:FilterConfig):Unit	= {
 		this.filterConfig	= Some(filterConfig)
 	}
 
-	def destroy() {
+	def destroy():Unit	= {
 		this.filterConfig	= None
 	}
 
@@ -55,7 +55,7 @@ final class JnlpFilter extends Filter with Logging {
 
 	//------------------------------------------------------------------------------
 
-	def doFilter(request:ServletRequest, response:ServletResponse, filterChain:FilterChain) {
+	def doFilter(request:ServletRequest, response:ServletResponse, filterChain:FilterChain):Unit	= {
 		@SuppressWarnings(Array("org.wartremover.warts.AsInstanceOf"))
 		val	httpRequest		= request.asInstanceOf[HttpServletRequest]
 		@SuppressWarnings(Array("org.wartremover.warts.AsInstanceOf"))
@@ -74,7 +74,7 @@ final class JnlpFilter extends Filter with Logging {
 
 			httpResponse setContentLength	output.size
 			httpResponse.getOutputStream	write	output
-			httpResponse.getOutputStream 	flush	()
+			httpResponse.getOutputStream 	.flush	()
 		}
 	}
 
@@ -82,7 +82,7 @@ final class JnlpFilter extends Filter with Logging {
 	private final class ResponseWrapper(response:HttpServletResponse) extends HttpServletResponseWrapper(response) with Logging {
 		private val buffer			= new mutable.ArrayBuffer[Byte]
 		private val outputStream	= new ServletOutputStream {
-			def write(byt:Int) {
+			def write(byt:Int):Unit	= {
 				buffer += byt.toByte
 			}
 			def isReady:Boolean								= false

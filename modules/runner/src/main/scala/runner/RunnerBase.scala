@@ -13,7 +13,7 @@ import scwebapp.HttpHandler
 import scwebapp.servlet.HttpIO
 
 object RunnerBase extends Logging {
-	def start(config:ServerConfig, application:() => (Disposable, HttpHandler)) {
+	def start(config:ServerConfig, application:() => (Disposable, HttpHandler)):Unit	= {
 		// starts with /
 		// does not end with /
 		// is "" for the root context
@@ -31,7 +31,7 @@ object RunnerBase extends Logging {
 
 		val handler		= new AbstractHandler {
 			// throws IOException, ServletException
-			def handle(target:String, baseRequest:Request, request:HttpServletRequest, response:HttpServletResponse) {
+			def handle(target:String, baseRequest:Request, request:HttpServletRequest, response:HttpServletResponse):Unit	= {
 				if (target startsWith (contextPath + "/")) {
 					baseRequest setContextPath contextPath
 					HttpIO execute (request, response, httpHandler)
@@ -77,7 +77,7 @@ object RunnerBase extends Logging {
 			sys exit 1
 		}
 
-		def stop() {
+		def stop():Unit	= {
 			if (running) {
 				running = false
 

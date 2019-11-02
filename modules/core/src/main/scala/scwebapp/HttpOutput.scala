@@ -52,7 +52,7 @@ object HttpOutput {
 					val buffer	= new Array[Byte](bufferSize)
 					input seek range.start
 					@tailrec
-					def loop(todo:Long) {
+					def loop(todo:Long):Unit	= {
 						if (todo != 0) {
 							val read	= input read (buffer, 0, (todo min buffer.length).toInt)
 							if (read >= 0) {

@@ -6,11 +6,11 @@ import javax.servlet._
 final class CharsetFilter extends Filter {
 	@volatile private var filterConfig:Option[FilterConfig] 	= None
 
-	def init(filterConfig:FilterConfig) {
+	def init(filterConfig:FilterConfig):Unit	= {
 		this.filterConfig	= Some(filterConfig)
 	}
 
-	def destroy() {
+	def destroy():Unit	= {
 		this.filterConfig	= None
 	}
 
@@ -26,7 +26,7 @@ final class CharsetFilter extends Filter {
 
 	//------------------------------------------------------------------------------
 
-	def doFilter(request:ServletRequest, response:ServletResponse, filterChain:FilterChain) {
+	def doFilter(request:ServletRequest, response:ServletResponse, filterChain:FilterChain):Unit	= {
 		// config.getServletContext log ("filter: " + response.getContentType)
 		request  setCharacterEncoding charset
 		response setCharacterEncoding charset

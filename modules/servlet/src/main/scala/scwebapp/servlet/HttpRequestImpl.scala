@@ -7,7 +7,7 @@ import java.io.InputStream
 import javax.servlet.ServletException
 import javax.servlet.http.HttpServletRequest
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 import scutil.base.implicits._
 import scutil.lang._

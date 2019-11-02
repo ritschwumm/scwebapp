@@ -1,6 +1,5 @@
 package scwebapp.data
 
-import scutil.base.implicits._
 import scutil.time.MilliDuration
 
 object HttpDuration {

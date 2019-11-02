@@ -6,7 +6,7 @@ object HttpMethod {
 	import method._
 
 	val all:ISeq[HttpMethod]	=
-			Vector (
+			Vector[HttpMethod](
 				OPTIONS, HEAD, GET, POST, PUT, DELETE, TRACE, CONNECT,
 				PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, LOCK, UNLOCK
 			)
