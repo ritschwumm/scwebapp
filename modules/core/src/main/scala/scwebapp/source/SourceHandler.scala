@@ -36,13 +36,24 @@ object SourceHandler {
 				source.caching match {
 					case SourceCaching.Silent			=>
 						HeaderValues(
-							// browsers tend to misunderstand this as "do not cache at all"
-							// where it really means "revalidate before serving from the cache"
-							// which they do anyway even without this header
-							//CacheControl(ISeq("no-cache"))
+							/*
+							// TODO is all this still true?
+
+							browsers tend to misunderstand this as "do not cache at all"
+							where it really means "revalidate before serving from the cache"
+							which they do anyway even without this header
+							CacheControl(ISeq("no-cache"))
+
+							this is slightly different, but browsers seem to do that
+							automatically when ETag or LastModified is present
+							CacheControl(ISeq("must-revalidate"))
+
+							if this is used, blink (chrome) still takes data from the memory
+							cache on programmatic reloads, though!
+							*/
 						)
-					case SourceCaching.NotCached		=>
-						NoCache
+					case SourceCaching.Disabled		=>
+						DisableCaching
 					case SourceCaching.Expires(when)	=>
 						HeaderValues(Expires(when(HttpDate.now())))
 				}

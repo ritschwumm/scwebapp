@@ -22,7 +22,7 @@ object StaticHandler {
 basePath		could be	META-INF/resources
 alias			could be	Map("" -> "index.html")
 serverCached	could be	_ => true
-clientCached	could be	it => if (it == Nes.single("sw.js")) SourceCaching.NotCached else SourceCaching.Silent
+clientCached	could be	it => if (it == Nes.single("sw.js")) SourceCaching.Disabled else SourceCaching.Expires(_ + HttpDuration.day)
 */
 final class StaticHandler(
 	basePath:String,

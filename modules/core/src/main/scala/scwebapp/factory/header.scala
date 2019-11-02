@@ -13,10 +13,13 @@ trait header {
 	type HeaderValues	= ISeq[HeaderValue]
 	def HeaderValues(values:HeaderValue*):ISeq[HeaderValue]	= values.toVector
 
-	def NoCache:HeaderValues	=
+	val DisableCaching:HeaderValues	=
 			Vector[HeaderValue](
 				CacheControl(ISeq("no-cache", "no-store", "must-revalidate")),
 				Pragma("no-cache"),
 				Expires(HttpDate.zero)
 			)
+
+	@deprecated("use DisableCaching", "0.200.0")
+	val NoCache:HeaderValues	= DisableCaching
 }
