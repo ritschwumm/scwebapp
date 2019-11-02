@@ -12,7 +12,7 @@ object SourceData {
 			lastModified.seconds.toString + "-" + size.toString
 
 	def milliInstantContentId(lastModified:MilliInstant, size:Long):String	=
-		lastModified.millis.toString + "-" + size.toString
+			lastModified.millis.toString + "-" + size.toString
 
 	def forFile(
 		file:File,

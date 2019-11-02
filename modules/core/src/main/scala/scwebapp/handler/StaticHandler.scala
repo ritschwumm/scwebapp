@@ -58,6 +58,7 @@ extends Logging {
 	private def loadSource(path:Path):Option[SourceData]	=
 			path into resourcePath into readResource map { bytes =>
 				val mimeType		= mimeTypeFor(path)
+				// TODO should use a hash of the content
 				val contentId		= SourceData httpDateContentId (lastModified, bytes.size)
 				SourceData(
 					size			= bytes.size.toLong,
