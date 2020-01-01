@@ -1,6 +1,6 @@
 inThisBuild(Seq(
 	organization	:= "de.djini",
-	version			:= "0.213.0",
+	version			:= "0.214.0",
 
 	scalaVersion	:= "2.13.1",
 	scalacOptions	++= Seq(
@@ -43,51 +43,51 @@ inThisBuild(Seq(
 //------------------------------------------------------------------------------
 
 lazy val `scwebapp`	=
-		(project in file("."))
-		.aggregate(
-			`scwebapp-core`,
-			`scwebapp-servlet`,
-			`scwebapp-runner`
-		)
-		.settings(
-			publishArtifact := false
-		)
+	(project in file("."))
+	.aggregate(
+		`scwebapp-core`,
+		`scwebapp-servlet`,
+		`scwebapp-runner`
+	)
+	.settings(
+		publishArtifact := false
+	)
 
 lazy val `scwebapp-core`	=
-		(project in file("modules/core"))
-		.settings(
-			scalacOptions	++= Seq(
-				"-language:implicitConversions"
-			),
-			libraryDependencies	++= Seq(
-				"de.djini"		%%	"scutil-core"	% "0.167.0"	% "compile",
-				"de.djini"		%%	"scparse-ng"	% "0.167.0"	% "compile",
-				"org.specs2"	%%	"specs2-core"	% "4.8.1"	% "test"
-			)
+	(project in file("modules/core"))
+	.settings(
+		scalacOptions	++= Seq(
+			"-language:implicitConversions"
+		),
+		libraryDependencies	++= Seq(
+			"de.djini"		%%	"scutil-core"	% "0.167.0"	% "compile",
+			"de.djini"		%%	"scparse-ng"	% "0.168.0"	% "compile",
+			"org.specs2"	%%	"specs2-core"	% "4.8.1"	% "test"
 		)
+	)
 
 lazy val `scwebapp-servlet`	=
-		(project in file("modules/servlet"))
-		.settings(
-			scalacOptions	++= Seq(
-				"-language:implicitConversions"
-			),
-			libraryDependencies	++= Seq(
-				"de.djini"		%%	"scutil-core"		% "0.167.0"	% "compile",
-				"javax.servlet"	%	"javax.servlet-api"	% "3.1.0"	% "provided"
-			)
+	(project in file("modules/servlet"))
+	.settings(
+		scalacOptions	++= Seq(
+			"-language:implicitConversions"
+		),
+		libraryDependencies	++= Seq(
+			"de.djini"		%%	"scutil-core"		% "0.167.0"	% "compile",
+			"javax.servlet"	%	"javax.servlet-api"	% "3.1.0"	% "provided"
 		)
-		.dependsOn(
-			`scwebapp-core`
-		)
+	)
+	.dependsOn(
+		`scwebapp-core`
+	)
 
 lazy val `scwebapp-runner`	=
-		(project in file("modules/runner"))
-		.settings(
-			libraryDependencies		++= Seq(
-				"org.eclipse.jetty"	%	"jetty-server"	% "9.4.24.v20191120"	% "compile"
-			)
+	(project in file("modules/runner"))
+	.settings(
+		libraryDependencies		++= Seq(
+			"org.eclipse.jetty"	%	"jetty-server"	% "9.4.24.v20191120"	% "compile"
 		)
-		.dependsOn(
-			`scwebapp-servlet`
-		)
+	)
+	.dependsOn(
+		`scwebapp-servlet`
+	)
