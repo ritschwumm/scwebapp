@@ -40,7 +40,7 @@ object CookieAv {
 		lazy val httponly_av:CParser[CookieAv]			= sis("HttpOnly")	tag HttpOnlyAv
 		lazy val extension_av:CParser[CookieAv]			= something									map ExtensionAv.apply
 		// TODO hack
-		lazy val sane_cookie_date:CParser[HttpDate]		= something filterMap HttpDate.parse
+		lazy val sane_cookie_date:CParser[HttpDate]		= something collapseMap HttpDate.parse
 
 		//// helper
 		lazy val duration:CParser[HttpDuration]			= longPositive map HttpDuration.apply

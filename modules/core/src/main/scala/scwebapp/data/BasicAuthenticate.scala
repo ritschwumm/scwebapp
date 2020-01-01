@@ -30,7 +30,7 @@ object BasicAuthenticate {
 				}
 				yield BasicAuthenticate(rlm)
 
-		val value:CParser[BasicAuthenticate]	= challengeList filterMap findBasicRealm
+		val value:CParser[BasicAuthenticate]	= challengeList collapseMap findBasicRealm
 	}
 }
 

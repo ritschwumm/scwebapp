@@ -4,17 +4,17 @@ import scala.annotation.tailrec
 
 import scutil.lang._
 
-object Parser {
-	import Result.{Success,Failure}
+import scwebapp.parser.Result.{Success,Failure}
 
+object Parser {
 	def success[S,T](t:T):Parser[S,T]	=
-			Parser { i:Input[S] => Result.Success(i, t) }
+			i => Result.Success(i, t)
 
 	def failure[S]:Parser[S,Unit]	=
-			Parser { i => Result.Failure(i) }
+			i => Result.Failure(i)
 
 	def any[S]:Parser[S,S]	=
-			Parser { i =>
+			i => {
 				i.next match {
 					case Some((rest, item))	=> Success(rest, item)
 					case None				=> Failure(i)
@@ -28,7 +28,7 @@ object Parser {
 			sat(_ == c)
 
 	def iss[S](cs:Seq[S]):Parser[S,Seq[S]]	=
-			Parser { i =>
+			i => {
 				@tailrec
 				def loop(ii:Input[S], look:Seq[S]):Result[S,Seq[S]]	=
 						look match {
@@ -47,11 +47,11 @@ object Parser {
 			any[S].prevent
 }
 
-final case class Parser[S,+T](parse:Input[S]=>Result[S,T]) { self =>
-	import Result.{Success,Failure}
+abstract class Parser[S,+T] { self =>
+	def parse(input:Input[S]):Result[S,T]
 
 	def filter(pred:Predicate[T]):Parser[S,T]	=
-			Parser { i => self parse i filter pred }
+			i => self parse i filter pred
 
 	def withFilter(pred:Predicate[T])	= new GenWithFilter[T](self, pred)
 	class GenWithFilter[+A](self:Parser[S,A], pred:Predicate[A]) {
@@ -61,13 +61,13 @@ final case class Parser[S,+T](parse:Input[S]=>Result[S,T]) { self =>
 	}
 
 	def orElse[U>:T](that:Parser[S,U]):Parser[S,U]	=
-			Parser { i => (self parse i) orElse (that parse i) }
+			i => (self parse i) orElse (that parse i)
 
 	def map[U](func:T=>U):Parser[S,U]	=
-			Parser { i => self parse i map func }
+			i => self parse i map func
 
 	def flatMap[U](func:T=>Parser[S,U]):Parser[S,U]	=
-			Parser { i =>
+			i => {
 				self parse i match {
 					case Success(i1, t)	=> func(t) parse i1
 					case Failure(i)		=> Failure(i)
@@ -77,14 +77,14 @@ final case class Parser[S,+T](parse:Input[S]=>Result[S,T]) { self =>
 	def flatten[U](implicit ev:T=>Parser[S,U]):Parser[S,U]	=
 			flatMap(ev)
 
-	def filterMap[U](pfunc:PFunction[T,U]):Parser[S,U]	=
-			Parser { i => self parse i filterMap pfunc }
+	def collapseMap[U](pfunc:PFunction[T,U]):Parser[S,U]	=
+			i => self parse i filterMap pfunc
 
-	def filterSome[U](implicit ev:PFunction[T,U]):Parser[S,U]	=
-			filterMap(ev)
+	def collapse[U](implicit ev:PFunction[T,U]):Parser[S,U]	=
+			collapseMap(ev)
 
 	def collect[U](pfunc:PartialFunction[T,U]):Parser[S,U]	=
-			filterMap(pfunc.lift)
+			collapseMap(pfunc.lift)
 
 	// function effect first
 	def ap[U,V](that:Parser[S,U])(implicit ev:T=>(U=>V)):Parser[S,V]	=
@@ -106,7 +106,7 @@ final case class Parser[S,+T](parse:Input[S]=>Result[S,T]) { self =>
 			quote right self left quote
 
 	def flag:Parser[S,Boolean]	=
-			Parser { i =>
+			i => {
 				self parse i match {
 					case Success(i1, _)	=> Success(i1,	true)
 					case Failure(_)		=> Success(i,	false)
@@ -118,7 +118,7 @@ final case class Parser[S,+T](parse:Input[S]=>Result[S,T]) { self =>
 			(that map Right.apply)
 
 	def option:Parser[S,Option[T]]	=
-			Parser { i =>
+			i => {
 				self parse i match {
 					case Success(i1, t)	=> Success(i1,	Some(t))
 					case Failure(_)		=> Success(i,	None)
@@ -126,7 +126,7 @@ final case class Parser[S,+T](parse:Input[S]=>Result[S,T]) { self =>
 			}
 
 	def seq:Parser[S,Seq[T]]	=
-			Parser { i =>
+			i => {
 				@tailrec
 				def loop(ii:Input[S], accu:Seq[T]):Result[S,Seq[T]]	=
 						self parse ii match {
@@ -146,7 +146,7 @@ final case class Parser[S,+T](parse:Input[S]=>Result[S,T]) { self =>
 			self upto count filter { _.size == count }
 
 	def upto(count:Int):Parser[S,Seq[T]]	=
-			Parser { i =>
+			i => {
 				@tailrec def loop(in:Input[S], accu:Seq[T]):Result[S,Seq[T]]	=
 						if (accu.size == count)	Success(in, accu)
 						else {
@@ -168,7 +168,7 @@ final case class Parser[S,+T](parse:Input[S]=>Result[S,T]) { self =>
 			prevent.prevent
 
 	def prevent:Parser[S,Unit]	=
-			Parser { i =>
+			i => {
 				self parse i match {
 					case Success(_, _)	=> Failure(i)
 					case Failure(_)		=> Success(i, ())
@@ -185,7 +185,7 @@ final case class Parser[S,+T](parse:Input[S]=>Result[S,T]) { self =>
 			self left Parser.end
 
 	def nest[U,V](mkInput:T=>Input[U], inner:Parser[U,V]):Parser[S,V]	=
-			Parser { selfInput =>
+			selfInput => {
 				self parse selfInput match {
 					case Success(selfRemainder, selfValue)	=>
 						inner.phrase parse mkInput(selfValue) match {
