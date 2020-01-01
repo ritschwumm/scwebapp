@@ -7,22 +7,22 @@ object AcceptEncodingType {
 	lazy val parser:TextParser[AcceptEncodingType]	= parsers.value
 
 	def unparse(it:AcceptEncodingType):String	=
-			it match {
-				case Identity	=> "identity"
-				case Other(x)	=> ContentEncodingType unparse x
-			}
+		it match {
+			case Identity	=> "identity"
+			case Other(x)	=> ContentEncodingType unparse x
+		}
 
 	private object parsers {
 		import HttpParsers._
 
 		val identity:TextParser[AcceptEncodingType]	=
-				token map CaseUtil.lowerCase ensure (_ == "identity") named "identity \"identity\"" tag Identity
+			token map CaseUtil.lowerCase ensure (_ == "identity") named "identity \"identity\"" tag Identity
 
 		val other:TextParser[AcceptEncodingType]	=
-				ContentEncodingType.parser map Other.apply
+			ContentEncodingType.parser map Other.apply
 
 		val value:TextParser[AcceptEncodingType]	=
-				identity orElse other
+			identity orElse other
 	}
 
 	//------------------------------------------------------------------------------

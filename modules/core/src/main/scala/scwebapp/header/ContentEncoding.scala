@@ -9,10 +9,10 @@ object ContentEncoding extends HeaderType[ContentEncoding] {
 	val key	= "Content-Encoding"
 
 	def parse(it:String):Option[ContentEncoding]	=
-			parsers.finished.parseString(it).toOption
+		parsers.finished.parseString(it).toOption
 
 	def unparse(it:ContentEncoding):String	=
-			ContentEncodingType unparse it.typ
+		ContentEncodingType unparse it.typ
 
 	private object parsers {
 		import HttpParsers._

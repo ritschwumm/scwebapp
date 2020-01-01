@@ -9,10 +9,10 @@ object IfUnmodifiedSince extends HeaderType[IfUnmodifiedSince] {
 	val key	= "If-Unmodified-Since"
 
 	def parse(it:String):Option[IfUnmodifiedSince]	=
-			parsers.finished.parseString(it).toOption
+		parsers.finished.parseString(it).toOption
 
 	def unparse(it:IfUnmodifiedSince):String	=
-			HttpDate unparse it.value
+		HttpDate unparse it.value
 
 	private object parsers {
 		import HttpParsers._
@@ -25,5 +25,5 @@ object IfUnmodifiedSince extends HeaderType[IfUnmodifiedSince] {
 final case class IfUnmodifiedSince(value:HttpDate) {
 	// TODO why add a second here?
 	def wasModified(modificationTime:HttpDate):Boolean	=
-			value + HttpDuration.second > modificationTime
+		value + HttpDuration.second > modificationTime
 }

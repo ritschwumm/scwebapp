@@ -9,10 +9,10 @@ object IfRange extends HeaderType[IfRange] {
 	val key	= "If-Range"
 
 	def parse(it:String):Option[IfRange]	=
-			parsers.finished.parseString(it).toOption
+		parsers.finished.parseString(it).toOption
 
 	def unparse(it:IfRange):String	=
-			IfRangeValue unparse it.value
+		IfRangeValue unparse it.value
 
 	private object parsers {
 		import HttpParsers._
@@ -24,5 +24,5 @@ object IfRange extends HeaderType[IfRange] {
 
 final case class IfRange(value:IfRangeValue) {
 	def needsFull(eTag:ETagValue, lastModified:HttpDate):Boolean	=
-			value needsFull (eTag, lastModified)
+		value needsFull (eTag, lastModified)
 }

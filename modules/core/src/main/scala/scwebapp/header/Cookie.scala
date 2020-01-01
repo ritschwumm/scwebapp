@@ -9,10 +9,10 @@ object Cookie extends HeaderType[Cookie] {
 	val key	= "Cookie"
 
 	def parse(it:String):Option[Cookie]	=
-			parsers.finished.parseString(it).toOption
+		parsers.finished.parseString(it).toOption
 
 	def unparse(it:Cookie):String	=
-			HttpUnparsers parameters it.values
+		HttpUnparsers parameters it.values
 
 	private object parsers {
 		import HttpParsers._

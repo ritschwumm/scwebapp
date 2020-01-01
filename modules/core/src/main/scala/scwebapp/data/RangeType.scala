@@ -13,21 +13,21 @@ object RangeType {
 	lazy val parser:TextParser[RangeType]	= parsers.value
 
 	def unparse(it:RangeType):String	=
-			it match {
-				case IsNone	=> "none"
-				case Bytes	=> "bytes"
-			}
+		it match {
+			case IsNone	=> "none"
+			case Bytes	=> "bytes"
+		}
 
 	private object parsers {
 		import HttpParsers._
 
 		val value:TextParser[RangeType]		=
-				token
-				.requirePartial[RangeType] {
-					case "none"		=> IsNone
-					case "bytes"	=> Bytes
-				}
-				.named("RangeType")
+			token
+			.requirePartial[RangeType] {
+				case "none"		=> IsNone
+				case "bytes"	=> Bytes
+			}
+			.named("RangeType")
 	}
 
 	case object IsNone	extends RangeType

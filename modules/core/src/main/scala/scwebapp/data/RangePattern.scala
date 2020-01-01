@@ -7,14 +7,14 @@ import scparse.ng.text._
 
 object RangePattern {
 	lazy val parser:TextParser[RangePattern]	=
-			parsers.value
+		parsers.value
 
 	def unparse(it:RangePattern):String	=
-			it match {
-				case Begin(s)		=> s.toString + "-"
-				case End(c)		=> "-" + c.toString
-				case FromTo(s,e)	=> s.toString + "-" + e.toString
-			}
+		it match {
+			case Begin(s)		=> s.toString + "-"
+			case End(c)		=> "-" + c.toString
+			case FromTo(s,e)	=> s.toString + "-" + e.toString
+		}
 
 	private object parsers {
 		import HttpParsers._
@@ -23,11 +23,11 @@ object RangePattern {
 		val byteRangeSpec:TextParser[(Long,Option[Long])]	= bytePos left symbol('-') next bytePos.option
 		val suffixByteRangeSpec:TextParser[Long]			= symbol('-') right bytePos
 		val value:TextParser[RangePattern]	=
-				byteRangeSpec either suffixByteRangeSpec map {
-					case Left((a, None))	=> Begin(a)
-					case Left((a, Some(b)))	=> FromTo(a, b)
-					case Right(b)			=> End(b)
-				}
+			byteRangeSpec either suffixByteRangeSpec map {
+				case Left((a, None))	=> Begin(a)
+				case Left((a, Some(b)))	=> FromTo(a, b)
+				case Right(b)			=> End(b)
+			}
 	}
 
 	//------------------------------------------------------------------------------

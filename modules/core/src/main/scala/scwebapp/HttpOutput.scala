@@ -16,95 +16,95 @@ object HttpOutput {
 	private val bufferSize = 16384
 
 	val empty:HttpOutput	=
-			withOutputStream(constant(()))
+		withOutputStream(constant(()))
 
 	def concat(its:Seq[HttpOutput]):HttpOutput	=
-			(its foldLeft empty)(_ ~> _)
+		(its foldLeft empty)(_ ~> _)
 
 	//------------------------------------------------------------------------------
 
 	def withOutputStream(handler:Effect[OutputStream]):HttpOutput	=
-			new HttpOutput {
-				def intoOutputStream(ost:OutputStream):Unit	= handler(ost)
-			}
+		new HttpOutput {
+			def intoOutputStream(ost:OutputStream):Unit	= handler(ost)
+		}
 
 	def writeByteString(data:ByteString):HttpOutput	=
-			withOutputStream { ost =>
-				ost writeByteString (data, 0, data.size)
-			}
+		withOutputStream { ost =>
+			ost writeByteString (data, 0, data.size)
+		}
 
 	// TODO toInt is questionable
 	def writeByteStringRange(data:ByteString, range:InclusiveRange):HttpOutput	=
-			withOutputStream { ost =>
-				ost writeByteString (data, range.start.toInt, range.length.toInt)
-			}
+		withOutputStream { ost =>
+			ost writeByteString (data, range.start.toInt, range.length.toInt)
+		}
 
 	def writeFile(data:File):HttpOutput	=
-			withOutputStream { ost =>
-				data withInputStream { ist =>
-					ist transferToPre9 ost
-				}
+		withOutputStream { ost =>
+			data withInputStream { ist =>
+				ist transferToPre9 ost
 			}
+		}
 
 	def writeFileRange(data:File, range:InclusiveRange):HttpOutput	=
-			withOutputStream { ost =>
-				new RandomAccessFile(data, "r") use { input =>
-					val buffer	= new Array[Byte](bufferSize)
-					input seek range.start
-					@tailrec
-					def loop(todo:Long):Unit	= {
-						if (todo != 0) {
-							val read	= input read (buffer, 0, (todo min buffer.length).toInt)
-							if (read >= 0) {
-								ost write (buffer, 0, read)
-								loop(todo - read)
-							}
+		withOutputStream { ost =>
+			new RandomAccessFile(data, "r") use { input =>
+				val buffer	= new Array[Byte](bufferSize)
+				input seek range.start
+				@tailrec
+				def loop(todo:Long):Unit	= {
+					if (todo != 0) {
+						val read	= input read (buffer, 0, (todo min buffer.length).toInt)
+						if (read >= 0) {
+							ost write (buffer, 0, read)
+							loop(todo - read)
 						}
 					}
-					loop(range.length)
 				}
+				loop(range.length)
 			}
+		}
 
 	def pipeInputStream(data:Thunk[InputStream]):HttpOutput	=
-			withOutputStream { ost =>
-				data() use { ist =>
-					ist transferToPre9 ost
-				}
+		withOutputStream { ost =>
+			data() use { ist =>
+				ist transferToPre9 ost
 			}
+		}
 
 	//------------------------------------------------------------------------------
 
 	def withWriter(encoding:Charset)(handler:Effect[Writer]):HttpOutput	=
-			withOutputStream { ost =>
-				val wr	= new OutputStreamWriter(ost, encoding)
-				handler(wr)
-				wr.flush()
-			}
+		withOutputStream { ost =>
+			val wr	= new OutputStreamWriter(ost, encoding)
+			handler(wr)
+			wr.flush()
+		}
 
 	def writeString(encoding:Charset, data:String):HttpOutput	=
-			withWriter(encoding)(_ write data)
+		withWriter(encoding)(_ write data)
 
 	def pipeReader(encoding:Charset, data:Thunk[Reader]):HttpOutput	=
-			withWriter(encoding) { wr =>
-				data() use { rd =>
-					rd transferToPre10 wr
-				}
+		withWriter(encoding) { wr =>
+			data() use { rd =>
+				rd transferToPre10 wr
 			}
+		}
 }
 
 trait HttpOutput {
 	def intoOutputStream(ost:OutputStream):Unit
 
 	final def ~> (that:HttpOutput):HttpOutput	=
-			HttpOutput withOutputStream { ost =>
-				this intoOutputStream ost
-				that intoOutputStream ost
-			}
+		HttpOutput withOutputStream { ost =>
+			this intoOutputStream ost
+			that intoOutputStream ost
+		}
 
 	final def gzip(bufferSize:Int):HttpOutput	=
-			HttpOutput withOutputStream { ost =>
-				val stream	= new GZIPOutputStream(ost, bufferSize)
-				intoOutputStream(stream)
-				stream.finish()
-			}
+		HttpOutput withOutputStream { ost =>
+			val stream	= new GZIPOutputStream(ost, bufferSize)
+			intoOutputStream(stream)
+			stream.finish()
+		}
 }

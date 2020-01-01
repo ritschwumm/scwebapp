@@ -8,10 +8,10 @@ object XUACompatible extends HeaderType[XUACompatible] {
 	val key	= "X-UA-Compatible"
 
 	def parse(it:String):Option[XUACompatible]	=
-			Some(XUACompatible(it))
+		Some(XUACompatible(it))
 
 	def unparse(it:XUACompatible):String	=
-			it.value
+		it.value
 }
 
 // "IE=edge"

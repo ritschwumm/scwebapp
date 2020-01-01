@@ -8,23 +8,23 @@ object predicate extends predicate
 
 trait predicate {
 	def Method(method:HttpMethod):HttpPredicate	=
-			_.method.toOption == Some(method)
+		_.method.toOption == Some(method)
 
 	def ContextPath(path:String):HttpPredicate	=
-			_.contextPath ==== path
+		_.contextPath ==== path
 
 	def ServletPath(path:String):HttpPredicate	=
-			_.servletPath ==== path
+		_.servletPath ==== path
 
 	def FullPathRaw(path:String):HttpPredicate	=
-			_.fullPathRaw ==== path
+		_.fullPathRaw ==== path
 
 	def FullPathUTF8(path:String):HttpPredicate	=
-			_.fullPathUTF8 exists (_ ==== path)
+		_.fullPathUTF8 exists (_ ==== path)
 
 	def PathInfoRaw(path:String):HttpPredicate	=
-			_.pathInfoRaw ==== path
+		_.pathInfoRaw ==== path
 
 	def PathInfoUTF8(path:String):HttpPredicate	=
-			_.pathInfoUTF8 exists (_ ==== path)
+		_.pathInfoUTF8 exists (_ ==== path)
 }

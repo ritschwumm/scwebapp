@@ -17,14 +17,14 @@ object SourceHandler {
 	private val gzipBufferSize	= 8192
 
 	def plan(source:SourceData):HttpHandler	=
-			request =>
-			HttpResponder(
-				request.method match {
-					case Right(GET)		=> respond(request, source, true)
-					case Right(HEAD)	=> respond(request, source, false)
-					case _				=> HttpResponse(METHOD_NOT_ALLOWED)
-				}
-			)
+		request =>
+		HttpResponder(
+			request.method match {
+				case Right(GET)		=> respond(request, source, true)
+				case Right(HEAD)	=> respond(request, source, false)
+				case _				=> HttpResponse(METHOD_NOT_ALLOWED)
+			}
+		)
 
 	private def respond(request:HttpRequest, source:SourceData, includeContent:Boolean):HttpResponse	= {
 		val contentType		= source.mimeType
@@ -33,30 +33,30 @@ object SourceHandler {
 		val eTag			= ETagValue(false, HttpUnparsers quotedString (URIComponent.utf_8 encode source.contentId))
 
 		val cacheHeaders:Seq[HeaderValue]	=
-				source.caching match {
-					case SourceCaching.Silent			=>
-						HeaderValues(
-							/*
-							// TODO is all this still true?
+			source.caching match {
+				case SourceCaching.Silent			=>
+					HeaderValues(
+						/*
+						// TODO is all this still true?
 
-							browsers tend to misunderstand this as "do not cache at all"
-							where it really means "revalidate before serving from the cache"
-							which they do anyway even without this header
-							CacheControl(Seq("no-cache"))
+						browsers tend to misunderstand this as "do not cache at all"
+						where it really means "revalidate before serving from the cache"
+						which they do anyway even without this header
+						CacheControl(Seq("no-cache"))
 
-							this is slightly different, but browsers seem to do that
-							automatically when ETag or LastModified is present
-							CacheControl(Seq("must-revalidate"))
+						this is slightly different, but browsers seem to do that
+						automatically when ETag or LastModified is present
+						CacheControl(Seq("must-revalidate"))
 
-							if this is used, blink (chrome) still takes data from the memory
-							cache on programmatic reloads, though!
-							*/
-						)
-					case SourceCaching.Disabled		=>
-						DisableCaching
-					case SourceCaching.Expires(when)	=>
-						HeaderValues(Expires(when(HttpDate.now())))
-				}
+						if this is used, blink (chrome) still takes data from the memory
+						cache on programmatic reloads, though!
+						*/
+					)
+				case SourceCaching.Disabled		=>
+					DisableCaching
+				case SourceCaching.Expires(when)	=>
+					HeaderValues(Expires(when(HttpDate.now())))
+			}
 
 		val requestHeaders	= request.headers
 
@@ -71,10 +71,10 @@ object SourceHandler {
 		val ifNoneMatch		= (requestHeaders first IfNoneMatch).toOption.flatten
 		val ifModifiedSince	= (requestHeaders first IfModifiedSince).toOption.flatten
 		val notModified		=
-				ifNoneMatch cata (
-					(ifModifiedSince	exists { it => (it wasModified lastModified) }),
-					it => (it matches eTag)
-				)
+			ifNoneMatch cata (
+				(ifModifiedSince	exists { it => (it wasModified lastModified) }),
+				it => (it matches eTag)
+			)
 		if (notModified) {
 			return HttpResponse(
 				NOT_MODIFIED,	None,
@@ -89,20 +89,20 @@ object SourceHandler {
 		val ifMatch				= (requestHeaders first IfMatch).toOption.flatten
 		val ifUnmodifiedSince	= (requestHeaders first IfUnmodifiedSince).toOption.flatten
 		val preconditionFailed	=
-				ifMatch cata (
-					(ifUnmodifiedSince	exists { it => !(it wasModified lastModified) }),
-					it => !(it matches eTag)
-				)
+			ifMatch cata (
+				(ifUnmodifiedSince	exists { it => !(it wasModified lastModified) }),
+				it => !(it matches eTag)
+			)
 		if (preconditionFailed) {
 			return HttpResponse(PRECONDITION_FAILED)
 		}
 
 		val needsFull	=
-				requestHeaders first IfRange match {
-					case Left(_)		=> true
-					case Right(None)	=> false
-					case Right(Some(x))	=> x needsFull (eTag, lastModified)
-				}
+			requestHeaders first IfRange match {
+				case Left(_)		=> true
+				case Right(None)	=> false
+				case Right(Some(x))	=> x needsFull (eTag, lastModified)
+			}
 
 		val total		= source.size
 		val range		= requestHeaders first Range
@@ -111,44 +111,44 @@ object SourceHandler {
 		// TODO should we fail when needsFull but range headers are invalid?
 		val full:InclusiveRange			= InclusiveRange full total
 		val ranges:Seq[InclusiveRange]	=
-				(needsFull, rangesRaw) match {
-					case (true,		_)											=> Vector(full)
-					case (false,	Right(None))								=> Vector(full)
-					case (false,	Right(Some(ranges)))	if ranges.nonEmpty	=> ranges
-					case _	=>
-						val outRange	= ContentRangeValue total source.size
-						return HttpResponse(
-							REQUESTED_RANGE_NOT_SATISFIABLE,	None,
-							Vector(
-								ContentRange(outRange)
-							)
+			(needsFull, rangesRaw) match {
+				case (true,		_)											=> Vector(full)
+				case (false,	Right(None))								=> Vector(full)
+				case (false,	Right(Some(ranges)))	if ranges.nonEmpty	=> ranges
+				case _	=>
+					val outRange	= ContentRangeValue total source.size
+					return HttpResponse(
+						REQUESTED_RANGE_NOT_SATISFIABLE,	None,
+						Vector(
+							ContentRange(outRange)
 						)
-				}
+					)
+			}
 
 		val acceptEncoding		= (requestHeaders first AcceptEncoding).toOption.flatten
 		val acceptsGzip:Boolean	=
-				source.enableGZIP &&
-				(acceptEncoding exists { _ accepts AcceptEncodingType.Other(ContentEncodingType.Gzip) })
+			source.enableGZIP &&
+			(acceptEncoding exists { _ accepts AcceptEncodingType.Other(ContentEncodingType.Gzip) })
 
 		val contentDisposition:Option[HeaderValue]		=
-				source.disposition map { case SourceDisposition(attachment, fileName) =>
-					HeaderValue fromHeader ContentDisposition(
-						attachment cata[ContentDispositionType] (ContentDispositionType.Inline, ContentDispositionType.Attachment),
-						fileName
-					)
-				}
+			source.disposition map { case SourceDisposition(attachment, fileName) =>
+				HeaderValue fromHeader ContentDisposition(
+					attachment cata[ContentDispositionType] (ContentDispositionType.Inline, ContentDispositionType.Attachment),
+					fileName
+				)
+			}
 
 		val standardHeaders:HeaderValues	=
-				HeaderValues(
-					XContentTypeOptions("nosniff"),
-					AcceptRanges(RangeType.Bytes),
-					ETag(eTag),
-					LastModified(lastModified)
-				) ++ (
-					cacheHeaders
-				) ++ (
-					contentDisposition.toVector
-				)
+			HeaderValues(
+				XContentTypeOptions("nosniff"),
+				AcceptRanges(RangeType.Bytes),
+				ETag(eTag),
+				LastModified(lastModified)
+			) ++ (
+				cacheHeaders
+			) ++ (
+				contentDisposition.toVector
+			)
 
 		// NOTE does not GZIP except for full range
 		// servers and browsers seem to disagree on whether offsets should
@@ -185,33 +185,33 @@ object SourceHandler {
 				val ct			= multipart_byteranges_boundary(boundary)
 
 				def boundaryOutput(r:ContentRangeValue):HttpOutput	=
-						crlfOutput(
-							"",
-							show"--${boundary}",
-							ContentType unparse ContentType(contentType),
-							ContentRange unparse ContentRange(r)
-						)
+					crlfOutput(
+						"",
+						show"--${boundary}",
+						ContentType unparse ContentType(contentType),
+						ContentRange unparse ContentRange(r)
+					)
 
 				def finishOutput:HttpOutput	=
-						crlfOutput(
-							"",
-							show"--${boundary}--"
-						)
+					crlfOutput(
+						"",
+						show"--${boundary}--"
+					)
 
 				def crlfOutput(ss:String*):HttpOutput	=
-						HttpOutput.writeString(
-							Charsets.us_ascii,
-							ss map (_ + "\r\n") mkString ""
-						)
+					HttpOutput.writeString(
+						Charsets.us_ascii,
+						ss map (_ + "\r\n") mkString ""
+					)
 
 				val body	=
-						if (includeContent) {
-							ranges
-							.flatMap	{ r => Vector(boundaryOutput(ContentRangeValue full (r, total)), source range r) }
-							.appended	(finishOutput)
-							.into		(HttpOutput.concat)
-						}
-						else HttpOutput.empty
+					if (includeContent) {
+						ranges
+						.flatMap	{ r => Vector(boundaryOutput(ContentRangeValue full (r, total)), source range r) }
+						.appended	(finishOutput)
+						.into		(HttpOutput.concat)
+					}
+					else HttpOutput.empty
 
 				HttpResponse(
 					PARTIAL_CONTENT, None,

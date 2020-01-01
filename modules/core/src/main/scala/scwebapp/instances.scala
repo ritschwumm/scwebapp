@@ -5,7 +5,7 @@ import scwebapp.factory._
 object instances extends instances
 
 trait instances
-		extends	predicate
-		with	header
-		with	docType
-		with	mimeType
+	extends	predicate
+	with	header
+	with	docType
+	with	mimeType

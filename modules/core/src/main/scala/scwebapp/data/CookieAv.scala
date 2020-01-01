@@ -5,30 +5,30 @@ import scparse.ng.text._
 
 object CookieAv {
 	lazy val parser:TextParser[CookieAv]	=
-			parsers.cookie_av
+		parsers.cookie_av
 
 	def unparse(it:CookieAv):String	=
-			it match {
-				case ExpiresAv(date)		=> "Expires="	+ (HttpDate		unparse date)
-				case MaxAgeAv(duration)		=> "Max-Age="	+ (HttpDuration	unparse duration)
-				case DomainAv(domain)		=> "Domain="	+ domain
-				case PathAv(path)			=> "Path="		+ path
-				case SecureAv				=> "Secure"
-				case HttpOnlyAv				=> "HttpOnly"
-				case ExtensionAv(extension)	=> extension
-			}
+		it match {
+			case ExpiresAv(date)		=> "Expires="	+ (HttpDate		unparse date)
+			case MaxAgeAv(duration)		=> "Max-Age="	+ (HttpDuration	unparse duration)
+			case DomainAv(domain)		=> "Domain="	+ domain
+			case PathAv(path)			=> "Path="		+ path
+			case SecureAv				=> "Secure"
+			case HttpOnlyAv				=> "HttpOnly"
+			case ExtensionAv(extension)	=> extension
+		}
 
 	private object parsers {
 		import HttpParsers._
 
 		lazy val cookie_av:TextParser[CookieAv]			=
-				expires_av	orElse
-				max_age_av	orElse
-				domain_av	orElse
-				path_av		orElse
-				secure_av	orElse
-				httponly_av	orElse
-				extension_av
+			expires_av	orElse
+			max_age_av	orElse
+			domain_av	orElse
+			path_av		orElse
+			secure_av	orElse
+			httponly_av	orElse
+			extension_av
 		lazy val expires_av:TextParser[CookieAv]		= TextParser isString "Expires="	right sane_cookie_date	map	ExpiresAv.apply
 		lazy val max_age_av:TextParser[CookieAv]		= TextParser isString "Max-Age="	right duration			map MaxAgeAv.apply
 		lazy val domain_av:TextParser[CookieAv]			= TextParser isString "Domain="		right domain_value		map DomainAv.apply
@@ -44,7 +44,7 @@ object CookieAv {
 
 		//// helper
 		lazy val duration:TextParser[HttpDuration]		= longPositive map HttpDuration.apply
-		lazy val something:TextParser[String]				= ((CTL orElse TextParser.isChar(';')).prevents right CHAR).seq.stringify
+		lazy val something:TextParser[String]			= ((CTL orElse TextParser.isChar(';')).prevents right CHAR).seq.stringify
 	}
 
 	//------------------------------------------------------------------------------

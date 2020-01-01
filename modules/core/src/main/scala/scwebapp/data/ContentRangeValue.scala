@@ -17,11 +17,11 @@ object ContentRangeValue {
 	lazy val parser:TextParser[ContentRangeValue]	= parsers.value
 
 	def unparse(it:ContentRangeValue):String	=
-			it match {
-				case Full(InclusiveRange(start, end), total)	=> show"${RangeType.keys.bytes} ${start}-${end}/${total}"
-				case Bare(InclusiveRange(start, end))			=> show"${RangeType.keys.bytes} ${start}-${end}/*"
-				case Total(total)								=> show"${RangeType.keys.bytes} */${total}"
-			}
+		it match {
+			case Full(InclusiveRange(start, end), total)	=> show"${RangeType.keys.bytes} ${start}-${end}/${total}"
+			case Bare(InclusiveRange(start, end))			=> show"${RangeType.keys.bytes} ${start}-${end}/*"
+			case Total(total)								=> show"${RangeType.keys.bytes} */${total}"
+		}
 
 	private object parsers {
 		import HttpParsers._
@@ -31,9 +31,9 @@ object ContentRangeValue {
 		val SLASH	= TextParser isChar '/'
 
 		val irange:TextParser[InclusiveRange]	=
-				longUnsigned left DASH next longUnsigned map { case (s, e) =>
-					InclusiveRange(s, e)
-				}
+			longUnsigned left DASH next longUnsigned map { case (s, e) =>
+				InclusiveRange(s, e)
+			}
 
 		val full:TextParser[ContentRangeValue]		= irange left SLASH next longUnsigned map Full.tupled
 		val fromTo:TextParser[ContentRangeValue]		= irange left SLASH left STAR map Bare.apply

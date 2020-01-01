@@ -84,20 +84,20 @@ object HttpParsers {
 
 	val parmValue:TextParser[String]		= token orElse quotedString
 	val regParameter:TextParser[(Boolean,(String,String))]	=
-			parmName eatLeft WSP left symbol('=') next parmValue map { false -> _ }
+		parmName eatLeft WSP left symbol('=') next parmValue map { false -> _ }
 
 	// @see https://tools.ietf.org/html/rfc5987
 
 	val hexNibble:TextParser[Int]	=
-			HEXDIG map {
-				case x if x >= '0'	&& x <= '9'	=> x - '0' + 0
-				case x if x >= 'a'	&& x <= 'f'	=> x - 'a' + 10
-				case x if x >= 'A'	&& x <= 'F'	=> x - 'A' + 10
-			}
+		HEXDIG map {
+			case x if x >= '0'	&& x <= '9'	=> x - '0' + 0
+			case x if x >= 'a'	&& x <= 'f'	=> x - 'a' + 10
+			case x if x >= 'A'	&& x <= 'F'	=> x - 'A' + 10
+		}
 	val hexByte:TextParser[Byte]	=
-			(hexNibble next hexNibble) map { case (h, l) =>
-				((h << 4) | l).toByte
-			}
+		(hexNibble next hexNibble) map { case (h, l) =>
+			((h << 4) | l).toByte
+		}
 	val pctEncoded:TextParser[Byte]				= TextParser.isChar('%') right hexByte
 	val attrCharByte:TextParser[Byte]			= attrChar map { _.toByte }
 	val valueCharBytes:TextParser[ByteString]	= (pctEncoded orElse attrCharByte).seq map ByteString.fromSeq
@@ -110,33 +110,33 @@ object HttpParsers {
 
 	// NOTE the rfc grammar requires uppercase, but the examples do not
 	val simpleCharset:TextParser[Charset]	=
-			extValuePart
-			.map	(CaseUtil.lowerCase)
-			.requirePartial {
-				case "utf-8"		=> Charsets.utf_8
-				case "iso-8859-1"	=> Charsets.iso_8859_1
-			}
-			.named ("Charset")
+		extValuePart
+		.map	(CaseUtil.lowerCase)
+		.requirePartial {
+			case "utf-8"		=> Charsets.utf_8
+			case "iso-8859-1"	=> Charsets.iso_8859_1
+		}
+		.named ("Charset")
 
 	// NOTE this ignores a mimeCharset
 	val charset:TextParser[Option[Charset]]	=
-			(simpleCharset	map Some.apply)	orElse
-			(mimeCharset	tag None)
+		(simpleCharset	map Some.apply)	orElse
+		(mimeCharset	tag None)
 
 	// TODO hack
 	val language:TextParser[String]	= extValuePart
 
 	val extValueOpt:TextParser[Option[String]]	=
-			for {
-				charset		<- charset
-				_			<- TextParser isChar '\''
-				language	<- language
-				_			<- TextParser isChar '\''
-				bytes		<- valueCharBytes
-			}
-			yield {
-				charset flatMap { it => (it decodeEitherByteString bytes).toOption }
-			}
+		for {
+			charset		<- charset
+			_			<- TextParser isChar '\''
+			language	<- language
+			_			<- TextParser isChar '\''
+			bytes		<- valueCharBytes
+		}
+		yield {
+			charset flatMap { it => (it decodeEitherByteString bytes).toOption }
+		}
 
 	val extValue:TextParser[String]	=
 		extValueOpt eatLeft LWSP requiredFor "extValue"
@@ -144,7 +144,7 @@ object HttpParsers {
 	val extParName:TextParser[String]	= parmName left TextParser.isChar('*')
 
 	val extParameter:TextParser[(Boolean,(String,String))]	=
-			extParName eatLeft WSP left symbol('=') next extValue map { true -> _ }
+		extParName eatLeft WSP left symbol('=') next extValue map { true -> _ }
 
 	val parameter:TextParser[(Boolean,(String,String))]			= regParameter orElse extParameter eatLeft LWSP
 	val nextParameter:TextParser[(Boolean,(String,String))]		= symbol(';') right parameter
@@ -152,38 +152,38 @@ object HttpParsers {
 
 	// moves extended parameters to the front
 	def extendedFirst(it:Seq[(Boolean,(String,String))]):Seq[(String,String)]	=
-			(it collect { case (true,	kv) => kv })	++
-			(it collect { case (false,	kv) => kv })
+		(it collect { case (true,	kv) => kv })	++
+		(it collect { case (false,	kv) => kv })
 
 	val parameterList:TextParser[NoCaseParameters]	=
-			manyParameters map { list => NoCaseParameters(extendedFirst(list)) }
+		manyParameters map { list => NoCaseParameters(extendedFirst(list)) }
 
 	//------------------------------------------------------------------------------
 
 	val qParam:TextParser[QValue]	=
-			symbol('q') right symbol('=') right (QValue.parser eatLeft LWSP)
+		symbol('q') right symbol('=') right (QValue.parser eatLeft LWSP)
 
 	//------------------------------------------------------------------------------
 
 	val longZero:TextParser[Long]	= TextParser.isChar('0') tag 0L
 	val longPositive:TextParser[Long]	=
-			TextParser.anyCharInRange('1', '9') next DIGIT.seq map { case (h, t)	=>
-				((h +: t) foldLeft 0L) { (o, d) =>
-					o * 10 + (d - '0')
-				}
+		TextParser.anyCharInRange('1', '9') next DIGIT.seq map { case (h, t)	=>
+			((h +: t) foldLeft 0L) { (o, d) =>
+				o * 10 + (d - '0')
 			}
+		}
 	val longUnsigned:TextParser[Long]	= longZero orElse longPositive
 
 	//------------------------------------------------------------------------------
 
 	val base64Char:TextParser[Char]	=
-			ALPHA orElse DIGIT orElse TextParser.anyCharOf("+/=")
+		ALPHA orElse DIGIT orElse TextParser.anyCharOf("+/=")
 
 	def base64(charset:Charset):TextParser[String]	=
-			base64Char.seq.stringify require Base64.decodeByteString named "Base64" require { it => (charset decodeEitherByteString it).toOption } named s"String[${charset.name}]"
+		base64Char.seq.stringify require Base64.decodeByteString named "Base64" require { it => (charset decodeEitherByteString it).toOption } named s"String[${charset.name}]"
 
 	//------------------------------------------------------------------------------
 
 	val dateValue:TextParser[HttpDate]	=
-			TextParser.anyCharInRange(32, 126).seq.stringify map { _.trim } require HttpDate.parse named "HttpDate"
+		TextParser.anyCharInRange(32, 126).seq.stringify map { _.trim } require HttpDate.parse named "HttpDate"
 }

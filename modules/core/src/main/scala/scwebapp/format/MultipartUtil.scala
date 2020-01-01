@@ -10,8 +10,8 @@ object MultipartUtil {
 	private val random	= new Random
 
 	def multipartBoundary():String	=
-			random string (
-				multipartChars,
-				30 + (random nextInt 10)
-			)
+		random string (
+			multipartChars,
+			30 + (random nextInt 10)
+		)
 }

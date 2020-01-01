@@ -12,10 +12,10 @@ object Authorization extends HeaderType[Authorization] {
 	val key	= "Authorization"
 
 	def parse(it:String):Option[Authorization]	=
-			parsers.finished.parseString(it).toOption
+		parsers.finished.parseString(it).toOption
 
 	def unparse(it:Authorization):String	=
-			BasicAuthorization unparse it.value
+		BasicAuthorization unparse it.value
 
 	private object parsers {
 		import HttpParsers._

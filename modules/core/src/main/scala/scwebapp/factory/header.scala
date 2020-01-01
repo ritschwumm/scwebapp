@@ -12,9 +12,9 @@ trait header {
 	def HeaderValues(values:HeaderValue*):Seq[HeaderValue]	= values.toVector
 
 	val DisableCaching:HeaderValues	=
-			Vector[HeaderValue](
-				CacheControl(Seq("no-cache", "no-store", "must-revalidate")),
-				Pragma("no-cache"),
-				Expires(HttpDate.zero)
-			)
+		Vector[HeaderValue](
+			CacheControl(Seq("no-cache", "no-store", "must-revalidate")),
+			Pragma("no-cache"),
+			Expires(HttpDate.zero)
+		)
 }

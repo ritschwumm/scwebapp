@@ -17,10 +17,10 @@ object HttpDuration {
 	//------------------------------------------------------------------------------
 
 	def unparse(duration:HttpDuration):String	=
-			duration.seconds.toString
+		duration.seconds.toString
 
 	def parse(str:String):Option[HttpDuration]	=
-			str.toLongOption map HttpDuration.apply
+		str.toLongOption map HttpDuration.apply
 }
 
 final case class HttpDuration(seconds:Long) extends Ordered[HttpDuration] {

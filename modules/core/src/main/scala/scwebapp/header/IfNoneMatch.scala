@@ -7,10 +7,10 @@ object IfNoneMatch extends HeaderType[IfNoneMatch] {
 	val key	= "If-None-Match"
 
 	def parse(it:String):Option[IfNoneMatch]	=
-			MatchValue parse it map IfNoneMatch.apply
+		MatchValue parse it map IfNoneMatch.apply
 
 	def unparse(it:IfNoneMatch):String	=
-			MatchValue unparse it.value
+		MatchValue unparse it.value
 }
 
 final case class IfNoneMatch(value:MatchValue) {

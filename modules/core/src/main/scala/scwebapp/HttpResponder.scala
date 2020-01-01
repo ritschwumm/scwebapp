@@ -8,10 +8,10 @@ import scwebapp.status._
 
 object HttpResponder {
 	def apply(response:HttpResponse):HttpResponder	=
-			sync(response)
+		sync(response)
 
 	def sync(response:HttpResponse):HttpResponder	=
-			Sync(response)
+		Sync(response)
 
 	def async(
 		timeout:MilliDuration,
@@ -20,12 +20,12 @@ object HttpResponder {
 	):(HttpResponder, Effect[HttpResponse])	= {
 		val channel	= new Channel[HttpResponse]
 		val resp	=
-				Async(
-					channel.get,
-					timeout,
-					timeoutResponse,
-					errorResponse
-				)
+			Async(
+				channel.get,
+				timeout,
+				timeoutResponse,
+				errorResponse
+			)
 		(resp, channel.put)
 	}
 
@@ -45,11 +45,11 @@ object HttpResponder {
 	private val timeoutResponse	= thunk { statusResponse(REQUEST_TIMEOUT)		}
 	private val errorResponse	= thunk { statusResponse(INTERNAL_SERVER_ERROR)	}
 	private def statusResponse(status:HttpStatus):HttpResponse	=
-			HttpResponse(
-				status, None,
-				Vector.empty,
-				HttpOutput.empty
-			)
+		HttpResponse(
+			status, None,
+			Vector.empty,
+			HttpOutput.empty
+		)
 
 	//------------------------------------------------------------------------------
 
@@ -57,8 +57,7 @@ object HttpResponder {
 		response:HttpResponse
 	)
 	extends HttpResponder {
-		def modify(func:Endo[HttpResponse]):HttpResponder	=
-				Sync(func(response))
+		def modify(func:Endo[HttpResponse]):HttpResponder	= Sync(func(response))
 	}
 
 	final case class Async(
@@ -69,7 +68,7 @@ object HttpResponder {
 	)
 	extends HttpResponder {
 		def modify(func:Endo[HttpResponse]):HttpResponder	=
-				copy(response	= _ compose func into response)
+			copy(response	= _ compose func into response)
 	}
 }
 

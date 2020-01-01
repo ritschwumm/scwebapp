@@ -10,10 +10,10 @@ object CacheControl extends HeaderType[CacheControl] {
 	val key	= "Cache-Control"
 
 	def parse(it:String):Option[CacheControl]	=
-			Some(CacheControl(it splitAroundChar ','))
+		Some(CacheControl(it splitAroundChar ','))
 
 	def unparse(it:CacheControl):String	=
-			it.directives mkString ", "
+		it.directives mkString ", "
 }
 
 final case class CacheControl(directives:Seq[String])

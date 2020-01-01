@@ -17,16 +17,16 @@ final class Channel[T] {
 	}
 
 	private def putter(v:T):State[ChannelState[T],Thunk[Unit]]	=
-			State {
-				case ChannelState.Initial()		=> ChannelState.HasValue(v)		-> ok
-				case ChannelState.HasHandler(h)	=> ChannelState.Final()			-> thunk(h(v))
-				case old			=> old				-> thunk(sys error "cannot put twice")
-			}
+		State {
+			case ChannelState.Initial()		=> ChannelState.HasValue(v)		-> ok
+			case ChannelState.HasHandler(h)	=> ChannelState.Final()			-> thunk(h(v))
+			case old			=> old				-> thunk(sys error "cannot put twice")
+		}
 
 	private def getter(h:Effect[T]):State[ChannelState[T],Thunk[Unit]]	=
-			State {
-				case ChannelState.Initial()		=> ChannelState.HasHandler(h)	-> ok
-				case ChannelState.HasValue(v)	=> ChannelState.Final()			-> thunk(h(v))
-				case old						=> old				-> thunk(sys error "cannot get twice")
-			}
+		State {
+			case ChannelState.Initial()		=> ChannelState.HasHandler(h)	-> ok
+			case ChannelState.HasValue(v)	=> ChannelState.Final()			-> thunk(h(v))
+			case old						=> old				-> thunk(sys error "cannot get twice")
+		}
 }

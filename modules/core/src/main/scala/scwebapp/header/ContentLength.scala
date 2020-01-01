@@ -8,10 +8,10 @@ object ContentLength extends HeaderType[ContentLength] {
 	val key	= "Content-Length"
 
 	def parse(it:String):Option[ContentLength]	=
-			parsers.finished.parseString(it).toOption
+		parsers.finished.parseString(it).toOption
 
 	def unparse(it:ContentLength):String	=
-			it.value.toString
+		it.value.toString
 
 	private object parsers {
 		import HttpParsers._

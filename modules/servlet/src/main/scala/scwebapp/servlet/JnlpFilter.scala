@@ -42,16 +42,16 @@ final class JnlpFilter extends Filter with Logging {
 	}
 
 	private def charset:Charset	=
-			configCharset getOrElse Charsets.utf_8
+		configCharset getOrElse Charsets.utf_8
 
 	private def configCharset:Option[Charset]	=
-			for {
-				config	<- filterConfig
-				name	<- Option(config getInitParameter "charset")
-				// TODO what if this fails?
-				charset	<- (Charsets byName name).toOption
-			}
-			yield charset
+		for {
+			config	<- filterConfig
+			name	<- Option(config getInitParameter "charset")
+			// TODO what if this fails?
+			charset	<- (Charsets byName name).toOption
+		}
+		yield charset
 
 	//------------------------------------------------------------------------------
 

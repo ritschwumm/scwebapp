@@ -27,24 +27,24 @@ object QValue {
 		import HttpParsers._
 
 		lazy val value:TextParser[QValue]	=
-				low orElse high map { case (h,l) =>
-					QValue(digitVal(h) * 1000 + tailing(l.flattenMany map digitVal, 100))
-				}
+			low orElse high map { case (h,l) =>
+				QValue(digitVal(h) * 1000 + tailing(l.flattenMany map digitVal, 100))
+			}
 
 		lazy val finished:TextParser[QValue]	=
-				value.phrase
+			value.phrase
 
 		lazy val low:TextParser[(Char,Option[Seq[Char]])]	= TextParser.isChar('0') next (TextParser.isChar('.') right (DIGIT					timesUpTo 3)).option
 		lazy val high:TextParser[(Char,Option[Seq[Char]])]	= TextParser.isChar('1') next (TextParser.isChar('.') right (TextParser.isChar('0')	timesUpTo 3)).option
 
 		private def tailing(digits:Seq[Int], factor:Int):Int =
-				if (factor == 0)	0
-				else {
-					digits match {
-						case head +: tail	=> head * factor + tailing(tail, factor / 10)
-						case _				=> 0
-					}
+			if (factor == 0)	0
+			else {
+				digits match {
+					case head +: tail	=> head * factor + tailing(tail, factor / 10)
+					case _				=> 0
 				}
+			}
 
 		private def digitVal(c:Char):Int	= c - '0'
 	}
@@ -57,5 +57,5 @@ final case class QValue(promille:Int) extends Ordered[QValue] {
 	def compare(that:QValue):Int	= this.promille compare that.promille
 
 	override def toString():String	=
-			QValue unparse this
+		QValue unparse this
 }

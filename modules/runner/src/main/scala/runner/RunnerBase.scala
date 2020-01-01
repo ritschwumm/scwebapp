@@ -20,29 +20,30 @@ object RunnerBase extends Logging {
 		val contextPath	= config.path.value replaceAll ("/$", "")
 
 		val (disposable, httpHandler)	=
-				try {
-					INFO(s"starting application")
-					application()
-				}
-				catch { case e:Exception	=>
-					ERROR("cannot start application", e)
-					sys exit 1
-				}
+			try {
+				INFO(s"starting application")
+				application()
+			}
+			catch { case e:Exception	=>
+				ERROR("cannot start application", e)
+				sys exit 1
+			}
 
-		val handler		= new AbstractHandler {
-			// throws IOException, ServletException
-			def handle(target:String, baseRequest:Request, request:HttpServletRequest, response:HttpServletResponse):Unit	= {
-				if (target startsWith (contextPath + "/")) {
-					baseRequest setContextPath contextPath
-					HttpIO execute (request, response, httpHandler)
-					baseRequest setHandled true
-				}
-				else {
-					// TODO what if not?
-					ERROR("unexpected request", target)
+		val handler		=
+			new AbstractHandler {
+				// throws IOException, ServletException
+				def handle(target:String, baseRequest:Request, request:HttpServletRequest, response:HttpServletResponse):Unit	= {
+					if (target startsWith (contextPath + "/")) {
+						baseRequest setContextPath contextPath
+						HttpIO execute (request, response, httpHandler)
+						baseRequest setHandled true
+					}
+					else {
+						// TODO what if not?
+						ERROR("unexpected request", target)
+					}
 				}
 			}
-		}
 
 		val server	= new Server(config.bindAdr)
 
@@ -54,8 +55,9 @@ object RunnerBase extends Logging {
 		val	httpFactory		= new HttpConnectionFactory(httpConfig)
 
 		val	httpConnector	= new ServerConnector(server, httpFactory)
-		httpConnector	setHost	config.bindAdr.getHostName
-		httpConnector	setPort	config.bindAdr.getPort
+		httpConnector	setHost			config.bindAdr.getHostName
+		httpConnector	setPort			config.bindAdr.getPort
+		httpConnector	setIdleTimeout	config.idleTimeout.millis
 
 		server	setConnectors		Array(httpConnector)
 		server	setHandler			handler

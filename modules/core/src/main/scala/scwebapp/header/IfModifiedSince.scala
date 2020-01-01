@@ -9,10 +9,10 @@ object IfModifiedSince extends HeaderType[IfModifiedSince] {
 	val key	= "If-Modified-Since"
 
 	def parse(it:String):Option[IfModifiedSince]	=
-			parsers.finished.parseString(it).toOption
+		parsers.finished.parseString(it).toOption
 
 	def unparse(it:IfModifiedSince):String	=
-			HttpDate unparse it.value
+		HttpDate unparse it.value
 
 	private object parsers {
 		import HttpParsers._

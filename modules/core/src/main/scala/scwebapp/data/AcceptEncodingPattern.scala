@@ -9,22 +9,22 @@ object AcceptEncodingPattern {
 	lazy val parser:TextParser[AcceptEncodingPattern]	= parsers.value
 
 	def unparse(it:AcceptEncodingPattern):String	=
-			it match {
-				case Wildcard	=> "*"
-				case Fixed(x)	=> AcceptEncodingType unparse x
-			}
+		it match {
+			case Wildcard	=> "*"
+			case Fixed(x)	=> AcceptEncodingType unparse x
+		}
 
 	private object parsers {
 		import HttpParsers._
 
 		val wildcard:TextParser[AcceptEncodingPattern]	=
-				token ensure (_ == "*") named "wildcard \"*\"" tag Wildcard
+			token ensure (_ == "*") named "wildcard \"*\"" tag Wildcard
 
 		val fixed:TextParser[AcceptEncodingPattern]	=
-				AcceptEncodingType.parser map Fixed.apply
+			AcceptEncodingType.parser map Fixed.apply
 
 		val value:TextParser[AcceptEncodingPattern]	=
-				wildcard orElse fixed
+			wildcard orElse fixed
 	}
 
 	//------------------------------------------------------------------------------
@@ -37,8 +37,8 @@ object AcceptEncodingPattern {
 sealed trait AcceptEncodingPattern {
 	// returns rank, if any
 	def matches(typ:AcceptEncodingType):Option[Int]	=
-			this matchOption {
-				case AcceptEncodingPattern.Wildcard		=> 0
-				case AcceptEncodingPattern.Fixed(`typ`)	=> 1
-			}
+		this matchOption {
+			case AcceptEncodingPattern.Wildcard		=> 0
+			case AcceptEncodingPattern.Fixed(`typ`)	=> 1
+		}
 }

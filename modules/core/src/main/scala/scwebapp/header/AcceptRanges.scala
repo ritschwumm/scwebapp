@@ -9,10 +9,10 @@ object AcceptRanges extends HeaderType[AcceptRanges] {
 	val key	= "Accept-Ranges"
 
 	def parse(it:String):Option[AcceptRanges]	=
-			parsers.finished.parseString(it).toOption
+		parsers.finished.parseString(it).toOption
 
 	def unparse(it:AcceptRanges):String	=
-			RangeType unparse it.rangeType
+		RangeType unparse it.rangeType
 
 	private object parsers {
 		import HttpParsers._

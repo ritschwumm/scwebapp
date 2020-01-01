@@ -23,11 +23,11 @@ trait mimeType {
 	def text_css_charset(charset:Charset):MimeType			= text("css",			Some(charset))
 
 	def text(minor:String, charset:Option[Charset]):MimeType	=
-			MimeType("text", minor,
-				NoCaseParameters(charset.toVector map { it =>
-					("charset" -> it.name)
-				})
-			)
+		MimeType("text", minor,
+			NoCaseParameters(charset.toVector map { it =>
+				("charset" -> it.name)
+			})
+		)
 
 	//------------------------------------------------------------------------------
 	//## application
@@ -51,5 +51,5 @@ trait mimeType {
 	val multipart_byteranges	= MimeType("multipart",		"byteranges")
 
 	def multipart_byteranges_boundary(boundary:String):MimeType	=
-			multipart_byteranges addParameter ("boundary", boundary)
+		multipart_byteranges addParameter ("boundary", boundary)
 }

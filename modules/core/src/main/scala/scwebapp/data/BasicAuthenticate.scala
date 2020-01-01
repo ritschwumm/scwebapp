@@ -10,7 +10,7 @@ object BasicAuthenticate {
 	lazy val parser:TextParser[BasicAuthenticate]	= parsers.value
 
 	def unparse(it:BasicAuthenticate):String	=
-			show"""Basic realm="${it.realm}""""
+		show"""Basic realm="${it.realm}""""
 
 	private object parsers {
 		import HttpParsers._
@@ -24,11 +24,11 @@ object BasicAuthenticate {
 		// TODO handle more challenge kinds
 		// TODO handle charset parameter in Basic
 		def findBasicRealm(it:Nes[Challenge]):Option[BasicAuthenticate]	=
-				for {
-					ch	<- it.toVector	collectFirst { case Challenge("Basic", params)	=> params	}
-					rlm	<- ch			collectFirst { case ("realm", realm)			=> realm	}
-				}
-				yield BasicAuthenticate(rlm)
+			for {
+				ch	<- it.toVector	collectFirst { case Challenge("Basic", params)	=> params	}
+				rlm	<- ch			collectFirst { case ("realm", realm)			=> realm	}
+			}
+			yield BasicAuthenticate(rlm)
 
 		val value:TextParser[BasicAuthenticate]	=
 			challengeList require findBasicRealm named "basic realm"

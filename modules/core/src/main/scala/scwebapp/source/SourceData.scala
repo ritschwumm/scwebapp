@@ -9,10 +9,10 @@ import scwebapp.data._
 
 object SourceData {
 	def httpDateContentId(lastModified:HttpDate, size:Long):String	=
-			lastModified.seconds.toString + "-" + size.toString
+		lastModified.seconds.toString + "-" + size.toString
 
 	def milliInstantContentId(lastModified:MilliInstant, size:Long):String	=
-			lastModified.millis.toString + "-" + size.toString
+		lastModified.millis.toString + "-" + size.toString
 
 	def forFile(
 		file:File,
@@ -23,16 +23,16 @@ object SourceData {
 		disposition:Option[SourceDisposition],
 		enableGZIP:Boolean
 	):SourceData	=
-			SourceData(
-				size			= file.length,
-				range			= HttpOutput writeFileRange (file, _),
-				contentId		= contentId,
-				lastModified	= HttpDate fromMilliInstant lastModified,
-				caching			= caching,
-				mimeType		= mimeType,
-				disposition		= disposition,
-				enableGZIP		= enableGZIP
-			)
+		SourceData(
+			size			= file.length,
+			range			= HttpOutput writeFileRange (file, _),
+			contentId		= contentId,
+			lastModified	= HttpDate fromMilliInstant lastModified,
+			caching			= caching,
+			mimeType		= mimeType,
+			disposition		= disposition,
+			enableGZIP		= enableGZIP
+		)
 }
 
 final case class SourceData(

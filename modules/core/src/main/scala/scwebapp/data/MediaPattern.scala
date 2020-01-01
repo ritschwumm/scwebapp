@@ -9,11 +9,11 @@ object MediaPattern {
 	lazy val parser:TextParser[MediaPattern]	= parsers.value
 
 	def unparse(it:MediaPattern):String	=
-			it match {
-				case WildWild					=> "*/*"
-				case TypeWild(major)			=> show"${major}/*"
-				case TypeSubtype(major, minor)	=> show"${major}/${minor}"
-			}
+		it match {
+			case WildWild					=> "*/*"
+			case TypeWild(major)			=> show"${major}/*"
+			case TypeSubtype(major, minor)	=> show"${major}/${minor}"
+		}
 
 	private object parsers {
 		import HttpParsers._
@@ -38,9 +38,9 @@ object MediaPattern {
 sealed trait MediaPattern {
 	// returns rank, if any
 	def matches(typ:MimeType):Option[Int]	=
-			this matchOption {
-				case MediaPattern.WildWild																=> 0
-				case MediaPattern.TypeWild(major)			if major == typ.major						=> 1
-				case MediaPattern.TypeSubtype(major, minor)	if major == typ.major && minor == typ.minor	=> 2
-			}
+		this matchOption {
+			case MediaPattern.WildWild																=> 0
+			case MediaPattern.TypeWild(major)			if major == typ.major						=> 1
+			case MediaPattern.TypeSubtype(major, minor)	if major == typ.major && minor == typ.minor	=> 2
+		}
 }

@@ -23,43 +23,43 @@ object HttpDate {
 	//------------------------------------------------------------------------------
 
 	def parse(str:String):Option[HttpDate]	=
-			synchronized {
-				allFormats collapseMapFirst parseDateWith(str)
-			}
+		synchronized {
+			allFormats collapseMapFirst parseDateWith(str)
+		}
 
 	def unparse(date:HttpDate):String	=
-			synchronized {
-				standardFormat format date.toDate
-			}
+		synchronized {
+			standardFormat format date.toDate
+		}
 
 	//------------------------------------------------------------------------------
 
 	private val gmtZone:TimeZone	=
-			TimeZone getTimeZone "GMT"
+		TimeZone getTimeZone "GMT"
 
 	private def mkFormat(pattern:String):DateFormat	=
-			new SimpleDateFormat(pattern, Locale.US) doto { _ setTimeZone gmtZone }
+		new SimpleDateFormat(pattern, Locale.US) doto { _ setTimeZone gmtZone }
 
 	private val standardFormat:DateFormat =
-			// RFC 822, updated by RFC 1123
-			mkFormat("EEE, dd MMM yyyy HH:mm:ss zzz")
+		// RFC 822, updated by RFC 1123
+		mkFormat("EEE, dd MMM yyyy HH:mm:ss zzz")
 
 	private val allFormats:Seq[DateFormat]	=
-			Vector(
-				standardFormat,
-				// RFC 850, obsoleted by RFC 1036
-				mkFormat("EEEEEE, dd-MMM-yy HH:mm:ss zzz"),
-				// ANSI C's asctime() format
-				mkFormat("EEE MMMM d HH:mm:ss yyyy")
-			)
+		Vector(
+			standardFormat,
+			// RFC 850, obsoleted by RFC 1036
+			mkFormat("EEEEEE, dd-MMM-yy HH:mm:ss zzz"),
+			// ANSI C's asctime() format
+			mkFormat("EEE MMMM d HH:mm:ss yyyy")
+		)
 
 	private def parseDateWith(str:String)(format:DateFormat):Option[HttpDate]	=
-			try {
-				Some(HttpDate fromDate (format parse str))
-			}
-			catch { case e:ParseException =>
-				None
-			}
+		try {
+			Some(HttpDate fromDate (format parse str))
+		}
+		catch { case e:ParseException =>
+			None
+		}
 }
 
 final case class HttpDate(seconds:Long) extends Ordered[HttpDate] {

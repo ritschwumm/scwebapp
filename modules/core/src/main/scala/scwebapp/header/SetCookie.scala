@@ -16,7 +16,7 @@ object SetCookie extends HeaderType[SetCookie] {
 	val key	= "Set-Cookie"
 
 	def parse(it:String):Option[SetCookie]	=
-			parsers.finished.parseString(it).toOption
+		parsers.finished.parseString(it).toOption
 
 	def unparse(it:SetCookie):String	= {
 		// NOTE if we have a comment or anything is quoted, we need version 1
@@ -25,25 +25,25 @@ object SetCookie extends HeaderType[SetCookie] {
 		/*
 		// NOTE these are not quoted
 		val (maxAgeValue, expiresValue)	=
-				it.maxAge
-				.map { duration =>
-					val expiresDate	=
-							if (duration == HttpDuration.zero)	HttpDate.zero
-							else								HttpDate.now() + duration
-					(HttpDuration unparse duration, HttpDate unparse expiresDate)
-				}
-				.unzip
+			it.maxAge
+			.map { duration =>
+				val expiresDate	=
+						if (duration == HttpDuration.zero)	HttpDate.zero
+						else								HttpDate.now() + duration
+				(HttpDuration unparse duration, HttpDate unparse expiresDate)
+			}
+			.unzip
 		*/
 
 		val avs:Vector[Option[CookieAv]]	=
-				Vector[Option[CookieAv]](
-					it.domain	map		CookieAv.DomainAv.apply,
-					it.path		map		CookieAv.PathAv.apply,
-					it.maxAge	map		CookieAv.MaxAgeAv.apply,
-					it.expires	map		CookieAv.ExpiresAv.apply,
-					it.secure	option	CookieAv.SecureAv,
-					it.httpOnly	option	CookieAv.HttpOnlyAv
-				)
+			Vector[Option[CookieAv]](
+				it.domain	map		CookieAv.DomainAv.apply,
+				it.path		map		CookieAv.PathAv.apply,
+				it.maxAge	map		CookieAv.MaxAgeAv.apply,
+				it.expires	map		CookieAv.ExpiresAv.apply,
+				it.secure	option	CookieAv.SecureAv,
+				it.httpOnly	option	CookieAv.HttpOnlyAv
+			)
 
 		val headPart	= it.name + "=" + it.value
 		val tailParts	= avs.collapse map CookieAv.unparse
@@ -58,17 +58,17 @@ object SetCookie extends HeaderType[SetCookie] {
 		lazy val finished:TextParser[SetCookie]	= value inside OWS
 
 		lazy val value:TextParser[SetCookie]	=
-				set_cookie_string map { case ((k, v), avs) =>
-					SetCookie(
-						name		= k,
-						value		= v,
-						domain		= avs collectFirst { case CookieAv.DomainAv(x)	=> x},
-						path		= avs collectFirst { case CookieAv.PathAv(x)		=> x},
-						maxAge		= avs collectFirst { case CookieAv.MaxAgeAv(x)	=> x},
-						secure		= avs contains CookieAv.SecureAv,
-						httpOnly	= avs contains CookieAv.HttpOnlyAv
-					)
-				}
+			set_cookie_string map { case ((k, v), avs) =>
+				SetCookie(
+					name		= k,
+					value		= v,
+					domain		= avs collectFirst { case CookieAv.DomainAv(x)	=> x},
+					path		= avs collectFirst { case CookieAv.PathAv(x)		=> x},
+					maxAge		= avs collectFirst { case CookieAv.MaxAgeAv(x)	=> x},
+					secure		= avs contains CookieAv.SecureAv,
+					httpOnly	= avs contains CookieAv.HttpOnlyAv
+				)
+			}
 
 		/*
 		lazy val cookie_header:TextParser[Seq[(String,String)]]			= sis("Cookie:") right (cookie_string inside OWS)

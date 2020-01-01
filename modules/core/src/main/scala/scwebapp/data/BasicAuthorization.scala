@@ -19,13 +19,13 @@ object BasicAuthorization {
 	lazy val parser:TextParser[BasicAuthorization]	= parsers.value
 
 	def unparse(it:BasicAuthorization):String	=
-			"Basic " + (
-				Base64 encodeByteString (
-					(it.name toByteString encoding) 	concat
-					(ByteString single ':')				concat
-					(it.password toByteString encoding)
-				)
+		"Basic " + (
+			Base64 encodeByteString (
+				(it.name toByteString encoding) 	concat
+				(ByteString single ':')				concat
+				(it.password toByteString encoding)
 			)
+		)
 
 	private object parsers {
 		import HttpParsers._
@@ -38,7 +38,7 @@ object BasicAuthorization {
 
 		val base64Credentials:TextParser[(String,String)]	= base64(encoding) nestString basicCredentials.phrase
 		def basicAuthentication(charset:Charset):TextParser[(String,String)]	=
-				symbolN("Basic") right (base64Credentials eatLeft LWSP)
+			symbolN("Basic") right (base64Credentials eatLeft LWSP)
 
 		val value:TextParser[BasicAuthorization]		= basicAuthentication(encoding) map (BasicAuthorization.apply _).tupled
 	}

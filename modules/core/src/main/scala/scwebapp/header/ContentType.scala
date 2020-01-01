@@ -9,10 +9,10 @@ object ContentType extends HeaderType[ContentType] {
 	val key	= "Content-Type"
 
 	def parse(it:String):Option[ContentType]	=
-			parsers.finished.parseString(it).toOption
+		parsers.finished.parseString(it).toOption
 
 	def unparse(it:ContentType):String	=
-			MimeType unparse it.typ
+		MimeType unparse it.typ
 
 	private object parsers {
 		import HttpParsers._

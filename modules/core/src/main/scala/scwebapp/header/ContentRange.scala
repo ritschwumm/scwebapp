@@ -9,15 +9,15 @@ object ContentRange extends HeaderType[ContentRange] {
 	val key	= "Content-Range"
 
 	def parse(it:String):Option[ContentRange]	=
-			parsers.finished.parseString(it).toOption
+		parsers.finished.parseString(it).toOption
 
 	def unparse(it:ContentRange):String	=
-			ContentRangeValue unparse it.value
+		ContentRangeValue unparse it.value
 
 	private object parsers {
 		import HttpParsers._
 
-		val value:TextParser[ContentRange]	= ContentRangeValue.parser map ContentRange.apply
+		val value:TextParser[ContentRange]		= ContentRangeValue.parser map ContentRange.apply
 		val finished:TextParser[ContentRange]	= value finish LWSP
 	}
 }

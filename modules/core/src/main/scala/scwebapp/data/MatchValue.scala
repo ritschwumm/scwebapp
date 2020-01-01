@@ -8,13 +8,13 @@ import scparse.ng.text._
 object MatchValue {
 	// NOTE this is special as we provide a complete tag
 	def parse(it:String):Option[MatchValue]	=
-			parsers.finished.parseString(it).toOption
+		parsers.finished.parseString(it).toOption
 
 	def unparse(it:MatchValue):String	=
-			it match {
-				case Wildcard		=> "*"
-				case EntityTags(x)	=> x.toVector map ETagValue.unparse mkString ","
-			}
+		it match {
+			case Wildcard		=> "*"
+			case EntityTags(x)	=> x.toVector map ETagValue.unparse mkString ","
+		}
 
 	private object parsers {
 		import HttpParsers._
@@ -34,8 +34,8 @@ object MatchValue {
 
 sealed trait MatchValue {
 	def matches(it:ETagValue):Boolean	=
-			this match {
-				case MatchValue.Wildcard		=> true
-				case MatchValue.EntityTags(xs)	=> xs.toVector.toSet contains it
-			}
+		this match {
+			case MatchValue.Wildcard		=> true
+			case MatchValue.EntityTags(xs)	=> xs.toVector.toSet contains it
+		}
 }

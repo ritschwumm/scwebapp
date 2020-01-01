@@ -11,7 +11,7 @@ object ContentDisposition extends HeaderType[ContentDisposition] {
 	val key	= "Content-Disposition"
 
 	def parse(it:String):Option[ContentDisposition]	=
-			parsers.finished.parseString(it).toOption
+		parsers.finished.parseString(it).toOption
 
 	def unparse(it:ContentDisposition):String	= {
 		// TODO filter out bad characters in value
@@ -27,10 +27,10 @@ object ContentDisposition extends HeaderType[ContentDisposition] {
 
 		// TODO handle *filename
 		val value:TextParser[ContentDisposition]	=
-				ContentDispositionType.parser next parameterList map { case (kind, params)	=>
-					val filename	= params firstString "filename"
-					ContentDisposition(kind, filename)
-				}
+			ContentDispositionType.parser next parameterList map { case (kind, params)	=>
+				val filename	= params firstString "filename"
+				ContentDisposition(kind, filename)
+			}
 
 		val finished:TextParser[ContentDisposition]	= value finish LWSP
 	}

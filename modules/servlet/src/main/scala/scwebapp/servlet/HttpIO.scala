@@ -34,14 +34,14 @@ object HttpIO {
 					def onStartAsync(ev:AsyncEvent):Unit	= {}
 					def onComplete(ev:AsyncEvent):Unit		= { alive set false	}
 					def onTimeout(ev:AsyncEvent):Unit		= { completeWith(timeoutResponse())	}
-					def onError(ev:AsyncEvent):Unit			= { completeWith(errorResponse())		}
+					def onError(ev:AsyncEvent):Unit			= { completeWith(errorResponse())	}
 				}
 				responseCont(completeWith)
 		}
 	}
 
 	private def readRequest(servletRequest:HttpServletRequest):HttpRequest	=
-			new HttpRequestImpl(servletRequest)
+		new HttpRequestImpl(servletRequest)
 
 	private def writeResponse(response:HttpResponse, servletResponse:HttpServletResponse):Unit	= {
 		response.reason match {
