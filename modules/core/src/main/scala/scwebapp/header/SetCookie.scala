@@ -5,7 +5,7 @@ import scutil.base.implicits._
 import scwebapp.HeaderType
 import scwebapp.data._
 import scwebapp.format._
-import scwebapp.parser.string._
+import scparse.ng.text._
 
 // TODO make sure responses with a cookie are not cached
 
@@ -16,7 +16,7 @@ object SetCookie extends HeaderType[SetCookie] {
 	val key	= "Set-Cookie"
 
 	def parse(it:String):Option[SetCookie]	=
-			parsers.finished parseStringOption it
+			parsers.finished.parseString(it).toOption
 
 	def unparse(it:SetCookie):String	= {
 		// NOTE if we have a comment or anything is quoted, we need version 1
@@ -55,9 +55,9 @@ object SetCookie extends HeaderType[SetCookie] {
 		import CookieParsers._
 
 		// TODO wrong
-		lazy val finished:CParser[SetCookie]	= value inside OWS
+		lazy val finished:TextParser[SetCookie]	= value inside OWS
 
-		lazy val value:CParser[SetCookie]	=
+		lazy val value:TextParser[SetCookie]	=
 				set_cookie_string map { case ((k, v), avs) =>
 					SetCookie(
 						name		= k,
@@ -71,13 +71,13 @@ object SetCookie extends HeaderType[SetCookie] {
 				}
 
 		/*
-		lazy val cookie_header:CParser[Seq[(String,String)]]			= sis("Cookie:") right (cookie_string inside OWS)
-		lazy val cookie_string:CParser[Seq[(String,String)]]			= cookie_pair sepSeq cis(';')
+		lazy val cookie_header:TextParser[Seq[(String,String)]]			= sis("Cookie:") right (cookie_string inside OWS)
+		lazy val cookie_string:TextParser[Seq[(String,String)]]			= cookie_pair sepSeq cis(';')
 
-		lazy val set_cookie_header:CParser[((String,String),Seq[CookieAv])]	= sis("Set-Cookie:") right SP right set_cookie_string
+		lazy val set_cookie_header:TextParser[((String,String),Seq[CookieAv])]	= sis("Set-Cookie:") right SP right set_cookie_string
 		*/
 
-		lazy val set_cookie_string:CParser[((String,String),Seq[CookieAv])]	= cookie_pair next (cis(';') right CookieAv.parser).seq
+		lazy val set_cookie_string:TextParser[((String,String),Seq[CookieAv])]	= cookie_pair next (TextParser.isChar(';') right CookieAv.parser).seq
 	}
 }
 

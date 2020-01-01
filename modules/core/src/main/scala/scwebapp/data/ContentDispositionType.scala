@@ -1,10 +1,10 @@
 package scwebapp.data
 
 import scwebapp.format._
-import scwebapp.parser.string._
+import scparse.ng.text._
 
 object ContentDispositionType {
-	lazy val parser:CParser[ContentDispositionType]	= parsers.value
+	lazy val parser:TextParser[ContentDispositionType]	= parsers.value
 
 	def unparse(it:ContentDispositionType):String	=
 			it match {
@@ -15,11 +15,14 @@ object ContentDispositionType {
 	private object parsers {
 		import HttpParsers._
 
-		val value:CParser[ContentDispositionType]	=
-				token map CaseUtil.lowerCase collect {
+		val value:TextParser[ContentDispositionType]	=
+				token
+				.map (CaseUtil.lowerCase)
+				.requirePartial[ContentDispositionType] {
 					case "attachment"	=> Attachment
 					case "inline"		=> Inline
 				}
+				.named ("ContentDispositionType")
 	}
 
 	//------------------------------------------------------------------------------

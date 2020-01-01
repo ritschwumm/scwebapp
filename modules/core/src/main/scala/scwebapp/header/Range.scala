@@ -6,13 +6,13 @@ import scutil.lang._
 import scwebapp.HeaderType
 import scwebapp.data._
 import scwebapp.format._
-import scwebapp.parser.string._
+import scparse.ng.text._
 
 object Range extends HeaderType[Range] {
 	val key	= "Range"
 
 	def parse(it:String):Option[Range]	=
-			parsers.finished parseStringOption it
+			parsers.finished.parseString(it).toOption
 
 	def unparse(it:Range):String	=
 			RangeType.keys.bytes + "=" +
@@ -21,12 +21,12 @@ object Range extends HeaderType[Range] {
 	private object parsers {
 		import HttpParsers._
 
-		val bytesUnit:CParser[String]					= symbolN(RangeType.keys.bytes)
-		val byteRangeSet:CParser[Nes[RangePattern]]		= hash1(RangePattern.parser)
-		val rangePatterns:CParser[Nes[RangePattern]]	= bytesUnit right symbol('=') right byteRangeSet
+		val bytesUnit:TextParser[String]					= symbolN(RangeType.keys.bytes)
+		val byteRangeSet:TextParser[Nes[RangePattern]]	= hash1(RangePattern.parser)
+		val rangePatterns:TextParser[Nes[RangePattern]]	= bytesUnit right symbol('=') right byteRangeSet
 
-		val value:CParser[Range]	= rangePatterns map Range.apply
-		val finished:CParser[Range]	= value finish LWSP
+		val value:TextParser[Range]	= rangePatterns map Range.apply
+		val finished:TextParser[Range]	= value finish LWSP
 	}
 }
 

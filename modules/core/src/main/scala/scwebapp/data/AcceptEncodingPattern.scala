@@ -3,10 +3,10 @@ package scwebapp.data
 import scutil.base.implicits._
 
 import scwebapp.format._
-import scwebapp.parser.string._
+import scparse.ng.text._
 
 object AcceptEncodingPattern {
-	lazy val parser:CParser[AcceptEncodingPattern]	= parsers.value
+	lazy val parser:TextParser[AcceptEncodingPattern]	= parsers.value
 
 	def unparse(it:AcceptEncodingPattern):String	=
 			it match {
@@ -17,13 +17,13 @@ object AcceptEncodingPattern {
 	private object parsers {
 		import HttpParsers._
 
-		val wildcard:CParser[AcceptEncodingPattern]	=
-				token filter (_ == "*") tag Wildcard
+		val wildcard:TextParser[AcceptEncodingPattern]	=
+				token ensure (_ == "*") named "wildcard \"*\"" tag Wildcard
 
-		val fixed:CParser[AcceptEncodingPattern]	=
+		val fixed:TextParser[AcceptEncodingPattern]	=
 				AcceptEncodingType.parser map Fixed.apply
 
-		val value:CParser[AcceptEncodingPattern]	=
+		val value:TextParser[AcceptEncodingPattern]	=
 				wildcard orElse fixed
 	}
 

@@ -3,10 +3,10 @@ package scwebapp.data
 import scutil.base.implicits._
 
 import scwebapp.format._
-import scwebapp.parser.string._
+import scparse.ng.text._
 
 object MediaPattern {
-	lazy val parser:CParser[MediaPattern]	= parsers.value
+	lazy val parser:TextParser[MediaPattern]	= parsers.value
 
 	def unparse(it:MediaPattern):String	=
 			it match {
@@ -18,14 +18,14 @@ object MediaPattern {
 	private object parsers {
 		import HttpParsers._
 
-		val major:CParser[String]	= token
-		val minor:CParser[String]	= token
+		val major:TextParser[String]	= token
+		val minor:TextParser[String]	= token
 
-		val wildWild:CParser[MediaPattern]		= symbolN("*/*") tag WildWild
-		val typeWild:CParser[MediaPattern]		= major left symbol('/') left symbol('*') map TypeWild.apply
-		val typeSubtype:CParser[MediaPattern]	= major left symbol('/') next minor map TypeSubtype.tupled
+		val wildWild:TextParser[MediaPattern]		= symbolN("*/*") tag WildWild
+		val typeWild:TextParser[MediaPattern]		= major left symbol('/') left symbol('*') map TypeWild.apply
+		val typeSubtype:TextParser[MediaPattern]	= major left symbol('/') next minor map TypeSubtype.tupled
 
-		val value:CParser[MediaPattern]			= wildWild orElse typeWild orElse typeSubtype eating LWSP
+		val value:TextParser[MediaPattern]			= wildWild orElse typeWild orElse typeSubtype eatLeft LWSP
 	}
 
 	//------------------------------------------------------------------------------

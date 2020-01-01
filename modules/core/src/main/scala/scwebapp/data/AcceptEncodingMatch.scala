@@ -1,14 +1,14 @@
 package scwebapp.data
 
 import scwebapp.format._
-import scwebapp.parser.string._
+import scparse.ng.text._
 
 object AcceptEncodingMatch {
 	val default	= AcceptEncodingMatch(AcceptEncodingPattern.Fixed(AcceptEncodingType.Identity), Some(QValue.one))
 
 	//------------------------------------------------------------------------------
 
-	lazy val parser:CParser[AcceptEncodingMatch]	= parsers.value
+	lazy val parser:TextParser[AcceptEncodingMatch]	= parsers.value
 
 	def unparse(it:AcceptEncodingMatch):String	=
 			(AcceptEncodingPattern	unparse		it.pattern) +
@@ -17,7 +17,7 @@ object AcceptEncodingMatch {
 	private object parsers {
 		import HttpParsers._
 
-		val value:CParser[AcceptEncodingMatch]		=
+		val value:TextParser[AcceptEncodingMatch]		=
 				AcceptEncodingPattern.parser next (symbol(';') right qParam).option map (AcceptEncodingMatch.apply _).tupled
 	}
 }

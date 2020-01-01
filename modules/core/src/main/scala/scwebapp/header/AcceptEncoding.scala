@@ -5,14 +5,14 @@ import scutil.base.implicits._
 import scwebapp.HeaderType
 import scwebapp.data._
 import scwebapp.format._
-import scwebapp.parser.string._
+import scparse.ng.text._
 import scwebapp.util.AcceptanceUtil
 
 object AcceptEncoding extends HeaderType[AcceptEncoding] {
 	val key	= "Accept-Encoding"
 
 	def parse(it:String):Option[AcceptEncoding]	=
-			parsers.finished parseStringOption it
+			parsers.finished.parseString(it).toOption
 
 	def unparse(it:AcceptEncoding):String	=
 			it.matches map AcceptEncodingMatch.unparse mkString ","
@@ -20,8 +20,8 @@ object AcceptEncoding extends HeaderType[AcceptEncoding] {
 	object parsers {
 		import HttpParsers._
 
-		val value:CParser[AcceptEncoding]		= hash(AcceptEncodingMatch.parser) map AcceptEncoding.apply
-		val finished:CParser[AcceptEncoding]	= value finish LWSP
+		val value:TextParser[AcceptEncoding]		= hash(AcceptEncodingMatch.parser) map AcceptEncoding.apply
+		val finished:TextParser[AcceptEncoding]	= value finish LWSP
 	}
 }
 

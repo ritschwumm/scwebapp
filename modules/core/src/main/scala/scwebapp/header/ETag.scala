@@ -3,13 +3,13 @@ package scwebapp.header
 import scwebapp.HeaderType
 import scwebapp.data._
 import scwebapp.format._
-import scwebapp.parser.string._
+import scparse.ng.text._
 
 object ETag extends HeaderType[ETag] {
 	val key	= "ETag"
 
 	def parse(it:String):Option[ETag]	=
-			parsers.finished parseStringOption it
+			parsers.finished.parseString(it).toOption
 
 	def unparse(it:ETag):String	=
 			ETagValue unparse it.value
@@ -17,8 +17,8 @@ object ETag extends HeaderType[ETag] {
 	private object parsers {
 		import HttpParsers._
 
-		val value:CParser[ETag]		= ETagValue.parser map ETag.apply
-		val finished:CParser[ETag]	= value finish LWSP
+		val value:TextParser[ETag]	= ETagValue.parser map ETag.apply
+		val finished:TextParser[ETag]	= value finish LWSP
 	}
 }
 

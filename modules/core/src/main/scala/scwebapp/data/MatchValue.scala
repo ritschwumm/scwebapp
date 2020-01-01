@@ -3,12 +3,12 @@ package scwebapp.data
 import scutil.lang._
 
 import scwebapp.format._
-import scwebapp.parser.string._
+import scparse.ng.text._
 
 object MatchValue {
 	// NOTE this is special as we provide a complete tag
 	def parse(it:String):Option[MatchValue]	=
-			parsers.finished parseStringOption it
+			parsers.finished.parseString(it).toOption
 
 	def unparse(it:MatchValue):String	=
 			it match {
@@ -19,11 +19,11 @@ object MatchValue {
 	private object parsers {
 		import HttpParsers._
 
-		val wildcardValue:CParser[MatchValue]	= symbol('*') tag Wildcard
-		val etagsValue:CParser[MatchValue]		= hash1(ETagValue.parser) map EntityTags.apply
+		val wildcardValue:TextParser[MatchValue]	= symbol('*') tag Wildcard
+		val etagsValue:TextParser[MatchValue]		= hash1(ETagValue.parser) map EntityTags.apply
 
-		val value:CParser[MatchValue]		= wildcardValue orElse etagsValue
-		val finished:CParser[MatchValue]	= value finish LWSP
+		val value:TextParser[MatchValue]		= wildcardValue orElse etagsValue
+		val finished:TextParser[MatchValue]	= value finish LWSP
 	}
 
 	//------------------------------------------------------------------------------

@@ -3,14 +3,14 @@ package scwebapp.header
 import scwebapp.HeaderType
 import scwebapp.data._
 import scwebapp.format._
-import scwebapp.parser.string._
+import scparse.ng.text._
 import scwebapp.util.AcceptanceUtil
 
 object Accept extends HeaderType[Accept] {
 	val key	= "Accept"
 
 	def parse(it:String):Option[Accept]	=
-			parsers.finished parseStringOption it
+			parsers.finished.parseString(it).toOption
 
 	def unparse(it:Accept):String	=
 			it.ranges map MediaRange.unparse mkString ","
@@ -18,8 +18,8 @@ object Accept extends HeaderType[Accept] {
 	private object parsers {
 		import HttpParsers._
 
-		val value:CParser[Accept]		= hash(MediaRange.parser) map Accept.apply
-		val finished:CParser[Accept]	= value finish LWSP
+		val value:TextParser[Accept]		= hash(MediaRange.parser) map Accept.apply
+		val finished:TextParser[Accept]	= value finish LWSP
 	}
 }
 

@@ -4,7 +4,7 @@ import scutil.base.implicits._
 import scutil.core.implicits._
 
 import scwebapp.format._
-import scwebapp.parser.string._
+import scparse.ng.text._
 
 object QValue {
 	val zero	= QValue(0)
@@ -12,7 +12,7 @@ object QValue {
 
 	//------------------------------------------------------------------------------
 
-	lazy val parser:CParser[QValue]	= parsers.value
+	lazy val parser:TextParser[QValue]	= parsers.value
 
 	def unparse(it:QValue):String	= {
 		val raw	= it.promille.toString.reverse.padTo(4, '0').dropWhile(_ == '0').reverse
@@ -26,16 +26,16 @@ object QValue {
 	private object parsers {
 		import HttpParsers._
 
-		lazy val value:CParser[QValue]	=
+		lazy val value:TextParser[QValue]	=
 				low orElse high map { case (h,l) =>
 					QValue(digitVal(h) * 1000 + tailing(l.flattenMany map digitVal, 100))
 				}
 
-		lazy val finished:CParser[QValue]	=
+		lazy val finished:TextParser[QValue]	=
 				value.phrase
 
-		lazy val low:CParser[(Char,Option[Seq[Char]])]	= cis('0') next (cis('.') right (DIGIT		upto 3)).option
-		lazy val high:CParser[(Char,Option[Seq[Char]])]	= cis('1') next (cis('.') right (cis('0')	upto 3)).option
+		lazy val low:TextParser[(Char,Option[Seq[Char]])]	= TextParser.isChar('0') next (TextParser.isChar('.') right (DIGIT					timesUpTo 3)).option
+		lazy val high:TextParser[(Char,Option[Seq[Char]])]	= TextParser.isChar('1') next (TextParser.isChar('.') right (TextParser.isChar('0')	timesUpTo 3)).option
 
 		private def tailing(digits:Seq[Int], factor:Int):Int =
 				if (factor == 0)	0

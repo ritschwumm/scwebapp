@@ -1,10 +1,10 @@
 package scwebapp.data
 
 import scwebapp.format._
-import scwebapp.parser.string._
+import scparse.ng.text._
 
 object ContentEncodingType {
-	lazy val parser:CParser[ContentEncodingType]	= parsers.value
+	lazy val parser:TextParser[ContentEncodingType]	= parsers.value
 
 	def unparse(it:ContentEncodingType):String	=
 			it match {
@@ -17,13 +17,16 @@ object ContentEncodingType {
 	private object parsers {
 		import HttpParsers._
 
-		val value:CParser[ContentEncodingType]	=
-				token map CaseUtil.lowerCase collect {
+		val value:TextParser[ContentEncodingType]	=
+				token
+				.map	(CaseUtil.lowerCase)
+				.requirePartial[ContentEncodingType] {
 					case "gzip"		=> Gzip
 					case "compress"	=> Compress
 					case "deflate"	=> Deflate
 					case "br"		=> Br
 				}
+				.named ("ContentEncodingType")
 	}
 
 	//------------------------------------------------------------------------------

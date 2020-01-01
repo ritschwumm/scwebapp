@@ -3,13 +3,13 @@ package scwebapp.header
 import scwebapp.HeaderType
 import scwebapp.data._
 import scwebapp.format._
-import scwebapp.parser.string._
+import scparse.ng.text._
 
 object Cookie extends HeaderType[Cookie] {
 	val key	= "Cookie"
 
 	def parse(it:String):Option[Cookie]	=
-			parsers.finished parseStringOption it
+			parsers.finished.parseString(it).toOption
 
 	def unparse(it:Cookie):String	=
 			HttpUnparsers parameters it.values
@@ -18,13 +18,13 @@ object Cookie extends HeaderType[Cookie] {
 		import HttpParsers._
 		import CookieParsers._
 
-		val cookie_string:CParser[Seq[(String,String)]]	= cookie_pair sepSeq (cis(';') next SP)
+		val cookie_string:TextParser[Seq[(String,String)]]	= cookie_pair sepSeq (TextParser.isChar(';') next SP)
 
 		// TODO inside OWS is stupid. revise whitespace handling.
-		val cookieParams:CParser[CaseParameters]	= cookie_string inside OWS map CaseParameters.apply
+		val cookieParams:TextParser[CaseParameters]	= cookie_string inside OWS map CaseParameters.apply
 
-		val value:CParser[Cookie]		= cookieParams map Cookie.apply
-		val finished:CParser[Cookie]	= value finish LWSP
+		val value:TextParser[Cookie]		= cookieParams map Cookie.apply
+		val finished:TextParser[Cookie]	= value finish LWSP
 	}
 }
 

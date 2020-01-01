@@ -5,13 +5,13 @@ import scutil.base.implicits._
 import scwebapp.HeaderType
 import scwebapp.data._
 import scwebapp.format._
-import scwebapp.parser.string._
+import scparse.ng.text._
 
 object ContentDisposition extends HeaderType[ContentDisposition] {
 	val key	= "Content-Disposition"
 
 	def parse(it:String):Option[ContentDisposition]	=
-			parsers.finished parseStringOption it
+			parsers.finished.parseString(it).toOption
 
 	def unparse(it:ContentDisposition):String	= {
 		// TODO filter out bad characters in value
@@ -26,13 +26,13 @@ object ContentDisposition extends HeaderType[ContentDisposition] {
 		import HttpParsers._
 
 		// TODO handle *filename
-		val value:CParser[ContentDisposition]	=
+		val value:TextParser[ContentDisposition]	=
 				ContentDispositionType.parser next parameterList map { case (kind, params)	=>
 					val filename	= params firstString "filename"
 					ContentDisposition(kind, filename)
 				}
 
-		val finished:CParser[ContentDisposition]	= value finish LWSP
+		val finished:TextParser[ContentDisposition]	= value finish LWSP
 	}
 }
 

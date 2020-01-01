@@ -4,10 +4,10 @@ import scutil.base.implicits._
 import scutil.lang._
 
 import scwebapp.format._
-import scwebapp.parser.string._
+import scparse.ng.text._
 
 object BasicAuthenticate {
-	lazy val parser:CParser[BasicAuthenticate]	= parsers.value
+	lazy val parser:TextParser[BasicAuthenticate]	= parsers.value
 
 	def unparse(it:BasicAuthenticate):String	=
 			show"""Basic realm="${it.realm}""""
@@ -17,9 +17,9 @@ object BasicAuthenticate {
 
 		final case class Challenge(name:String, parameters:Seq[(String,String)])
 
-		val simpleParameter:CParser[(String,String)]	= regParameter map { _._2 }
-		val challenge:CParser[Challenge]				= token next hash(simpleParameter) map Challenge.tupled
-		val challengeList:CParser[Nes[Challenge]]		= hash1(challenge)
+		val simpleParameter:TextParser[(String,String)]	= regParameter map { _._2 }
+		val challenge:TextParser[Challenge]				= token next hash(simpleParameter) map Challenge.tupled
+		val challengeList:TextParser[Nes[Challenge]]		= hash1(challenge)
 
 		// TODO handle more challenge kinds
 		// TODO handle charset parameter in Basic
@@ -30,7 +30,8 @@ object BasicAuthenticate {
 				}
 				yield BasicAuthenticate(rlm)
 
-		val value:CParser[BasicAuthenticate]	= challengeList collapseMap findBasicRealm
+		val value:TextParser[BasicAuthenticate]	=
+			challengeList require findBasicRealm named "basic realm"
 	}
 }
 

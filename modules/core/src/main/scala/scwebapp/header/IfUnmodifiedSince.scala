@@ -3,13 +3,13 @@ package scwebapp.header
 import scwebapp.HeaderType
 import scwebapp.data._
 import scwebapp.format._
-import scwebapp.parser.string._
+import scparse.ng.text._
 
 object IfUnmodifiedSince extends HeaderType[IfUnmodifiedSince] {
 	val key	= "If-Unmodified-Since"
 
 	def parse(it:String):Option[IfUnmodifiedSince]	=
-			parsers.finished parseStringOption it
+			parsers.finished.parseString(it).toOption
 
 	def unparse(it:IfUnmodifiedSince):String	=
 			HttpDate unparse it.value
@@ -17,8 +17,8 @@ object IfUnmodifiedSince extends HeaderType[IfUnmodifiedSince] {
 	private object parsers {
 		import HttpParsers._
 
-		val value:CParser[IfUnmodifiedSince]	= dateValue map IfUnmodifiedSince.apply
-		val finished:CParser[IfUnmodifiedSince]	= value finish LWSP
+		val value:TextParser[IfUnmodifiedSince]		= dateValue map IfUnmodifiedSince.apply
+		val finished:TextParser[IfUnmodifiedSince]	= value finish LWSP
 	}
 }
 

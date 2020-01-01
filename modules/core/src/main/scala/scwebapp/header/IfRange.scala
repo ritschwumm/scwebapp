@@ -3,13 +3,13 @@ package scwebapp.header
 import scwebapp.HeaderType
 import scwebapp.data._
 import scwebapp.format._
-import scwebapp.parser.string._
+import scparse.ng.text._
 
 object IfRange extends HeaderType[IfRange] {
 	val key	= "If-Range"
 
 	def parse(it:String):Option[IfRange]	=
-			parsers.finished parseStringOption it
+			parsers.finished.parseString(it).toOption
 
 	def unparse(it:IfRange):String	=
 			IfRangeValue unparse it.value
@@ -17,8 +17,8 @@ object IfRange extends HeaderType[IfRange] {
 	private object parsers {
 		import HttpParsers._
 
-		val value:CParser[IfRange]		= IfRangeValue.parser map IfRange.apply
-		val finished:CParser[IfRange]	= value finish LWSP
+		val value:TextParser[IfRange]		= IfRangeValue.parser map IfRange.apply
+		val finished:TextParser[IfRange]	= value finish LWSP
 	}
 }
 

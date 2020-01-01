@@ -1,10 +1,10 @@
 package scwebapp.data
 
 import scwebapp.format._
-import scwebapp.parser.string._
+import scparse.ng.text._
 
 object AcceptEncodingType {
-	lazy val parser:CParser[AcceptEncodingType]	= parsers.value
+	lazy val parser:TextParser[AcceptEncodingType]	= parsers.value
 
 	def unparse(it:AcceptEncodingType):String	=
 			it match {
@@ -15,13 +15,13 @@ object AcceptEncodingType {
 	private object parsers {
 		import HttpParsers._
 
-		val identity:CParser[AcceptEncodingType]	=
-				token map CaseUtil.lowerCase  filter (_ == "identity") tag Identity
+		val identity:TextParser[AcceptEncodingType]	=
+				token map CaseUtil.lowerCase ensure (_ == "identity") named "identity \"identity\"" tag Identity
 
-		val other:CParser[AcceptEncodingType]	=
+		val other:TextParser[AcceptEncodingType]	=
 				ContentEncodingType.parser map Other.apply
 
-		val value:CParser[AcceptEncodingType]	=
+		val value:TextParser[AcceptEncodingType]	=
 				identity orElse other
 	}
 

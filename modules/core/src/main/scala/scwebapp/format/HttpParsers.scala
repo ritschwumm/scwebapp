@@ -7,8 +7,7 @@ import scutil.lang._
 import scutil.codec._
 
 import scwebapp.data._
-import scwebapp.parser.Parser._
-import scwebapp.parser.string._
+import scparse.ng.text._
 
 object HttpParsers {
 	val ctlChars		= ((0 to 31) :+ 127) map { _.toChar } mkString ""
@@ -18,169 +17,173 @@ object HttpParsers {
 	//------------------------------------------------------------------------------
 
 	/*
-	val CHAR:CParser[Char]		= rng(0, 127)
-	val UPALPHA:CParser[Char]	= rng('A', 'Z')
-	val LOALPHA:CParser[Char]	= rng('a', 'z')
-	val ALPHA:CParser[Char]		= UPALPHA orElse LOALPHA
-	val LWS:CParser[Char]		= CRLF.option next WSP.nes tag ' '
+	val CHAR:TextParser[Char]		= rng(0, 127)
+	val UPALPHA:TextParser[Char]	= rng('A', 'Z')
+	val LOALPHA:TextParser[Char]	= rng('a', 'z')
+	val ALPHA:TextParser[Char]	= UPALPHA orElse LOALPHA
+	val LWS:TextParser[Char]		= CRLF.option next WSP.nes tag ' '
 	*/
 
-	val OCTET:CParser[Char]		= rng(0, 255)
-	val ALPHA:CParser[Char]		= rng('A', 'Z') orElse rng('a', 'z')
-	val BIT:CParser[Char]		= is('0') orElse is('1')
-	val CHAR:CParser[Char]		= rng(1,127)
-	val DIGIT:CParser[Char]		= rng('0', '9')
-	val HEXDIG:CParser[Char]	= DIGIT orElse rng('a', 'f') orElse rng('A', 'F')
-	val CTL:CParser[Char]		= rng(0, 31) orElse is(127)
-	val VCHAR:CParser[Char]		= rng(33, 126)
-	val CR:CParser[Char]		= is('\r')
-	val LF:CParser[Char]		= is('\n')
-	val SP:CParser[Char]		= is(' ')
-	val HTAB:CParser[Char]		= is('\t')
-	val DQUOTE:CParser[Char]	= is('"')
+	val OCTET:TextParser[Char]	= TextParser anyCharInRange (0, 255)
+	val ALPHA:TextParser[Char]	= TextParser.anyCharInRange('A', 'Z') orElse TextParser.anyCharInRange('a', 'z')
+	val BIT:TextParser[Char]	= TextParser.isChar('0') orElse TextParser.isChar('1')
+	val CHAR:TextParser[Char]	= TextParser anyCharInRange (1,127)
+	val DIGIT:TextParser[Char]	= TextParser anyCharInRange ('0', '9')
+	val HEXDIG:TextParser[Char]	= DIGIT orElse TextParser.anyCharInRange('a', 'f') orElse TextParser.anyCharInRange('A', 'F')
+	val CTL:TextParser[Char]	= TextParser.anyCharInRange(0, 31) orElse TextParser.isChar(127)
+	val VCHAR:TextParser[Char]	= TextParser anyCharInRange (33, 126)
+	val CR:TextParser[Char]		= TextParser isChar '\r'
+	val LF:TextParser[Char]		= TextParser isChar '\n'
+	val SP:TextParser[Char]		= TextParser isChar ' '
+	val HTAB:TextParser[Char]	= TextParser isChar '\t'
+	val DQUOTE:TextParser[Char]	= TextParser isChar '"'
 
-	val CRLF:CParser[String]	= CR next LF map { case (a, b) => a.toString + b.toString }
-	val WSP:CParser[Char]		= SP orElse HTAB
-	val LWSP:CParser[Char]		= (CRLF.option next WSP).seq tag ' '
+	val CRLF:TextParser[String]	= CR next LF map { case (a, b) => a.toString + b.toString }
+	val WSP:TextParser[Char]		= SP orElse HTAB
+	val LWSP:TextParser[Char]		= (CRLF.option next WSP).seq tag ' '
 
-	val TEXT:CParser[Char]		= CTL.prevent right OCTET
-	val OWS:CParser[Unit]		= (CRLF.option next WSP).seq tag (())
+	val TEXT:TextParser[Char]		= CTL.prevents right OCTET
+	val OWS:TextParser[Unit]		= (CRLF.option next WSP).seq tag (())
 
 	//------------------------------------------------------------------------------
 
-	def symbol(c:Char):CParser[Char]		= is(c)		eating LWSP
-	def symbolN(s:String):CParser[String]	= sis(s)	eating LWSP
+	def symbol(c:Char):TextParser[Char]			= TextParser isChar		c	eatLeft LWSP
+	def symbolN(s:String):TextParser[String]	= TextParser isString	s	eatLeft LWSP
 
 	// NOTE separator is tspecials and "{} \t" and CTL
-	val tokenSeparator:CParser[Char]	= in(nonTokenChars)
-	val token:CParser[String]			= (tokenSeparator.prevent right CHAR).nes.stringify eating LWSP
+	val tokenSeparator:TextParser[Char]	= TextParser anyCharOf nonTokenChars
+	val token:TextParser[String]		= (tokenSeparator.prevents right CHAR).nes.stringify eatLeft LWSP
 
-	// val ctext:Parser[Char]		= (sat('(') orElse sat(')')).prevent right TEXT
+	// val ctext:Parser[Char]		= (sat('(') orElse sat(')')).prevents right TEXT
 	// val comment:Parser[String]	= '(' ~> (quoted_pair_string | comment | ctext_string).* <~ ')' stringify
 
-	val quotedPair:CParser[Char]		= is('\\') right CHAR
-	val dqText:CParser[Char]			= DQUOTE.prevent right TEXT
-	val quotedChar:CParser[Char]		= quotedPair orElse dqText
-	val quotedString:CParser[String]	= (quotedChar.seq inside DQUOTE).stringify eating LWSP
+	val quotedPair:TextParser[Char]		= TextParser.isChar('\\') right CHAR
+	val dqText:TextParser[Char]			= DQUOTE.prevents right TEXT
+	val quotedChar:TextParser[Char]		= quotedPair orElse dqText
+	val quotedString:TextParser[String]	= (quotedChar.seq inside DQUOTE).stringify eatLeft LWSP
 
-	val hashSepa:CParser[Char]	= symbol(',')
-	def hash[T](sub:CParser[T]):CParser[Seq[T]]	= sub sepSeq	hashSepa
-	def hash1[T](sub:CParser[T]):CParser[Nes[T]]	= sub sepNes	hashSepa
+	val hashSepa:TextParser[Char]	= symbol(',')
+	def hash[T](sub:TextParser[T]):TextParser[Seq[T]]	= sub sepSeq	hashSepa
+	def hash1[T](sub:TextParser[T]):TextParser[Nes[T]]	= sub sepNes	hashSepa
 
 	//------------------------------------------------------------------------------
 
 	/*
-	val attribute:CParser[String]				= token
-	val value:CParser[String]					= token orElse quotedString
-	val parameter:CParser[(String,String)]		= attribute left symbol('=') next value
-	val nextParameter:CParser[(String,String)]	= symbol(';') right parameter
-	val parameterList:CParser[NoCaseParameters]	= nextParameter.seq map NoCaseParameters.apply
+	val attribute:TextParser[String]					= token
+	val value:TextParser[String]						= token orElse quotedString
+	val parameter:TextParser[(String,String)]			= attribute left symbol('=') next value
+	val nextParameter:TextParser[(String,String)]		= symbol(';') right parameter
+	val parameterList:TextParser[NoCaseParameters]	= nextParameter.seq map NoCaseParameters.apply
 	*/
 
 	// TODO is this allowed for all parameters, or just for content-disposition?
 	// NOTE this is _not_ allowed for content-disposition in multipart/form-data
 
-	val attrChar:CParser[Char]		= ALPHA orElse DIGIT orElse in("!#$&+-.^_`|~")
-	val parmName:CParser[String]	= attrChar.nes.stringify
+	val attrChar:TextParser[Char]	= ALPHA orElse DIGIT orElse TextParser.anyCharOf("!#$&+-.^_`|~")
+	val parmName:TextParser[String]	= attrChar.nes.stringify
 
-	val parmValue:CParser[String]		= token orElse quotedString
-	val regParameter:CParser[(Boolean,(String,String))]	=
-			parmName eating WSP left symbol('=') next parmValue map { false -> _ }
+	val parmValue:TextParser[String]		= token orElse quotedString
+	val regParameter:TextParser[(Boolean,(String,String))]	=
+			parmName eatLeft WSP left symbol('=') next parmValue map { false -> _ }
 
 	// @see https://tools.ietf.org/html/rfc5987
 
-	val hexNibble:CParser[Int]	=
+	val hexNibble:TextParser[Int]	=
 			HEXDIG map {
 				case x if x >= '0'	&& x <= '9'	=> x - '0' + 0
 				case x if x >= 'a'	&& x <= 'f'	=> x - 'a' + 10
 				case x if x >= 'A'	&& x <= 'F'	=> x - 'A' + 10
 			}
-	val hexByte:CParser[Byte]	=
+	val hexByte:TextParser[Byte]	=
 			(hexNibble next hexNibble) map { case (h, l) =>
 				((h << 4) | l).toByte
 			}
-	val pctEncoded:CParser[Byte]			= is('%') right hexByte
-	val attrCharByte:CParser[Byte]			= attrChar map { _.toByte }
-	val valueCharBytes:CParser[ByteString]	= (pctEncoded orElse attrCharByte).seq map ByteString.fromSeq
+	val pctEncoded:TextParser[Byte]				= TextParser.isChar('%') right hexByte
+	val attrCharByte:TextParser[Byte]			= attrChar map { _.toByte }
+	val valueCharBytes:TextParser[ByteString]	= (pctEncoded orElse attrCharByte).seq map ByteString.fromSeq
 
-	val mimeCharsetC:CParser[Char]			= ALPHA orElse DIGIT orElse in("!#$%&+-^_`{}~")
-	val mimeCharset:CParser[String]			= mimeCharsetC.nes.stringify
+	val mimeCharsetC:TextParser[Char]		= ALPHA orElse DIGIT orElse TextParser.anyCharOf("!#$%&+-^_`{}~")
+	val mimeCharset:TextParser[String]		= mimeCharsetC.nes.stringify
 
 	// TODO hack
-	val extValuePart:CParser[String]		= mimeCharsetC.seq.stringify
+	val extValuePart:TextParser[String]		= mimeCharsetC.seq.stringify
 
 	// NOTE the rfc grammar requires uppercase, but the examples do not
-	val simpleCharset:CParser[Charset]	=
-			extValuePart map { CaseUtil.lowerCase } collect {
+	val simpleCharset:TextParser[Charset]	=
+			extValuePart
+			.map	(CaseUtil.lowerCase)
+			.requirePartial {
 				case "utf-8"		=> Charsets.utf_8
 				case "iso-8859-1"	=> Charsets.iso_8859_1
 			}
+			.named ("Charset")
 
 	// NOTE this ignores a mimeCharset
-	val charset:CParser[Option[Charset]]	=
+	val charset:TextParser[Option[Charset]]	=
 			(simpleCharset	map Some.apply)	orElse
 			(mimeCharset	tag None)
 
 	// TODO hack
-	val language:CParser[String]	= extValuePart
+	val language:TextParser[String]	= extValuePart
 
-	val extValueOpt:CParser[Option[String]]	=
+	val extValueOpt:TextParser[Option[String]]	=
 			for {
 				charset		<- charset
-				_			<- cis('\'')
+				_			<- TextParser isChar '\''
 				language	<- language
-				_			<- cis('\'')
+				_			<- TextParser isChar '\''
 				bytes		<- valueCharBytes
 			}
 			yield {
 				charset flatMap { it => (it decodeEitherByteString bytes).toOption }
 			}
 
-	val extValue:CParser[String]	= (extValueOpt eating LWSP).collapse
+	val extValue:TextParser[String]	=
+		extValueOpt eatLeft LWSP requiredFor "extValue"
 
-	val extParName:CParser[String]	= parmName left cis('*')
+	val extParName:TextParser[String]	= parmName left TextParser.isChar('*')
 
-	val extParameter:CParser[(Boolean,(String,String))]	=
-			extParName eating WSP left symbol('=') next extValue map { true -> _ }
+	val extParameter:TextParser[(Boolean,(String,String))]	=
+			extParName eatLeft WSP left symbol('=') next extValue map { true -> _ }
 
-	val parameter:CParser[(Boolean,(String,String))]			= (regParameter orElse extParameter) eating LWSP
-	val nextParameter:CParser[(Boolean,(String,String))]		= symbol(';') right parameter
-	val manyParameters:CParser[Seq[(Boolean,(String,String))]]	= nextParameter.seq
+	val parameter:TextParser[(Boolean,(String,String))]			= regParameter orElse extParameter eatLeft LWSP
+	val nextParameter:TextParser[(Boolean,(String,String))]		= symbol(';') right parameter
+	val manyParameters:TextParser[Seq[(Boolean,(String,String))]]	= nextParameter.seq
 
 	// moves extended parameters to the front
 	def extendedFirst(it:Seq[(Boolean,(String,String))]):Seq[(String,String)]	=
 			(it collect { case (true,	kv) => kv })	++
 			(it collect { case (false,	kv) => kv })
 
-	val parameterList:CParser[NoCaseParameters]	=
+	val parameterList:TextParser[NoCaseParameters]	=
 			manyParameters map { list => NoCaseParameters(extendedFirst(list)) }
 
 	//------------------------------------------------------------------------------
 
-	val qParam:CParser[QValue]	=
-			symbol('q') right symbol('=') right (QValue.parser eating LWSP)
+	val qParam:TextParser[QValue]	=
+			symbol('q') right symbol('=') right (QValue.parser eatLeft LWSP)
 
 	//------------------------------------------------------------------------------
 
-	val longZero:CParser[Long]	= cis('0') tag 0L
-	val longPositive:CParser[Long]	=
-			rng('1', '9') next DIGIT.seq map { case (h, t)	=>
+	val longZero:TextParser[Long]	= TextParser.isChar('0') tag 0L
+	val longPositive:TextParser[Long]	=
+			TextParser.anyCharInRange('1', '9') next DIGIT.seq map { case (h, t)	=>
 				((h +: t) foldLeft 0L) { (o, d) =>
 					o * 10 + (d - '0')
 				}
 			}
-	val longUnsigned:CParser[Long]	= longZero orElse longPositive
+	val longUnsigned:TextParser[Long]	= longZero orElse longPositive
 
 	//------------------------------------------------------------------------------
 
-	val base64Char:CParser[Char]	=
-			ALPHA orElse DIGIT orElse in("+/=")
+	val base64Char:TextParser[Char]	=
+			ALPHA orElse DIGIT orElse TextParser.anyCharOf("+/=")
 
-	def base64(charset:Charset):CParser[String]	=
-			base64Char.seq.stringify collapseMap Base64.decodeByteString collapseMap { it => (charset decodeEitherByteString it).toOption }
+	def base64(charset:Charset):TextParser[String]	=
+			base64Char.seq.stringify require Base64.decodeByteString named "Base64" require { it => (charset decodeEitherByteString it).toOption } named s"String[${charset.name}]"
 
 	//------------------------------------------------------------------------------
 
-	val dateValue:CParser[HttpDate]	=
-			rng(32, 126).seq.stringify map { _.trim } collapseMap HttpDate.parse
+	val dateValue:TextParser[HttpDate]	=
+			TextParser.anyCharInRange(32, 126).seq.stringify map { _.trim } require HttpDate.parse named "HttpDate"
 }

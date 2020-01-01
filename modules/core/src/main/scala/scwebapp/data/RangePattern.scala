@@ -3,10 +3,10 @@ package scwebapp.data
 import scutil.base.implicits._
 
 import scwebapp.format._
-import scwebapp.parser.string._
+import scparse.ng.text._
 
 object RangePattern {
-	lazy val parser:CParser[RangePattern]	=
+	lazy val parser:TextParser[RangePattern]	=
 			parsers.value
 
 	def unparse(it:RangePattern):String	=
@@ -19,10 +19,10 @@ object RangePattern {
 	private object parsers {
 		import HttpParsers._
 
-		val bytePos:CParser[Long]						= DIGIT.nes.stringify map { _.toLong } eating LWSP
-		val byteRangeSpec:CParser[(Long,Option[Long])]	= bytePos left symbol('-') next bytePos.option
-		val suffixByteRangeSpec:CParser[Long]			= symbol('-') right bytePos
-		val value:CParser[RangePattern]			=
+		val bytePos:TextParser[Long]						= DIGIT.nes.stringify map { _.toLong } eatLeft LWSP
+		val byteRangeSpec:TextParser[(Long,Option[Long])]	= bytePos left symbol('-') next bytePos.option
+		val suffixByteRangeSpec:TextParser[Long]			= symbol('-') right bytePos
+		val value:TextParser[RangePattern]	=
 				byteRangeSpec either suffixByteRangeSpec map {
 					case Left((a, None))	=> Begin(a)
 					case Left((a, Some(b)))	=> FromTo(a, b)

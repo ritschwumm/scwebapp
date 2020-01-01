@@ -1,10 +1,10 @@
 package scwebapp.data
 
 import scwebapp.format._
-import scwebapp.parser.string._
+import scparse.ng.text._
 
 object IfRangeValue {
-	lazy val parser:CParser[IfRangeValue]	= parsers.value
+	lazy val parser:TextParser[IfRangeValue]	= parsers.value
 
 	def unparse(it:IfRangeValue):String	=
 			it match {
@@ -15,10 +15,10 @@ object IfRangeValue {
 	private object parsers {
 		import HttpParsers._
 
-		val date:CParser[IfRangeValue]	= dateValue map IsHttpDate.apply
-		val etag:CParser[IfRangeValue]	= ETagValue.parser map EntityTag.apply
+		val date:TextParser[IfRangeValue]		= dateValue map IsHttpDate.apply
+		val etag:TextParser[IfRangeValue]		= ETagValue.parser map EntityTag.apply
 
-		val value:CParser[IfRangeValue]	= date orElse etag
+		val value:TextParser[IfRangeValue]	= date orElse etag
 	}
 
 	//------------------------------------------------------------------------------

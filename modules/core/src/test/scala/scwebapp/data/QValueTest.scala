@@ -3,11 +3,11 @@ package scwebapp.data
 import org.specs2.mutable._
 
 import scwebapp.format._
-import scwebapp.parser.string._
+import scparse.ng.text._
 
 class QValueTest extends Specification {
 	val parser	= QValue.parser finish HttpParsers.LWSP
-	def parseQValue(it:String):Option[QValue] = parser parseStringOption it
+	def parseQValue(it:String):Option[QValue] = parser.parseString(it).toOption
 
 	"QValue" should {
 		"parse 0" in {

@@ -3,7 +3,7 @@ package scwebapp.data
 import scutil.base.implicits._
 
 import scwebapp.format._
-import scwebapp.parser.string._
+import scparse.ng.text._
 
 object ContentRangeValue {
 	def total(size:Long):ContentRangeValue	=
@@ -14,7 +14,7 @@ object ContentRangeValue {
 
 	//------------------------------------------------------------------------------
 
-	lazy val parser:CParser[ContentRangeValue]	= parsers.value
+	lazy val parser:TextParser[ContentRangeValue]	= parsers.value
 
 	def unparse(it:ContentRangeValue):String	=
 			it match {
@@ -26,21 +26,21 @@ object ContentRangeValue {
 	private object parsers {
 		import HttpParsers._
 
-		val STAR	= cis('*')
-		val DASH	= cis('-')
-		val SLASH	= cis('/')
+		val STAR	= TextParser isChar '*'
+		val DASH	= TextParser isChar '-'
+		val SLASH	= TextParser isChar '/'
 
-		val irange:CParser[InclusiveRange]	=
+		val irange:TextParser[InclusiveRange]	=
 				longUnsigned left DASH next longUnsigned map { case (s, e) =>
 					InclusiveRange(s, e)
 				}
 
-		val full:CParser[ContentRangeValue]			= irange left SLASH next longUnsigned map Full.tupled
-		val fromTo:CParser[ContentRangeValue]		= irange left SLASH left STAR map Bare.apply
-		val total:CParser[ContentRangeValue]		= STAR right longUnsigned map Total.apply
-		val rangeValue:CParser[ContentRangeValue]	= full orElse fromTo orElse total
+		val full:TextParser[ContentRangeValue]		= irange left SLASH next longUnsigned map Full.tupled
+		val fromTo:TextParser[ContentRangeValue]		= irange left SLASH left STAR map Bare.apply
+		val total:TextParser[ContentRangeValue]		= STAR right longUnsigned map Total.apply
+		val rangeValue:TextParser[ContentRangeValue]	= full orElse fromTo orElse total
 
-		val value:CParser[ContentRangeValue]		= symbolN(RangeType.keys.bytes) right rangeValue
+		val value:TextParser[ContentRangeValue]		= symbolN(RangeType.keys.bytes) right rangeValue
 	}
 
 	//------------------------------------------------------------------------------

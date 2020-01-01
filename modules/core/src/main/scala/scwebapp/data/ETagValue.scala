@@ -3,10 +3,10 @@ package scwebapp.data
 import scutil.base.implicits._
 
 import scwebapp.format._
-import scwebapp.parser.string._
+import scparse.ng.text._
 
 object ETagValue {
-	lazy val parser:CParser[ETagValue]	= parsers.value
+	lazy val parser:TextParser[ETagValue]	= parsers.value
 
 	def unparse(it:ETagValue):String	=
 			(it.weak cata ("", "W/")) +
@@ -15,8 +15,8 @@ object ETagValue {
 	private object parsers {
 		import HttpParsers._
 
-		val weak:CParser[Boolean]		= symbolN("W/").flag
-		val value:CParser[ETagValue]	= weak next quotedString map (ETagValue.apply _).tupled
+		val weak:TextParser[Boolean]		= symbolN("W/").flag
+		val value:TextParser[ETagValue]	= weak next quotedString map (ETagValue.apply _).tupled
 	}
 }
 

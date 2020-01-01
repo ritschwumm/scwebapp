@@ -7,7 +7,7 @@ import scutil.lang._
 import scutil.codec._
 
 import scwebapp.format._
-import scwebapp.parser.string._
+import scparse.ng.text._
 
 // @see http://www.ietf.org/rfc/rfc2617.txt
 object BasicAuthorization {
@@ -16,7 +16,7 @@ object BasicAuthorization {
 
 	//------------------------------------------------------------------------------
 
-	lazy val parser:CParser[BasicAuthorization]	= parsers.value
+	lazy val parser:TextParser[BasicAuthorization]	= parsers.value
 
 	def unparse(it:BasicAuthorization):String	=
 			"Basic " + (
@@ -30,15 +30,17 @@ object BasicAuthorization {
 	private object parsers {
 		import HttpParsers._
 
-		val userid:CParser[String]						= (TEXT filter { _ != ':' }).seq.stringify
-		val password:CParser[String]					= TEXT.seq.stringify
-		val basicCredentials:CParser[(String,String)]	= userid left cis(':') next password
+		val colon	= TextParser isChar ':'
 
-		val base64Credentials:CParser[(String,String)]	= base64(encoding) nestString basicCredentials
-		def basicAuthentication(charset:Charset):CParser[(String,String)]	=
-				symbolN("Basic") right (base64Credentials eating LWSP)
+		val userid:TextParser[String]						= (colon.prevents right TEXT).seq.stringify
+		val password:TextParser[String]						= TEXT.seq.stringify
+		val basicCredentials:TextParser[(String,String)]	= userid left colon next password
 
-		val value:CParser[BasicAuthorization]		= basicAuthentication(encoding) map (BasicAuthorization.apply _).tupled
+		val base64Credentials:TextParser[(String,String)]	= base64(encoding) nestString basicCredentials.phrase
+		def basicAuthentication(charset:Charset):TextParser[(String,String)]	=
+				symbolN("Basic") right (base64Credentials eatLeft LWSP)
+
+		val value:TextParser[BasicAuthorization]		= basicAuthentication(encoding) map (BasicAuthorization.apply _).tupled
 	}
 }
 

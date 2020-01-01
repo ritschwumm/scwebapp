@@ -3,13 +3,13 @@ package scwebapp.header
 import scwebapp.HeaderType
 import scwebapp.data._
 import scwebapp.format._
-import scwebapp.parser.string._
+import scparse.ng.text._
 
 object LastModified extends HeaderType[LastModified] {
 	val key	= "Last-Modified"
 
 	def parse(it:String):Option[LastModified]	=
-			parsers.finished parseStringOption it
+			parsers.finished.parseString(it).toOption
 
 	def unparse(it:LastModified):String	=
 			HttpDate unparse it.value
@@ -17,8 +17,8 @@ object LastModified extends HeaderType[LastModified] {
 	private object parsers {
 		import HttpParsers._
 
-		val value:CParser[LastModified]		= dateValue map LastModified.apply
-		val finished:CParser[LastModified]	= value finish LWSP
+		val value:TextParser[LastModified]	= dateValue map LastModified.apply
+		val finished:TextParser[LastModified]	= value finish LWSP
 	}
 }
 

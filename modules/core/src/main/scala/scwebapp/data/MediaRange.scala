@@ -1,10 +1,10 @@
 package scwebapp.data
 
 import scwebapp.format._
-import scwebapp.parser.string._
+import scparse.ng.text._
 
 object MediaRange {
-	lazy val parser:CParser[MediaRange]	= parsers.value
+	lazy val parser:TextParser[MediaRange]	= parsers.value
 
 	def unparse(it:MediaRange):String	=
 			(MediaValue unparse it.value)	+
@@ -13,7 +13,7 @@ object MediaRange {
 	private object parsers {
 		import HttpParsers._
 
-		val value:CParser[MediaRange]	=
+		val value:TextParser[MediaRange]	=
 				MediaValue.parser next parameterList map (MediaRange.apply _).tupled
 	}
 }
