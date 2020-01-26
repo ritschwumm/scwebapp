@@ -26,7 +26,7 @@ object Range extends HeaderType[Range] {
 		val rangePatterns:TextParser[Nes[RangePattern]]	= bytesUnit right symbol('=') right byteRangeSet
 
 		val value:TextParser[Range]		= rangePatterns map Range.apply
-		val finished:TextParser[Range]	= value finish LWSP
+		val finished:TextParser[Range]	= value finishRight LWSP
 	}
 }
 

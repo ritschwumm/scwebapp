@@ -26,9 +26,9 @@ object ContentRangeValue {
 	private object parsers {
 		import HttpParsers._
 
-		val STAR	= TextParser isChar '*'
-		val DASH	= TextParser isChar '-'
-		val SLASH	= TextParser isChar '/'
+		val STAR	= TextParser is '*'
+		val DASH	= TextParser is '-'
+		val SLASH	= TextParser is '/'
 
 		val irange:TextParser[InclusiveRange]	=
 			longUnsigned left DASH next longUnsigned map { case (s, e) =>

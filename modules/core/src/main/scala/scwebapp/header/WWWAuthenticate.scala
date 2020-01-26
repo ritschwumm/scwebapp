@@ -18,7 +18,7 @@ object WWWAuthenticate extends HeaderType[WWWAuthenticate] {
 		import HttpParsers._
 
 		val value:TextParser[WWWAuthenticate]		= BasicAuthenticate.parser map WWWAuthenticate.apply
-		val finished:TextParser[WWWAuthenticate]	= value finish LWSP
+		val finished:TextParser[WWWAuthenticate]	= value finishRight LWSP
 	}
 }
 

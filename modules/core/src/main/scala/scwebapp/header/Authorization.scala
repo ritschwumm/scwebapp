@@ -21,7 +21,7 @@ object Authorization extends HeaderType[Authorization] {
 		import HttpParsers._
 
 		val value:TextParser[Authorization]		= BasicAuthorization.parser map Authorization.apply
-		val finished:TextParser[Authorization]	= value finish LWSP
+		val finished:TextParser[Authorization]	= value finishRight LWSP
 	}
 }
 

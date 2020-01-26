@@ -77,7 +77,7 @@ object SetCookie extends HeaderType[SetCookie] {
 		lazy val set_cookie_header:TextParser[((String,String),Seq[CookieAv])]	= sis("Set-Cookie:") right SP right set_cookie_string
 		*/
 
-		lazy val set_cookie_string:TextParser[((String,String),Seq[CookieAv])]	= cookie_pair next (TextParser.isChar(';') right CookieAv.parser).seq
+		lazy val set_cookie_string:TextParser[((String,String),Seq[CookieAv])]	= cookie_pair next (TextParser.is(';') right CookieAv.parser).seq
 	}
 }
 

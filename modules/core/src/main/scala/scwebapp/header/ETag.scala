@@ -17,8 +17,8 @@ object ETag extends HeaderType[ETag] {
 	private object parsers {
 		import HttpParsers._
 
-		val value:TextParser[ETag]	= ETagValue.parser map ETag.apply
-		val finished:TextParser[ETag]	= value finish LWSP
+		val value:TextParser[ETag]		= ETagValue.parser map ETag.apply
+		val finished:TextParser[ETag]	= value finishRight LWSP
 	}
 }
 

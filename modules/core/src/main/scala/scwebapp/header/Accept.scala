@@ -18,8 +18,8 @@ object Accept extends HeaderType[Accept] {
 	private object parsers {
 		import HttpParsers._
 
-		val value:TextParser[Accept]		= hash(MediaRange.parser) map Accept.apply
-		val finished:TextParser[Accept]	= value finish LWSP
+		val value:TextParser[Accept]	= hash(MediaRange.parser) map Accept.apply
+		val finished:TextParser[Accept]	= value finishRight LWSP
 	}
 }
 

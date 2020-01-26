@@ -6,7 +6,7 @@ import scwebapp.format._
 import scparse.ng.text._
 
 class QValueTest extends Specification {
-	val parser	= QValue.parser finish HttpParsers.LWSP
+	val parser	= QValue.parser finishRight HttpParsers.LWSP
 	def parseQValue(it:String):Option[QValue] = parser.parseString(it).toOption
 
 	"QValue" should {

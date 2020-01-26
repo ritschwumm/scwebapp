@@ -17,8 +17,8 @@ object LastModified extends HeaderType[LastModified] {
 	private object parsers {
 		import HttpParsers._
 
-		val value:TextParser[LastModified]	= dateValue map LastModified.apply
-		val finished:TextParser[LastModified]	= value finish LWSP
+		val value:TextParser[LastModified]		= dateValue map LastModified.apply
+		val finished:TextParser[LastModified]	= value finishRight LWSP
 	}
 }
 

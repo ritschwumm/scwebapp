@@ -35,7 +35,7 @@ object MimeType {
 				case ((major, minor), params) => MimeType(major, minor, params)
 			}
 
-		val finished:TextParser[MimeType]	= value finish LWSP
+		val finished:TextParser[MimeType]	= value finishRight LWSP
 	}
 }
 

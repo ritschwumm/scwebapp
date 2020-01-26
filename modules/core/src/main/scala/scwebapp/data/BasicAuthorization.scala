@@ -30,11 +30,11 @@ object BasicAuthorization {
 	private object parsers {
 		import HttpParsers._
 
-		val colon	= TextParser isChar ':'
+		val COLON	= TextParser is ':'
 
-		val userid:TextParser[String]						= (colon.not right TEXT).seq.stringify
+		val userid:TextParser[String]						= (COLON.not right TEXT).seq.stringify
 		val password:TextParser[String]						= TEXT.seq.stringify
-		val basicCredentials:TextParser[(String,String)]	= userid left colon next password
+		val basicCredentials:TextParser[(String,String)]	= userid left COLON next password
 
 		val base64Credentials:TextParser[(String,String)]	= base64(encoding) nestString basicCredentials.phrase
 		def basicAuthentication(charset:Charset):TextParser[(String,String)]	=

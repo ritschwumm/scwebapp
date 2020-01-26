@@ -21,6 +21,8 @@ object CookieAv {
 	private object parsers {
 		import HttpParsers._
 
+		val SEMICOLON	= TextParser is ';'
+
 		lazy val cookie_av:TextParser[CookieAv]			=
 			expires_av	orElse
 			max_age_av	orElse
@@ -44,7 +46,7 @@ object CookieAv {
 
 		//// helper
 		lazy val duration:TextParser[HttpDuration]		= longPositive map HttpDuration.apply
-		lazy val something:TextParser[String]			= ((CTL orElse TextParser.isChar(';')).not right CHAR).seq.stringify
+		lazy val something:TextParser[String]			= ((CTL orElse SEMICOLON).not right CHAR).seq.stringify
 	}
 
 	//------------------------------------------------------------------------------

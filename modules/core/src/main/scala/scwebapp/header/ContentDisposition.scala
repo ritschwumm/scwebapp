@@ -32,7 +32,7 @@ object ContentDisposition extends HeaderType[ContentDisposition] {
 				ContentDisposition(kind, filename)
 			}
 
-		val finished:TextParser[ContentDisposition]	= value finish LWSP
+		val finished:TextParser[ContentDisposition]	= value finishRight LWSP
 	}
 }
 

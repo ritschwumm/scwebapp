@@ -20,8 +20,8 @@ object AcceptEncoding extends HeaderType[AcceptEncoding] {
 	object parsers {
 		import HttpParsers._
 
-		val value:TextParser[AcceptEncoding]		= hash(AcceptEncodingMatch.parser) map AcceptEncoding.apply
-		val finished:TextParser[AcceptEncoding]	= value finish LWSP
+		val value:TextParser[AcceptEncoding]	= hash(AcceptEncodingMatch.parser) map AcceptEncoding.apply
+		val finished:TextParser[AcceptEncoding]	= value finishRight LWSP
 	}
 }
 

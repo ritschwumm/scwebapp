@@ -34,8 +34,8 @@ object QValue {
 		lazy val finished:TextParser[QValue]	=
 			value.phrase
 
-		lazy val low:TextParser[(Char,Option[Seq[Char]])]	= TextParser.isChar('0') next (TextParser.isChar('.') right (DIGIT					timesUpTo 3)).option
-		lazy val high:TextParser[(Char,Option[Seq[Char]])]	= TextParser.isChar('1') next (TextParser.isChar('.') right (TextParser.isChar('0')	timesUpTo 3)).option
+		lazy val low:TextParser[(Char,Option[Seq[Char]])]	= TextParser.is('0') next (TextParser.is('.') right (DIGIT				timesUpTo 3)).option
+		lazy val high:TextParser[(Char,Option[Seq[Char]])]	= TextParser.is('1') next (TextParser.is('.') right (TextParser.is('0')	timesUpTo 3)).option
 
 		private def tailing(digits:Seq[Int], factor:Int):Int =
 			if (factor == 0)	0

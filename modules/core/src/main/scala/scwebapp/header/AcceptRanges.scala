@@ -17,8 +17,8 @@ object AcceptRanges extends HeaderType[AcceptRanges] {
 	private object parsers {
 		import HttpParsers._
 
-		val value:TextParser[AcceptRanges]	= RangeType.parser map AcceptRanges.apply
-		val finished:TextParser[AcceptRanges]	= value finish LWSP
+		val value:TextParser[AcceptRanges]		= RangeType.parser map AcceptRanges.apply
+		val finished:TextParser[AcceptRanges]	= value finishRight LWSP
 	}
 }
 

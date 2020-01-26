@@ -18,7 +18,7 @@ object IfModifiedSince extends HeaderType[IfModifiedSince] {
 		import HttpParsers._
 
 		val value:TextParser[IfModifiedSince]		= dateValue map IfModifiedSince.apply
-		val finished:TextParser[IfModifiedSince]	= value finish LWSP
+		val finished:TextParser[IfModifiedSince]	= value finishRight LWSP
 	}
 }
 

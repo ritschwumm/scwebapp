@@ -1,6 +1,6 @@
 inThisBuild(Seq(
 	organization	:= "de.djini",
-	version			:= "0.221.0",
+	version			:= "0.222.0",
 
 	scalaVersion	:= "2.13.1",
 	scalacOptions	++= Seq(
@@ -61,7 +61,7 @@ lazy val `scwebapp-core`	=
 		),
 		libraryDependencies	++= Seq(
 			"de.djini"		%%	"scutil-core"	% "0.171.0"	% "compile",
-			"de.djini"		%%	"scparse-ng"	% "0.176.0"	% "compile",
+			"de.djini"		%%	"scparse-ng"	% "0.177.0"	% "compile",
 			"org.specs2"	%%	"specs2-core"	% "4.8.3"	% "test"
 		)
 	)

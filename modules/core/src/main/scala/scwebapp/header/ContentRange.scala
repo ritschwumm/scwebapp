@@ -18,7 +18,7 @@ object ContentRange extends HeaderType[ContentRange] {
 		import HttpParsers._
 
 		val value:TextParser[ContentRange]		= ContentRangeValue.parser map ContentRange.apply
-		val finished:TextParser[ContentRange]	= value finish LWSP
+		val finished:TextParser[ContentRange]	= value finishRight LWSP
 	}
 }
 

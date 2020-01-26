@@ -18,7 +18,7 @@ object Expires extends HeaderType[Expires] {
 		import HttpParsers._
 
 		val value:TextParser[Expires]		= dateValue map Expires.apply
-		val finished:TextParser[Expires]	= value finish LWSP
+		val finished:TextParser[Expires]	= value finishRight LWSP
 	}
 }
 

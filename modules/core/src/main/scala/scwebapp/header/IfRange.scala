@@ -18,7 +18,7 @@ object IfRange extends HeaderType[IfRange] {
 		import HttpParsers._
 
 		val value:TextParser[IfRange]		= IfRangeValue.parser map IfRange.apply
-		val finished:TextParser[IfRange]	= value finish LWSP
+		val finished:TextParser[IfRange]	= value finishRight LWSP
 	}
 }
 

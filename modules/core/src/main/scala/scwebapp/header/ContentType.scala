@@ -18,7 +18,7 @@ object ContentType extends HeaderType[ContentType] {
 		import HttpParsers._
 
 		val value:TextParser[ContentType]		= MimeType.parser map ContentType.apply
-		val finished:TextParser[ContentType]	= value finish LWSP
+		val finished:TextParser[ContentType]	= value finishRight LWSP
 	}
 }
 

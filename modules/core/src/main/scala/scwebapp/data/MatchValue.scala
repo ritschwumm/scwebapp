@@ -22,8 +22,8 @@ object MatchValue {
 		val wildcardValue:TextParser[MatchValue]	= symbol('*') tag Wildcard
 		val etagsValue:TextParser[MatchValue]		= hash1(ETagValue.parser) map EntityTags.apply
 
-		val value:TextParser[MatchValue]		= wildcardValue orElse etagsValue
-		val finished:TextParser[MatchValue]	= value finish LWSP
+		val value:TextParser[MatchValue]	= wildcardValue orElse etagsValue
+		val finished:TextParser[MatchValue]	= value finishRight LWSP
 	}
 
 	//------------------------------------------------------------------------------

@@ -18,7 +18,7 @@ object ContentEncoding extends HeaderType[ContentEncoding] {
 		import HttpParsers._
 
 		val value:TextParser[ContentEncoding]		= ContentEncodingType.parser map ContentEncoding.apply
-		val finished:TextParser[ContentEncoding]	= value finish LWSP
+		val finished:TextParser[ContentEncoding]	= value finishRight LWSP
 	}
 }
 
