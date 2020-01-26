@@ -37,12 +37,12 @@ object SetCookie extends HeaderType[SetCookie] {
 
 		val avs:Vector[Option[CookieAv]]	=
 			Vector[Option[CookieAv]](
-				it.domain	map		CookieAv.DomainAv.apply,
-				it.path		map		CookieAv.PathAv.apply,
-				it.maxAge	map		CookieAv.MaxAgeAv.apply,
-				it.expires	map		CookieAv.ExpiresAv.apply,
-				it.secure	option	CookieAv.SecureAv,
-				it.httpOnly	option	CookieAv.HttpOnlyAv
+				it.domain	map		CookieAv.Domain.apply,
+				it.path		map		CookieAv.Path.apply,
+				it.maxAge	map		CookieAv.MaxAge.apply,
+				it.expires	map		CookieAv.Expires.apply,
+				it.secure	option	CookieAv.Secure,
+				it.httpOnly	option	CookieAv.HttpOnly
 			)
 
 		val headPart	= it.name + "=" + it.value
@@ -62,11 +62,11 @@ object SetCookie extends HeaderType[SetCookie] {
 				SetCookie(
 					name		= k,
 					value		= v,
-					domain		= avs collectFirst { case CookieAv.DomainAv(x)	=> x},
-					path		= avs collectFirst { case CookieAv.PathAv(x)	=> x},
-					maxAge		= avs collectFirst { case CookieAv.MaxAgeAv(x)	=> x},
-					secure		= avs contains CookieAv.SecureAv,
-					httpOnly	= avs contains CookieAv.HttpOnlyAv
+					domain		= avs collectFirst { case CookieAv.Domain(x)	=> x},
+					path		= avs collectFirst { case CookieAv.Path(x)		=> x},
+					maxAge		= avs collectFirst { case CookieAv.MaxAge(x)	=> x},
+					secure		= avs contains CookieAv.Secure,
+					httpOnly	= avs contains CookieAv.HttpOnly
 				)
 			}
 

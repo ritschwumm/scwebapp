@@ -9,13 +9,13 @@ object CookieAv {
 
 	def unparse(it:CookieAv):String	=
 		it match {
-			case ExpiresAv(date)		=> "Expires="	+ (HttpDate		unparse date)
-			case MaxAgeAv(duration)		=> "Max-Age="	+ (HttpDuration	unparse duration)
-			case DomainAv(domain)		=> "Domain="	+ domain
-			case PathAv(path)			=> "Path="		+ path
-			case SecureAv				=> "Secure"
-			case HttpOnlyAv				=> "HttpOnly"
-			case ExtensionAv(extension)	=> extension
+			case Expires(date)			=> "Expires="	+ (HttpDate		unparse date)
+			case MaxAge(duration)		=> "Max-Age="	+ (HttpDuration	unparse duration)
+			case Domain(domain)			=> "Domain="	+ domain
+			case Path(path)				=> "Path="		+ path
+			case Secure					=> "Secure"
+			case HttpOnly				=> "HttpOnly"
+			case Extension(extension)	=> extension
 		}
 
 	private object parsers {
@@ -29,16 +29,16 @@ object CookieAv {
 			secure_av	orElse
 			httponly_av	orElse
 			extension_av
-		lazy val expires_av:TextParser[CookieAv]		= TextParser isString "Expires="	right sane_cookie_date	map	ExpiresAv.apply
-		lazy val max_age_av:TextParser[CookieAv]		= TextParser isString "Max-Age="	right duration			map MaxAgeAv.apply
-		lazy val domain_av:TextParser[CookieAv]			= TextParser isString "Domain="		right domain_value		map DomainAv.apply
+		lazy val expires_av:TextParser[CookieAv]		= TextParser isString "Expires="	right sane_cookie_date	map	Expires.apply
+		lazy val max_age_av:TextParser[CookieAv]		= TextParser isString "Max-Age="	right duration			map MaxAge.apply
+		lazy val domain_av:TextParser[CookieAv]			= TextParser isString "Domain="		right domain_value		map Domain.apply
 		// TODO hack
 		lazy val domain_value:TextParser[String]		= something
-		lazy val path_av:TextParser[CookieAv]			= TextParser isString "Path="		right path_value		map PathAv.apply
+		lazy val path_av:TextParser[CookieAv]			= TextParser isString "Path="		right path_value		map Path.apply
 		lazy val path_value:TextParser[String]			= something
-		lazy val secure_av:TextParser[CookieAv]			= TextParser isString "Secure"		tag SecureAv
-		lazy val httponly_av:TextParser[CookieAv]		= TextParser isString "HttpOnly"	tag HttpOnlyAv
-		lazy val extension_av:TextParser[CookieAv]		= something							map ExtensionAv.apply
+		lazy val secure_av:TextParser[CookieAv]			= TextParser isString "Secure"		tag Secure
+		lazy val httponly_av:TextParser[CookieAv]		= TextParser isString "HttpOnly"	tag HttpOnly
+		lazy val extension_av:TextParser[CookieAv]		= something							map Extension.apply
 		// TODO hack
 		lazy val sane_cookie_date:TextParser[HttpDate]	= something collapseMap HttpDate.parse named "HttpDate"
 
@@ -49,13 +49,13 @@ object CookieAv {
 
 	//------------------------------------------------------------------------------
 
-	final	case class ExpiresAv(date:HttpDate)			extends CookieAv
-	final	case class MaxAgeAv(duration:HttpDuration)	extends CookieAv
-	final	case class DomainAv(domain:String)			extends CookieAv
-	final	case class PathAv(path:String)				extends CookieAv
-			case object SecureAv						extends CookieAv
-			case object HttpOnlyAv						extends CookieAv
-	final	case class ExtensionAv(extension:String)	extends CookieAv
+	final	case class Expires(date:HttpDate)			extends CookieAv
+	final	case class MaxAge(duration:HttpDuration)	extends CookieAv
+	final	case class Domain(domain:String)			extends CookieAv
+	final	case class Path(path:String)				extends CookieAv
+			case object Secure							extends CookieAv
+			case object HttpOnly						extends CookieAv
+	final	case class Extension(extension:String)		extends CookieAv
 }
 
 sealed trait CookieAv

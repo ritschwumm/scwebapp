@@ -26,6 +26,10 @@ object HttpIO {
 
 				def completeWith(response:HttpResponse):Unit	= {
 					if (alive compareAndSet(true, false)) {
+						// TODO this seems to be called from onTimeout in rumms
+						// and fail because the client connection is closed already.
+						// weird, because the client supposedly never closes
+						// the connection _before_ the timeout there
 						writeResponse(response, servletResponse)
 						asyncCtx.complete()
 					}
