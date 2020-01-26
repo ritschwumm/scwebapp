@@ -63,8 +63,8 @@ object HttpParsers {
 	val quotedString:TextParser[String]	= (quotedChar.seq within DQUOTE).stringify eatLeft LWSP
 
 	val hashSepa:TextParser[Char]	= symbol(',')
-	def hash[T](sub:TextParser[T]):TextParser[Seq[T]]	= sub sepSeq	hashSepa
-	def hash1[T](sub:TextParser[T]):TextParser[Nes[T]]	= sub sepNes	hashSepa
+	def hash[T](sub:TextParser[T]):TextParser[Seq[T]]	= sub seqSepBy	hashSepa
+	def hash1[T](sub:TextParser[T]):TextParser[Nes[T]]	= sub nesSepBy	hashSepa
 
 	//------------------------------------------------------------------------------
 
