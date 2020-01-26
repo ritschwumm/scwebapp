@@ -18,7 +18,7 @@ object ContentDispositionType {
 		val value:TextParser[ContentDispositionType]	=
 			token
 			.map (CaseUtil.lowerCase)
-			.requirePartial[ContentDispositionType] {
+			.collect[ContentDispositionType] {
 				case "attachment"	=> Attachment
 				case "inline"		=> Inline
 			}

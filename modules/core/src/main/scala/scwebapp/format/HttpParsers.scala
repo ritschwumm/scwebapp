@@ -60,7 +60,7 @@ object HttpParsers {
 	val quotedPair:TextParser[Char]		= TextParser.isChar('\\') right CHAR
 	val dqText:TextParser[Char]			= DQUOTE.prevents right TEXT
 	val quotedChar:TextParser[Char]		= quotedPair orElse dqText
-	val quotedString:TextParser[String]	= (quotedChar.seq inside DQUOTE).stringify eatLeft LWSP
+	val quotedString:TextParser[String]	= (quotedChar.seq within DQUOTE).stringify eatLeft LWSP
 
 	val hashSepa:TextParser[Char]	= symbol(',')
 	def hash[T](sub:TextParser[T]):TextParser[Seq[T]]	= sub sepSeq	hashSepa
@@ -112,7 +112,7 @@ object HttpParsers {
 	val simpleCharset:TextParser[Charset]	=
 		extValuePart
 		.map	(CaseUtil.lowerCase)
-		.requirePartial {
+		.collect {
 			case "utf-8"		=> Charsets.utf_8
 			case "iso-8859-1"	=> Charsets.iso_8859_1
 		}
@@ -139,7 +139,7 @@ object HttpParsers {
 		}
 
 	val extValue:TextParser[String]	=
-		extValueOpt eatLeft LWSP requiredFor "extValue"
+		extValueOpt eatLeft LWSP collapseNamed "extValue"
 
 	val extParName:TextParser[String]	= parmName left TextParser.isChar('*')
 
@@ -180,10 +180,10 @@ object HttpParsers {
 		ALPHA orElse DIGIT orElse TextParser.anyCharOf("+/=")
 
 	def base64(charset:Charset):TextParser[String]	=
-		base64Char.seq.stringify require Base64.decodeByteString named "Base64" require { it => (charset decodeEitherByteString it).toOption } named s"String[${charset.name}]"
+		base64Char.seq.stringify collapseMap Base64.decodeByteString named "Base64" collapseMap { it => (charset decodeEitherByteString it).toOption } named s"String[${charset.name}]"
 
 	//------------------------------------------------------------------------------
 
 	val dateValue:TextParser[HttpDate]	=
-		TextParser.anyCharInRange(32, 126).seq.stringify map { _.trim } require HttpDate.parse named "HttpDate"
+		TextParser.anyCharInRange(32, 126).seq.stringify map { _.trim } collapseMap HttpDate.parse named "HttpDate"
 }

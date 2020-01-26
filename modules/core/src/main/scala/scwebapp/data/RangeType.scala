@@ -23,7 +23,7 @@ object RangeType {
 
 		val value:TextParser[RangeType]		=
 			token
-			.requirePartial[RangeType] {
+			.collect[RangeType] {
 				case "none"		=> IsNone
 				case "bytes"	=> Bytes
 			}

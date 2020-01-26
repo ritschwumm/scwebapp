@@ -16,7 +16,7 @@ object AcceptEncodingType {
 		import HttpParsers._
 
 		val identity:TextParser[AcceptEncodingType]	=
-			token map CaseUtil.lowerCase ensure (_ == "identity") named "identity \"identity\"" tag Identity
+			token map CaseUtil.lowerCase filter (_ == "identity") named "identity \"identity\"" tag Identity
 
 		val other:TextParser[AcceptEncodingType]	=
 			ContentEncodingType.parser map Other.apply

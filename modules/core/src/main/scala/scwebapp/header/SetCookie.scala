@@ -55,7 +55,7 @@ object SetCookie extends HeaderType[SetCookie] {
 		import CookieParsers._
 
 		// TODO wrong
-		lazy val finished:TextParser[SetCookie]	= value inside OWS
+		lazy val finished:TextParser[SetCookie]	= value within OWS
 
 		lazy val value:TextParser[SetCookie]	=
 			set_cookie_string map { case ((k, v), avs) =>
@@ -63,7 +63,7 @@ object SetCookie extends HeaderType[SetCookie] {
 					name		= k,
 					value		= v,
 					domain		= avs collectFirst { case CookieAv.DomainAv(x)	=> x},
-					path		= avs collectFirst { case CookieAv.PathAv(x)		=> x},
+					path		= avs collectFirst { case CookieAv.PathAv(x)	=> x},
 					maxAge		= avs collectFirst { case CookieAv.MaxAgeAv(x)	=> x},
 					secure		= avs contains CookieAv.SecureAv,
 					httpOnly	= avs contains CookieAv.HttpOnlyAv

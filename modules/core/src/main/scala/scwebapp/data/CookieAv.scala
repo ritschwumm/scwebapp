@@ -40,7 +40,7 @@ object CookieAv {
 		lazy val httponly_av:TextParser[CookieAv]		= TextParser isString "HttpOnly"	tag HttpOnlyAv
 		lazy val extension_av:TextParser[CookieAv]		= something							map ExtensionAv.apply
 		// TODO hack
-		lazy val sane_cookie_date:TextParser[HttpDate]	= something require HttpDate.parse named "HttpDate"
+		lazy val sane_cookie_date:TextParser[HttpDate]	= something collapseMap HttpDate.parse named "HttpDate"
 
 		//// helper
 		lazy val duration:TextParser[HttpDuration]		= longPositive map HttpDuration.apply

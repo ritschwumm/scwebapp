@@ -18,7 +18,7 @@ object AcceptEncodingPattern {
 		import HttpParsers._
 
 		val wildcard:TextParser[AcceptEncodingPattern]	=
-			token ensure (_ == "*") named "wildcard \"*\"" tag Wildcard
+			token filter (_ == "*") named "wildcard \"*\"" tag Wildcard
 
 		val fixed:TextParser[AcceptEncodingPattern]	=
 			AcceptEncodingType.parser map Fixed.apply

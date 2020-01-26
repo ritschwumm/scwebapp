@@ -21,7 +21,7 @@ object Cookie extends HeaderType[Cookie] {
 		val cookie_string:TextParser[Seq[(String,String)]]	= cookie_pair sepSeq (TextParser.isChar(';') next SP)
 
 		// TODO inside OWS is stupid. revise whitespace handling.
-		val cookieParams:TextParser[CaseParameters]	= cookie_string inside OWS map CaseParameters.apply
+		val cookieParams:TextParser[CaseParameters]	= cookie_string within OWS map CaseParameters.apply
 
 		val value:TextParser[Cookie]		= cookieParams map Cookie.apply
 		val finished:TextParser[Cookie]	= value finish LWSP

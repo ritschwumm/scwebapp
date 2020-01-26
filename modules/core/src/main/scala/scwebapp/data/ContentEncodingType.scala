@@ -20,7 +20,7 @@ object ContentEncodingType {
 		val value:TextParser[ContentEncodingType]	=
 			token
 			.map	(CaseUtil.lowerCase)
-			.requirePartial[ContentEncodingType] {
+			.collect[ContentEncodingType] {
 				case "gzip"		=> Gzip
 				case "compress"	=> Compress
 				case "deflate"	=> Deflate

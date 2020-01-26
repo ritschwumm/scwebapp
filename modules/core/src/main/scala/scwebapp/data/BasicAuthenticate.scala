@@ -31,7 +31,7 @@ object BasicAuthenticate {
 			yield BasicAuthenticate(rlm)
 
 		val value:TextParser[BasicAuthenticate]	=
-			challengeList require findBasicRealm named "basic realm"
+			challengeList collapseMap findBasicRealm named "basic realm"
 	}
 }
 

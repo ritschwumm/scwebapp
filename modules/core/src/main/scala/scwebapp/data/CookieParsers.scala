@@ -8,7 +8,7 @@ object CookieParsers {
 
 	lazy val cookie_pair:TextParser[(String,String)]	= cookie_name left TextParser.isChar('=') next cookie_value
 	lazy val cookie_name:TextParser[String]				= token
-	lazy val cookie_value:TextParser[String]			= (cookie_octet.seq orElse (cookie_octet.seq inside DQUOTE)).stringify
+	lazy val cookie_value:TextParser[String]			= (cookie_octet.seq orElse (cookie_octet.seq within DQUOTE)).stringify
 	lazy val cookie_octet:TextParser[Char]	=
 		TextParser.isChar(0x21)					orElse
 		TextParser.anyCharInRange(0x23, 0x2b)	orElse
