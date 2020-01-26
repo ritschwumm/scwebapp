@@ -15,7 +15,7 @@ object MediaValue {
 		import HttpParsers._
 
 		// NOTE this is quite a hack in the RFC: the q-value separates media type parameters from media range parameters...
-		val manyParametersStopQ:TextParser[Seq[(Boolean,(String,String))]]	= (qParam.prevents right nextParameter).seq
+		val manyParametersStopQ:TextParser[Seq[(Boolean,(String,String))]]	= (qParam.not right nextParameter).seq
 		val parameterListStopQ:TextParser[NoCaseParameters]					= manyParametersStopQ map { list => NoCaseParameters(extendedFirst(list)) }
 
 		val value:TextParser[MediaValue]	=

@@ -42,7 +42,7 @@ object HttpParsers {
 	val WSP:TextParser[Char]		= SP orElse HTAB
 	val LWSP:TextParser[Char]		= (CRLF.option next WSP).seq tag ' '
 
-	val TEXT:TextParser[Char]		= CTL.prevents right OCTET
+	val TEXT:TextParser[Char]		= CTL.not right OCTET
 	val OWS:TextParser[Unit]		= (CRLF.option next WSP).seq tag (())
 
 	//------------------------------------------------------------------------------
@@ -52,13 +52,13 @@ object HttpParsers {
 
 	// NOTE separator is tspecials and "{} \t" and CTL
 	val tokenSeparator:TextParser[Char]	= TextParser anyCharOf nonTokenChars
-	val token:TextParser[String]		= (tokenSeparator.prevents right CHAR).nes.stringify eatLeft LWSP
+	val token:TextParser[String]		= (tokenSeparator.not right CHAR).nes.stringify eatLeft LWSP
 
 	// val ctext:Parser[Char]		= (sat('(') orElse sat(')')).prevents right TEXT
 	// val comment:Parser[String]	= '(' ~> (quoted_pair_string | comment | ctext_string).* <~ ')' stringify
 
 	val quotedPair:TextParser[Char]		= TextParser.isChar('\\') right CHAR
-	val dqText:TextParser[Char]			= DQUOTE.prevents right TEXT
+	val dqText:TextParser[Char]			= DQUOTE.not right TEXT
 	val quotedChar:TextParser[Char]		= quotedPair orElse dqText
 	val quotedString:TextParser[String]	= (quotedChar.seq within DQUOTE).stringify eatLeft LWSP
 

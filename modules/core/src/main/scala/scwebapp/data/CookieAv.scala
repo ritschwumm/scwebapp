@@ -44,7 +44,7 @@ object CookieAv {
 
 		//// helper
 		lazy val duration:TextParser[HttpDuration]		= longPositive map HttpDuration.apply
-		lazy val something:TextParser[String]			= ((CTL orElse TextParser.isChar(';')).prevents right CHAR).seq.stringify
+		lazy val something:TextParser[String]			= ((CTL orElse TextParser.isChar(';')).not right CHAR).seq.stringify
 	}
 
 	//------------------------------------------------------------------------------

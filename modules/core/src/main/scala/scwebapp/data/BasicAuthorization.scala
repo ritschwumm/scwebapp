@@ -32,7 +32,7 @@ object BasicAuthorization {
 
 		val colon	= TextParser isChar ':'
 
-		val userid:TextParser[String]						= (colon.prevents right TEXT).seq.stringify
+		val userid:TextParser[String]						= (colon.not right TEXT).seq.stringify
 		val password:TextParser[String]						= TEXT.seq.stringify
 		val basicCredentials:TextParser[(String,String)]	= userid left colon next password
 
