@@ -12,15 +12,15 @@ final class LogErrorHandler extends ErrorHandler with Logging {
 	@SuppressWarnings(Array("org.wartremover.warts.ToString"))
 	override def handleErrorPage(request:HttpServletRequest, writer:Writer, code:Int, message:String):Unit = {
 		WARN log (
-			LogString("handling error") +:
+			LogValue.string("handling error") +:
 			Vector[Option[LogValue]](
-				Option(message) map LogString.apply,
+				Option(message) map LogValue.string,
 				Option(request getAttribute "javax.servlet.error.exception") map {
-					case e:Throwable	=> LogThrowable(e)
-					case x				=> LogString(x.toString)
+					case e:Throwable	=> LogValue.throwable(e)
+					case x				=> LogValue.string(x.toString)
 				},
-				Option(request getAttribute "javax.servlet.error.request_uri")	map (_.toString) map LogString.apply,
-				Option(request getAttribute "javax.servlet.error.servlet_name")	map (_.toString) map LogString.apply
+				Option(request getAttribute "javax.servlet.error.request_uri")	map (_.toString) map LogValue.string,
+				Option(request getAttribute "javax.servlet.error.servlet_name")	map (_.toString) map LogValue.string
 			).collapse
 		)
 		writer write code.toString
