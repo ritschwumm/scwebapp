@@ -1036,7 +1036,7 @@ final case class MimeMapping(table:Seq[(String,String)]) {
 			byExtension get (it toLowerCase Locale.US)
 
 	private def extension(it:String):Option[String]	=
-			it indexOfCharOption '.' map { idx =>
+			it indexOfChar '.' map { idx =>
 				it substring idx+1
 			}
 }
