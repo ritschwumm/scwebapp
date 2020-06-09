@@ -4,7 +4,7 @@ import java.util.{ Enumeration=>JEnumeration }
 
 import javax.servlet._
 
-import scutil.core.implicits._
+import scutil.jdk.implicits._
 
 import scwebapp.data._
 

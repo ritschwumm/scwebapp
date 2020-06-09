@@ -4,7 +4,7 @@ import java.io._
 import java.nio.charset.Charset
 import java.util.zip.GZIPInputStream
 
-import scutil.core.implicits._
+import scutil.jdk.implicits._
 import scutil.lang._
 
 object HttpInput {

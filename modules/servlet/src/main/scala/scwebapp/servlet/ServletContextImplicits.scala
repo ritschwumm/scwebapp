@@ -4,7 +4,7 @@ import java.util.{ Set=>JSet }
 
 import javax.servlet._
 
-import scutil.core.implicits._
+import scutil.jdk.implicits._
 import scutil.resource._
 
 import scwebapp._
