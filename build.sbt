@@ -1,6 +1,6 @@
 inThisBuild(Seq(
 	organization	:= "de.djini",
-	version			:= "0.231.0",
+	version			:= "0.232.0",
 
 	scalaVersion	:= "2.13.3",
 	scalacOptions	++= Seq(
@@ -60,9 +60,9 @@ lazy val `scwebapp-core`	=
 			"-language:implicitConversions"
 		),
 		libraryDependencies	++= Seq(
-			"de.djini"		%%	"scutil-jdk"	% "0.180.0"	% "compile",
-			"de.djini"		%%	"scparse-ng"	% "0.186.0"	% "compile",
-			"org.specs2"	%%	"specs2-core"	% "4.10.0"	% "test"
+			"de.djini"		%%	"scutil-jdk"	% "0.181.0"	% "compile",
+			"de.djini"		%%	"scparse-ng"	% "0.187.0"	% "compile",
+			"org.specs2"	%%	"specs2-core"	% "4.10.1"	% "test"
 		)
 	)
 
@@ -73,7 +73,7 @@ lazy val `scwebapp-servlet`	=
 			"-language:implicitConversions"
 		),
 		libraryDependencies	++= Seq(
-			"de.djini"		%%	"scutil-jdk"		% "0.180.0"	% "compile",
+			"de.djini"		%%	"scutil-jdk"		% "0.181.0"	% "compile",
 			"javax.servlet"	%	"javax.servlet-api"	% "3.1.0"	% "provided"
 		)
 	)
