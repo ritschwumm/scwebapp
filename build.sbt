@@ -1,6 +1,6 @@
 inThisBuild(Seq(
 	organization	:= "de.djini",
-	version			:= "0.232.0",
+	version			:= "0.233.0",
 
 	scalaVersion	:= "2.13.3",
 	scalacOptions	++= Seq(
@@ -60,9 +60,9 @@ lazy val `scwebapp-core`	=
 			"-language:implicitConversions"
 		),
 		libraryDependencies	++= Seq(
-			"de.djini"		%%	"scutil-jdk"	% "0.181.0"	% "compile",
-			"de.djini"		%%	"scparse-ng"	% "0.187.0"	% "compile",
-			"org.specs2"	%%	"specs2-core"	% "4.10.1"	% "test"
+			"de.djini"		%%	"scutil-jdk"	% "0.182.0"	% "compile",
+			"de.djini"		%%	"scparse-ng"	% "0.188.0"	% "compile",
+			"org.specs2"	%%	"specs2-core"	% "4.10.3"	% "test"
 		)
 	)
 
@@ -73,7 +73,7 @@ lazy val `scwebapp-servlet`	=
 			"-language:implicitConversions"
 		),
 		libraryDependencies	++= Seq(
-			"de.djini"		%%	"scutil-jdk"		% "0.181.0"	% "compile",
+			"de.djini"		%%	"scutil-jdk"		% "0.182.0"	% "compile",
 			"javax.servlet"	%	"javax.servlet-api"	% "3.1.0"	% "provided"
 		)
 	)
@@ -85,7 +85,7 @@ lazy val `scwebapp-runner`	=
 	(project in file("modules/runner"))
 	.settings(
 		libraryDependencies		++= Seq(
-			"org.eclipse.jetty"	%	"jetty-server"	% "9.4.30.v20200611"	% "compile"
+			"org.eclipse.jetty"	%	"jetty-server"	% "9.4.31.v20200723"	% "compile"
 		)
 	)
 	.dependsOn(
