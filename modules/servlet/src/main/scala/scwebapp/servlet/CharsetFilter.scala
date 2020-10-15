@@ -30,6 +30,6 @@ final class CharsetFilter extends Filter {
 		// config.getServletContext log ("filter: " + response.getContentType)
 		request  setCharacterEncoding charset
 		response setCharacterEncoding charset
-		filterChain doFilter (request, response)
+		filterChain.doFilter(request, response)
 	}
 }

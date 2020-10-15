@@ -73,7 +73,7 @@ trait HttpRequest {
 	def queryString:Option[String]
 
 	final def queryParameters(encoding:Charset):Either[String,CaseParameters]	=
-		queryString cata (Right(CaseParameters.empty), UrlEncoding parseQueryParameters (_, encoding))
+		queryString.cata(Right(CaseParameters.empty), UrlEncoding.parseQueryParameters(_, encoding))
 
 	final def queryParametersUTF8:Either[String,CaseParameters]	=
 		queryParameters(Charsets.utf_8)
@@ -94,7 +94,7 @@ trait HttpRequest {
 			encodingOpt	<- mime.charset
 			string		= body readString Charsets.us_ascii
 			encoding	= encodingOpt getOrElse defaultEncoding
-			params		<- UrlEncoding parseForm (string, encoding)
+			params		<- UrlEncoding.parseForm(string, encoding)
 		}
 		yield params
 

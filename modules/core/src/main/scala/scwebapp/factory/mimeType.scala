@@ -51,5 +51,5 @@ trait mimeType {
 	val multipart_byteranges	= MimeType("multipart",		"byteranges")
 
 	def multipart_byteranges_boundary(boundary:String):MimeType	=
-		multipart_byteranges addParameter ("boundary", boundary)
+		multipart_byteranges.addParameter("boundary", boundary)
 }

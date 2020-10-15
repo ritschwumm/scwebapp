@@ -24,7 +24,7 @@ trait BootstrapBase extends ServletContextListener with Logging {
 		disposable			= Some(tmp)
 
 		INFO("creating web servlet")
-		sc mount (
+		sc.mount(
 			name			= "WebServlet",
 			handler			= handler,
 			mappings		= Vector("/*"),

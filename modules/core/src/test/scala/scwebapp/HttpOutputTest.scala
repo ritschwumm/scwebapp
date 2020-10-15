@@ -11,7 +11,7 @@ class HttpOutputTest extends Specification {
 		"write into an OutputStream" in {
 			val output	= HttpOutput withOutputStream { ost =>
 				val b	= "hallo" getBytes "utf-8"
-				ost write (b, 0, b.length)
+				ost.write(b, 0, b.length)
 			}
 			val stream	= new ByteArrayOutputStream
 			output intoOutputStream stream
@@ -32,7 +32,7 @@ class HttpOutputTest extends Specification {
 	}
 	"HttpOutput" should {
 		"write a string" in {
-			val output	= HttpOutput writeString (Charsets.utf_8, "hallo")
+			val output	= HttpOutput.writeString(Charsets.utf_8, "hallo")
 			val stream	= new ByteArrayOutputStream
 			output intoOutputStream stream
 			stream.toString mustEqual "hallo"

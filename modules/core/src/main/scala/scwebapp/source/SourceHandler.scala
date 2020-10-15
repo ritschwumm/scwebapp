@@ -71,7 +71,7 @@ object SourceHandler {
 		val ifNoneMatch		= (requestHeaders first IfNoneMatch).toOption.flatten
 		val ifModifiedSince	= (requestHeaders first IfModifiedSince).toOption.flatten
 		val notModified		=
-			ifNoneMatch cata (
+			ifNoneMatch.cata(
 				(ifModifiedSince	exists { it => (it wasModified lastModified) }),
 				it => (it matches eTag)
 			)
@@ -89,9 +89,9 @@ object SourceHandler {
 		val ifMatch				= (requestHeaders first IfMatch).toOption.flatten
 		val ifUnmodifiedSince	= (requestHeaders first IfUnmodifiedSince).toOption.flatten
 		val preconditionFailed	=
-			ifMatch cata (
-				(ifUnmodifiedSince	exists { it => !(it wasModified lastModified) }),
-				it => !(it matches eTag)
+			ifMatch.cata (
+				ifUnmodifiedSince	exists { it => !(it wasModified lastModified) },
+				it => !it.matches(eTag)
 			)
 		if (preconditionFailed) {
 			return HttpResponse(PRECONDITION_FAILED)
@@ -101,7 +101,7 @@ object SourceHandler {
 			requestHeaders first IfRange match {
 				case Left(_)		=> true
 				case Right(None)	=> false
-				case Right(Some(x))	=> x needsFull (eTag, lastModified)
+				case Right(Some(x))	=> x.needsFull(eTag, lastModified)
 			}
 
 		val total		= source.size
@@ -133,7 +133,7 @@ object SourceHandler {
 		val contentDisposition:Option[HeaderValue]		=
 			source.disposition map { case SourceDisposition(attachment, fileName) =>
 				HeaderValue fromHeader ContentDisposition(
-					attachment cata[ContentDispositionType] (ContentDispositionType.Inline, ContentDispositionType.Attachment),
+					attachment.cata[ContentDispositionType](ContentDispositionType.Inline, ContentDispositionType.Attachment),
 					fileName
 				)
 			}
@@ -174,7 +174,7 @@ object SourceHandler {
 					standardHeaders ++
 					HeaderValues(
 						ContentType(contentType),
-						ContentRange(ContentRangeValue full (r, total)),
+						ContentRange(ContentRangeValue.full(r, total)),
 						ContentLength(r.length)
 					),
 					if (includeContent)	source range r
@@ -207,7 +207,7 @@ object SourceHandler {
 				val body	=
 					if (includeContent) {
 						ranges
-						.flatMap	{ r => Vector(boundaryOutput(ContentRangeValue full (r, total)), source range r) }
+						.flatMap	{ r => Vector(boundaryOutput(ContentRangeValue.full(r, total)), source range r) }
 						.appended	(finishOutput)
 						.into		(HttpOutput.concat)
 					}

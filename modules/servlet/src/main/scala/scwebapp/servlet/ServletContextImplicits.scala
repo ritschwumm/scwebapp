@@ -25,7 +25,7 @@ final class ServletContextExtension(peer:ServletContext) {
 		loadOnStartup:Option[Int]
 	):ServletRegistration.Dynamic	= {
 		val servlet	= new HttpHandlerServlet(handler)
-		val dynamic	= peer addServlet (name, servlet)
+		val dynamic	= peer.addServlet(name, servlet)
 		dynamic addMapping (mappings:_*)
 		loadOnStartup foreach dynamic.setLoadOnStartup
 		dynamic	setAsyncSupported true

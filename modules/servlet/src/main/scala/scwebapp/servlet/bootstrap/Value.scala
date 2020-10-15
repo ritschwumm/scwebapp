@@ -9,13 +9,13 @@ object Value {
 	//## restricted primitives
 
 	def positive(s:String):Either[String,Int]	=
-		integer(s) rightByOr (_ > 0, "must be positive")
+		integer(s).rightByOr(_ > 0, "must be positive")
 
 	def between(low:Int, high:Int)(s:String):Either[String,Int]	=
-		integer(s) rightByOr (_ >= low, show"must be >= $low") rightByOr (_ <= high, show"must be <= $high")
+		integer(s).rightByOr(_ >= low, show"must be >= $low").rightByOr(_ <= high, show"must be <= $high")
 
 	def nonEmpty(s:String):Either[String,String]	=
-		string(s) rightByOr (_.nonEmpty, "must not be empty")
+		string(s).rightByOr(_.nonEmpty, "must not be empty")
 
 	//------------------------------------------------------------------------------
 	//## primitives

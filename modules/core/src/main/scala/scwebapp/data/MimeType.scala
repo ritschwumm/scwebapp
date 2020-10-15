@@ -44,7 +44,7 @@ final case class MimeType(major:String, minor:String, parameters:NoCaseParameter
 		MimeType unparse this
 
 	def addParameter(name:String, value:String):MimeType	=
-		copy(parameters = parameters append (name, value))
+		copy(parameters = parameters.append(name, value))
 
 	def sameMajorAndMinor(that:MimeType):Boolean	=
 		this.major == that.major &&

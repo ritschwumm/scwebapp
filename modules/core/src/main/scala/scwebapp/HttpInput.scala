@@ -28,7 +28,7 @@ trait HttpInput { self =>
 		}
 
 	final def readString(encoding:Charset):String	=
-		withReader(encoding) { _.readFully }
+		withReader(encoding) { _.readFully() }
 
 	//------------------------------------------------------------------------------
 

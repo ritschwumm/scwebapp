@@ -25,7 +25,7 @@ object SourceData {
 	):SourceData	=
 		SourceData(
 			size			= file.length,
-			range			= HttpOutput writeFileRange (file, _),
+			range			= HttpOutput.writeFileRange(file, _),
 			contentId		= contentId,
 			lastModified	= HttpDate fromMilliInstant lastModified,
 			caching			= caching,

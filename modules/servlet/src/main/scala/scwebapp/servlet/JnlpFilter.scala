@@ -62,14 +62,14 @@ final class JnlpFilter extends Filter with Logging {
 		val	httpResponse	= response.asInstanceOf[HttpServletResponse]
 
 		val	wrapper	= new ResponseWrapper(httpResponse)
-		filterChain doFilter (httpRequest, wrapper)
+		filterChain.doFilter(httpRequest, wrapper)
 		if (wrapper.failed) {
 			ERROR("wrapped failed")
 		}
 		else {
 			val input		= wrapper.written asString charset
-			val codeBase	= httpRequest.getRequestURL.toString replaceAll ("/[^/]*$", "/")
-			val patched		= input replace ("$$codebase", codeBase)
+			val codeBase	= httpRequest.getRequestURL.toString.replaceAll("/[^/]*$", "/")
+			val patched		= input.replace("$$codebase", codeBase)
 			val output		= patched getBytes charset
 
 			httpResponse setContentLength	output.size

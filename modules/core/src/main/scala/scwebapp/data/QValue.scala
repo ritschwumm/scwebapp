@@ -19,7 +19,7 @@ object QValue {
 		raw.length match {
 			case 0	=> "0"
 			case 1	=> raw
-			case _	=> raw patch (1, ".", 0)
+			case _	=> raw.patch(1, ".", 0)
 		}
 	}
 

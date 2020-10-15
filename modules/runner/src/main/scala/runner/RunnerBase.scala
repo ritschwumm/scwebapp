@@ -17,7 +17,7 @@ object RunnerBase extends Logging {
 		// starts with /
 		// does not end with /
 		// is "" for the root context
-		val contextPath	= config.path.value replaceAll ("/$", "")
+		val contextPath	= config.path.value.replaceAll("/$", "")
 
 		val (disposable, httpHandler)	=
 			try {
@@ -35,7 +35,7 @@ object RunnerBase extends Logging {
 				def handle(target:String, baseRequest:Request, request:HttpServletRequest, response:HttpServletResponse):Unit	= {
 					if (target startsWith (contextPath + "/")) {
 						baseRequest setContextPath contextPath
-						HttpIO execute (request, response, httpHandler)
+						HttpIO.execute(request, response, httpHandler)
 						baseRequest setHandled true
 					}
 					else {
@@ -91,7 +91,7 @@ object RunnerBase extends Logging {
 
 		Runtime.getRuntime addShutdownHook new Thread(() => stop())
 
-		val url	= show"http://${config.host cata ("localhost", _.toString)}:${config.port.value.toString}${config.path.value}"
+		val url	= show"http://${config.host.cata("localhost", _.toString)}:${config.port.value.toString}${config.path.value}"
 		INFO(show"point your browser to $url")
 
 		INFO("press enter to stop")

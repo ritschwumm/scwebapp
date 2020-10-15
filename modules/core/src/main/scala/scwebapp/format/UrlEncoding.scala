@@ -26,7 +26,7 @@ object UrlEncoding {
 
 	private def urlDecode(encoding:Charset)(formData:String):Either[String,String]	=
 		try {
-			Right(URLDecoder decode (formData, encoding.name))
+			Right(URLDecoder.decode(formData, encoding.name))
 		}
 		catch { case e:UnsupportedEncodingException =>
 			Left(e.getMessage)

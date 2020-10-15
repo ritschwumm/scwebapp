@@ -9,7 +9,7 @@ object HttpUnparsers {
 		"q=" + (QValue unparse it)
 
 	def qParamPart(it:Option[QValue]):String	=
-		it cata (
+		it.cata(
 			"",
 			x => ";" + qParam(x)
 		)
@@ -27,7 +27,7 @@ object HttpUnparsers {
 	//------------------------------------------------------------------------------
 
 	def value(s:String):String	=
-		s exists HttpParsers.nonTokenChars.toSet cata (
+		s.exists(HttpParsers.nonTokenChars.toSet).cata(
 			s,
 			quotedString(s)
 		)

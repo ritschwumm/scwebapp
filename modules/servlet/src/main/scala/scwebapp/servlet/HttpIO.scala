@@ -25,7 +25,7 @@ object HttpIO {
 				val alive	= new AtomicBoolean(true)
 
 				def completeWith(response:HttpResponse):Unit	= {
-					if (alive compareAndSet(true, false)) {
+					if (alive.compareAndSet(true, false)) {
 						// TODO this seems to be called from onTimeout in rumms
 						// and fail because the client connection is closed already.
 						// weird, because the client supposedly never closes
@@ -49,12 +49,12 @@ object HttpIO {
 
 	private def writeResponse(response:HttpResponse, servletResponse:HttpServletResponse):Unit	= {
 		response.reason match {
-			case Some(reason)	=> servletResponse sendError (response.status.id, reason)
-			case None			=> servletResponse setStatus response.status.id
+			case Some(reason)	=> servletResponse.sendError(response.status.id, reason)
+			case None			=> servletResponse.setStatus(response.status.id)
 		}
 
 		response.headers foreach { case HeaderValue(k, v) =>
-			servletResponse addHeader (k, v)
+			servletResponse.addHeader(k, v)
 		}
 
 		response.body intoOutputStream servletResponse.getOutputStream

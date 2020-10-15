@@ -14,7 +14,7 @@ class RangeTest extends Specification {
 		}
 		"parse two simple ranges" in {
 			Range parse "bytes=1-2,3-4" mustEqual
-			Some(Range(Nes multi (RangePattern.FromTo(1,2), RangePattern.FromTo(3,4))))
+			Some(Range(Nes.multi(RangePattern.FromTo(1,2), RangePattern.FromTo(3,4))))
 		}
 		"parse a prefix range" in {
 			Range parse "bytes=1-" mustEqual

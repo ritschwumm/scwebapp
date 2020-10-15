@@ -24,14 +24,14 @@ object HttpParsers {
 	val LWS:TextParser[Char]		= CRLF.option next WSP.nes tag ' '
 	*/
 
-	val OCTET:TextParser[Char]	= TextParser anyIn (0, 255)
+	val OCTET:TextParser[Char]	= TextParser.anyIn(0, 255)
 	val ALPHA:TextParser[Char]	= TextParser.anyIn('A', 'Z') orElse TextParser.anyIn('a', 'z')
 	val BIT:TextParser[Char]	= TextParser.is('0') orElse TextParser.is('1')
-	val CHAR:TextParser[Char]	= TextParser anyIn (1,127)
-	val DIGIT:TextParser[Char]	= TextParser anyIn ('0', '9')
+	val CHAR:TextParser[Char]	= TextParser.anyIn(1,127)
+	val DIGIT:TextParser[Char]	= TextParser.anyIn('0', '9')
 	val HEXDIG:TextParser[Char]	= DIGIT orElse TextParser.anyIn('a', 'f') orElse TextParser.anyIn('A', 'F')
 	val CTL:TextParser[Char]	= TextParser.anyIn(0, 31) orElse TextParser.is(127)
-	val VCHAR:TextParser[Char]	= TextParser anyIn (33, 126)
+	val VCHAR:TextParser[Char]	= TextParser.anyIn(33, 126)
 	val CR:TextParser[Char]		= TextParser is '\r'
 	val LF:TextParser[Char]		= TextParser is '\n'
 	val SP:TextParser[Char]		= TextParser is ' '

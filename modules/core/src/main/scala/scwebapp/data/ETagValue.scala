@@ -9,8 +9,8 @@ object ETagValue {
 	lazy val parser:TextParser[ETagValue]	= parsers.value
 
 	def unparse(it:ETagValue):String	=
-		(it.weak cata ("", "W/")) +
-		(HttpUnparsers quotedString it.value)
+		it.weak.cata("", "W/") +
+		HttpUnparsers.quotedString(it.value)
 
 	private object parsers {
 		import HttpParsers._

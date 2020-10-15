@@ -24,5 +24,5 @@ object IfRange extends HeaderType[IfRange] {
 
 final case class IfRange(value:IfRangeValue) {
 	def needsFull(eTag:ETagValue, lastModified:HttpDate):Boolean	=
-		value needsFull (eTag, lastModified)
+		value.needsFull(eTag, lastModified)
 }

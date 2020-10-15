@@ -11,7 +11,7 @@ final class SimpleCache[K,V](load:K=>Option[V]) {
 			(map get key)
 			.cata (
 				load(key) secondBy { valueOpt =>
-					valueOpt cata (
+					valueOpt.cata(
 						map,
 						value => map + (key -> value)
 					)

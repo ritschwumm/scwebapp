@@ -62,7 +62,7 @@ extends Logging {
 			val mimeType		= mimeTypeFor(path)
 			SourceData(
 				size			= bytes.size.toLong,
-				range			= HttpOutput writeByteStringRange (bytes, _),
+				range			= HttpOutput.writeByteStringRange(bytes, _),
 				contentId		= hashString(bytes),
 				lastModified	= lastModified,
 				caching			= clientCached(path),
@@ -74,7 +74,7 @@ extends Logging {
 
 	private def hashString(it:ByteString):String =
 		Hex encodeByteString (
-			Hashing hash ("SHA-256", 1, it)
+			Hashing.hash("SHA-256", 1, it)
 		)
 
 	private def resourcePath(path:Path):String	=
@@ -95,9 +95,9 @@ extends Logging {
 		MimeMapping.default forFileName it.last map fixCharset getOrElse application_octetStream
 
 	private def fixCharset(it:MimeType):MimeType	=
-		doCharset(it) cata (
+		doCharset(it).cata(
 			it,
-			it addParameter ("charset", "UTF-8")
+			it.addParameter("charset", "UTF-8")
 		)
 
 	private def doCharset(it:MimeType):Boolean	=

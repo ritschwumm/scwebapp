@@ -30,13 +30,13 @@ object HttpOutput {
 
 	def writeByteString(data:ByteString):HttpOutput	=
 		withOutputStream { ost =>
-			ost writeByteString (data, 0, data.size)
+			ost.writeByteString(data, 0, data.size)
 		}
 
 	// TODO toInt is questionable
 	def writeByteStringRange(data:ByteString, range:InclusiveRange):HttpOutput	=
 		withOutputStream { ost =>
-			ost writeByteString (data, range.start.toInt, range.length.toInt)
+			ost.writeByteString(data, range.start.toInt, range.length.toInt)
 		}
 
 	def writeFile(data:File):HttpOutput	=
@@ -54,9 +54,9 @@ object HttpOutput {
 				@tailrec
 				def loop(todo:Long):Unit	= {
 					if (todo != 0) {
-						val read	= input read (buffer, 0, (todo min buffer.length).toInt)
+						val read	= input.read(buffer, 0, (todo min buffer.length).toInt)
 						if (read >= 0) {
-							ost write (buffer, 0, read)
+							ost.write(buffer, 0, read)
 							loop(todo - read)
 						}
 					}
