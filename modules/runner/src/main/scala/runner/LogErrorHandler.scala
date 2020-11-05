@@ -4,7 +4,7 @@ import java.io.Writer
 import javax.servlet.http.HttpServletRequest
 import org.eclipse.jetty.server.handler.ErrorHandler
 
-import scutil.base.implicits._
+import scutil.core.implicits._
 import scutil.log._
 
 final class LogErrorHandler extends ErrorHandler with Logging {

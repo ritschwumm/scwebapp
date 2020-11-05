@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest
 
 import scala.jdk.CollectionConverters._
 
-import scutil.base.implicits._
+import scutil.core.implicits._
 
 import scwebapp._
 import scwebapp.data._

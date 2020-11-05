@@ -1,6 +1,6 @@
 package scwebapp.format
 
-import scutil.base.implicits._
+import scutil.core.implicits._
 
 import scwebapp.data._
 

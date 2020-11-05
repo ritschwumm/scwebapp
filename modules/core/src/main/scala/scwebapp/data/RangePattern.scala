@@ -1,6 +1,6 @@
 package scwebapp.data
 
-import scutil.base.implicits._
+import scutil.core.implicits._
 
 import scwebapp.format._
 import scparse.ng.text._

@@ -10,6 +10,6 @@ object Property {
 			visible	= true
 		)
 }
-final case class Property[C](key:String, mod:String=>Either[String,Endo[C]], visible:Boolean) {
+final case class Property[C](key:String, mod:String=>Either[String,C=>C], visible:Boolean) {
 	def hidden:Property[C]	= copy(visible = false)
 }

@@ -8,7 +8,7 @@ import javax.servlet.http._
 
 import scala.collection.mutable
 
-//import scutil.base.implicits._
+//import scutil.core.implicits._
 import scutil.lang._
 import scutil.log._
 

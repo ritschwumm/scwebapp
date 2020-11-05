@@ -7,7 +7,7 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
-import scutil.base.implicits._
+import scutil.core.implicits._
 import scutil.time.MilliInstant
 
 object HttpDate {

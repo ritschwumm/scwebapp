@@ -1,6 +1,6 @@
 package scwebapp
 
-import scutil.base.implicits._
+import scutil.core.implicits._
 import scutil.lang._
 import scutil.time._
 
@@ -57,7 +57,7 @@ object HttpResponder {
 		response:HttpResponse
 	)
 	extends HttpResponder {
-		def modify(func:Endo[HttpResponse]):HttpResponder	= Sync(func(response))
+		def modify(func:HttpResponse=>HttpResponse):HttpResponder	= Sync(func(response))
 	}
 
 	final case class Async(
@@ -67,11 +67,11 @@ object HttpResponder {
 		errorResponse:Thunk[HttpResponse]
 	)
 	extends HttpResponder {
-		def modify(func:Endo[HttpResponse]):HttpResponder	=
+		def modify(func:HttpResponse=>HttpResponse):HttpResponder	=
 			copy(response	= _ compose func into response)
 	}
 }
 
 sealed trait HttpResponder {
-	def modify(func:Endo[HttpResponse]):HttpResponder
+	def modify(func:HttpResponse=>HttpResponse):HttpResponder
 }

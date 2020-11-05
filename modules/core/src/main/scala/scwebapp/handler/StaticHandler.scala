@@ -1,6 +1,6 @@
 package scwebapp.handler
 
-import scutil.base.implicits._
+import scutil.core.implicits._
 import scutil.jdk.implicits._
 import scutil.lang._
 import scutil.log._

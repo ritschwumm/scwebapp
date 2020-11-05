@@ -1,6 +1,6 @@
 package scwebapp.handler
 
-import scutil.base.implicits._
+import scutil.core.implicits._
 import scutil.lang._
 
 final class SimpleCache[K,V](load:K=>Option[V]) {

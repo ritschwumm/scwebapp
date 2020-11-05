@@ -1,6 +1,6 @@
 package scwebapp.runner
 
-import scutil.base.implicits._
+import scutil.core.implicits._
 
 object InetPort {
 	val lowest	= 0

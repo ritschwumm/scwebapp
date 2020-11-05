@@ -1,6 +1,6 @@
 package scwebapp.factory
 
-import scutil.base.implicits._
+import scutil.core.implicits._
 
 import scwebapp._
 

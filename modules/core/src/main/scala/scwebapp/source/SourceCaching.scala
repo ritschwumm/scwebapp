@@ -1,13 +1,11 @@
 package scwebapp.source
 
-import scutil.lang._
-
 import scwebapp.data._
 
 object SourceCaching {
-	case object			Silent							extends SourceCaching
-	case object			Disabled  						extends SourceCaching
-	final case class	Expires(when:Endo[HttpDate])	extends SourceCaching
+	case object			Silent								extends SourceCaching
+	case object			Disabled  							extends SourceCaching
+	final case class	Expires(when:HttpDate=>HttpDate)	extends SourceCaching
 }
 
 sealed trait SourceCaching

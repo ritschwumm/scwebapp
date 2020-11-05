@@ -2,7 +2,7 @@ package scwebapp.servlet.bootstrap
 
 import java.io.File
 
-import scutil.base.implicits._
+import scutil.core.implicits._
 
 object Value {
 	//------------------------------------------------------------------------------

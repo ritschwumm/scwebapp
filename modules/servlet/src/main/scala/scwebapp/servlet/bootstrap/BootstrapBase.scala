@@ -10,7 +10,8 @@ import scwebapp.servlet.implicits._
 
 /** make an object extending this and annotate it with javax.servlet.annotation.WebListener */
 trait BootstrapBase extends ServletContextListener with Logging {
-	protected def startup(props:PFunction[String,String]):(Disposable, HttpHandler)
+	// TODO return a Using
+	protected def startup(props:String=>Option[String]):(Disposable, HttpHandler)
 
 	//------------------------------------------------------------------------------
 

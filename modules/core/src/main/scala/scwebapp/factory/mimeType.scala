@@ -2,7 +2,7 @@ package scwebapp.factory
 
 import java.nio.charset.Charset
 
-import scutil.base.implicits._
+import scutil.core.implicits._
 
 import scwebapp.data._
 

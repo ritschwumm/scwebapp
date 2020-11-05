@@ -1,6 +1,6 @@
 package scwebapp
 
-import scutil.base.implicits._
+import scutil.core.implicits._
 
 trait HeaderType[T] {
 	implicit val HT:HeaderType[T]	= this
