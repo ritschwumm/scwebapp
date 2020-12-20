@@ -22,7 +22,7 @@ object BasicAuthorization {
 		"Basic " + (
 			Base64 encodeByteString (
 				(it.name toByteString encoding) 	concat
-				(ByteString single ':')				concat
+				(ByteString one ':')				concat
 				(it.password toByteString encoding)
 			)
 		)
