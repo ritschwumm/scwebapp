@@ -1,24 +1,33 @@
 package scwebapp.format
 
-import org.specs2.mutable._
+import minitest._
 
-class HttpUnparsersTest extends Specification {
-	"quoteStar" should {
-		"leave alphanumerics alone" in {
-			HttpUnparsers quoteStar_UTF8 "a0m5Z9" mustEqual
+object HttpUnparsersTest extends SimpleTestSuite {
+	test("quoteStar should leave alphanumerics alone") {
+		assertEquals(
+			HttpUnparsers quoteStar_UTF8 "a0m5Z9",
 			"UTF-8''a0m5Z9"
-		}
-		"leave simple characters alone" in {
-			HttpUnparsers quoteStar_UTF8 "!#$&+-.^_`|~" mustEqual
+		)
+	}
+
+	test("quoteStar should leave simple characters alone") {
+		assertEquals(
+			HttpUnparsers quoteStar_UTF8 "!#$&+-.^_`|~",
 			"UTF-8''!#$&+-.^_`|~"
-		}
-		"encode low chars with a single percent" in {
-			HttpUnparsers quoteStar_UTF8 " :\n" mustEqual
+		)
+	}
+
+	test("quoteStar should encode low chars with a single percent") {
+		assertEquals(
+			HttpUnparsers quoteStar_UTF8 " :\n",
 			"UTF-8''%20%3a%0a"
-		}
-		"encode high chars with two percent" in {
-			HttpUnparsers quoteStar_UTF8 "äöü" mustEqual
+		)
+	}
+
+	test("quoteStar should encode high chars with two percent") {
+		assertEquals(
+			HttpUnparsers quoteStar_UTF8 "äöü",
 			"UTF-8''%c3%a4%c3%b6%c3%bc"
-		}
+		)
 	}
 }

@@ -1,24 +1,31 @@
 package scwebapp.data
 
-import org.specs2.mutable._
+import minitest._
 
-class MimeTypeTest extends Specification {
-	"MimeType" should {
-		"parse without parameters" in {
-			MimeType parse "text/plain" mustEqual
+object MimeTypeTest extends SimpleTestSuite {
+	test("MimeType should parse without parameters") {
+		assertEquals(
+			MimeType parse "text/plain",
 			Some(MimeType("text", "plain", NoCaseParameters.empty))
-		}
-		"parse with a token parameter" in {
-			MimeType parse "text/plain; filename=test" mustEqual
+		)
+	}
+
+	test("MimeType should parse with a token parameter") {
+		assertEquals(
+			MimeType parse "text/plain; filename=test",
 			Some(MimeType("text", "plain", NoCaseParameters(Vector("filename" -> "test"))))
-		}
-		"parse with a quoted parameter" in {
-			MimeType parse "text/plain; filename=\"test\"" mustEqual
+		)
+	}
+	test("MimeType should parse with a quoted parameter") {
+		assertEquals(
+			MimeType parse "text/plain; filename=\"test\"",
 			Some(MimeType("text", "plain", NoCaseParameters(Vector("filename" -> "test"))))
-		}
-		"parse with multiple parameters" in {
-			MimeType parse "text/plain; name=foo; filename=\"bar\"" mustEqual
+		)
+	}
+	test("MimeType should parse with multiple parameters") {
+		assertEquals(
+			MimeType parse "text/plain; name=foo; filename=\"bar\"",
 			Some(MimeType("text", "plain", NoCaseParameters(Vector("name" -> "foo", "filename" -> "bar"))))
-		}
+		)
 	}
 }

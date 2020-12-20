@@ -1,59 +1,57 @@
 package scwebapp.data
 
-import org.specs2.mutable._
+import minitest._
 
 import scwebapp.format._
 import scparse.ng.text._
 
-class QValueTest extends Specification {
+object QValueTest extends SimpleTestSuite {
 	val parser	= QValue.parser finishRight HttpParsers.LWSP
 	def parseQValue(it:String):Option[QValue] = parser.parseString(it).toOption
 
-	"QValue" should {
-		"parse 0" in {
-			this parseQValue "0" mustEqual
-			Some(QValue(0))
-		}
-		"parse 0.0" in {
-			this parseQValue "0.0" mustEqual
-			Some(QValue(0))
-		}
-		"parse 0.00" in {
-			this parseQValue "0.00" mustEqual
-			Some(QValue(0))
-		}
-		"parse 0.000" in {
-			this parseQValue "0.000" mustEqual
-			Some(QValue(0))
-		}
-		"parse 0.5" in {
-			this parseQValue "0.5" mustEqual
-			Some(QValue(500))
-		}
-		"parse 0.777" in {
-			this parseQValue "0.777" mustEqual
-			Some(QValue(777))
-		}
-		"not parse 0.0000" in {
-			this parseQValue "0.0000" mustEqual
-			None
-		}
-		"parse 1" in {
-			this parseQValue "1" mustEqual
-			Some(QValue(1000))
-		}
-		"parse 1.0" in {
-			this parseQValue "1.0" mustEqual
-			Some(QValue(1000))
-		}
-		"not parse 1.1" in {
-			this parseQValue "1.1" mustEqual
-			None
-		}
-		"roundtrip the complete range" in {
-			val orig	= 0 to 1000 map QValue.apply
-			val trip	= orig map QValue.unparse map this.parseQValue
-			trip mustEqual (orig map Some.apply)
-		}
+	test("QValue should parse 0") {
+		assertEquals(this parseQValue "0", Some(QValue(0)))
+	}
+
+	test("QValue should parse 0.0") {
+		assertEquals(this parseQValue "0.0", Some(QValue(0)))
+	}
+
+	test("QValue should parse 0.00") {
+		assertEquals(this parseQValue "0.00", Some(QValue(0)))
+	}
+
+	test("QValue should parse 0.000") {
+		assertEquals(this parseQValue "0.000", Some(QValue(0)))
+	}
+
+	test("QValue should parse 0.5") {
+		assertEquals(this parseQValue "0.5", Some(QValue(500)))
+	}
+
+	test("QValue should parse 0.777") {
+		assertEquals(this parseQValue "0.777", Some(QValue(777)))
+	}
+
+	test("QValue should not parse 0.0000") {
+		assertEquals(this parseQValue "0.0000", None)
+	}
+
+	test("QValue should parse 1") {
+		assertEquals(this parseQValue "1", Some(QValue(1000)))
+	}
+
+	test("QValue should parse 1.0") {
+		assertEquals(this parseQValue "1.0", Some(QValue(1000)))
+	}
+
+	test("QValue should not parse 1.1") {
+		assertEquals(this parseQValue "1.1", None)
+	}
+
+	test("QValue should roundtrip the complete range") {
+		val orig	= 0 to 1000 map QValue.apply
+		val trip	= orig map QValue.unparse map this.parseQValue
+		assertEquals(trip, (orig map Some.apply))
 	}
 }

@@ -1,16 +1,19 @@
 package scwebapp.header
 
-import org.specs2.mutable._
+import minitest._
 
-class SetCookieTest extends Specification {
-	"SetCookie" should {
-		"do at least something" in {
-			SetCookie unparse SetCookie("foo", "bar") mustEqual
+object SetCookieTest extends SimpleTestSuite {
+	test("SetCookie should do at least something") {
+		assertEquals(
+			SetCookie unparse SetCookie("foo", "bar"),
 			"foo=bar"
-		}
-		"unparse correctly" in {
-			SetCookie unparse SetCookie(name="session", value="56e5ffe283148bab2138c154", path=Some("/")) mustEqual
+		)
+	}
+
+	test("SetCookie should unparse correctly") {
+		assertEquals(
+			SetCookie unparse SetCookie(name="session", value="56e5ffe283148bab2138c154", path=Some("/")),
 			"session=56e5ffe283148bab2138c154;Path=/"
-		}
+		)
 	}
 }

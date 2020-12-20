@@ -1,22 +1,28 @@
 package scwebapp.header
 
-import org.specs2.mutable._
+import minitest._
 
 import scwebapp.data._
 
-class CookieTest extends Specification {
-	"CookieValue" should {
-		"parse a simple cookie" in {
-			Cookie parse "foo=bar" mustEqual
+object CookieTest extends SimpleTestSuite {
+	test("Cookie should parse a simple cookie") {
+		assertEquals(
+			Cookie parse "foo=bar",
 			Some(Cookie(CaseParameters(Vector("foo" -> "bar"))))
-		}
-		"parse for two simple cookies" in {
-			Cookie parse "foo=bar; quux=wibble" mustEqual
+		)
+	}
+
+	test("Cookie should parse for two simple cookies") {
+		assertEquals(
+			Cookie parse "foo=bar; quux=wibble",
 			Some(Cookie(CaseParameters(Vector("foo" -> "bar", "quux" -> "wibble"))))
-		}
-		"parse a cookie with whitespace" in {
-			Cookie parse " foo=bar " mustEqual
+		)
+	}
+
+	test("Cookie should parse a cookie with whitespace") {
+		assertEquals(
+			Cookie parse " foo=bar ",
 			Some(Cookie(CaseParameters(Vector("foo" -> "bar"))))
-		}
+		)
 	}
 }

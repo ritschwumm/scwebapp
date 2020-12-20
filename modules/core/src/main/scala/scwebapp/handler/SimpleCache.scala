@@ -7,7 +7,7 @@ final class SimpleCache[K,V](load:K=>Option[V]) {
 	private val cache:Synchronized[Map[K,V]]	= Synchronized(Map.empty)
 
 	def fetch(key:K):Option[V]	=
-		cache modify State { map	=>
+		cache modify { map	=>
 			(map get key)
 			.cata (
 				load(key) secondBy { valueOpt =>

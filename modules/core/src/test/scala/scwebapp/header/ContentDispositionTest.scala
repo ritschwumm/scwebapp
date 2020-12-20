@@ -1,43 +1,63 @@
 package scwebapp.header
 
-import org.specs2.mutable._
+import minitest._
 
 import scwebapp.data._
 
-class ContentDispositionTest extends Specification {
-	"ContentDisposition" should {
-		"unparse" in {
-			ContentDisposition unparse ContentDisposition(ContentDispositionType.Attachment, Some("ä")) mustEqual
-			"attachment;filename=ä;filename*=UTF-8''%c3%a4"
-		}
+object ContentDispositionTest extends SimpleTestSuite {
+	test("ContentDisposition should unparse") {
+		assertEquals(
+			ContentDisposition unparse ContentDisposition(ContentDispositionType.Attachment,
+			Some("ä")), "attachment;filename=ä;filename*=UTF-8''%c3%a4"
+		)
+	}
 
-		"parse without parameters" in {
-			ContentDisposition parse "attachment" mustEqual
+	test("ContentDisposition should parse without parameters") {
+		assertEquals(
+			ContentDisposition parse "attachment",
 			Some(ContentDisposition(ContentDispositionType.Attachment,  None))
-		}
-		"parse with a token parameter" in {
-			ContentDisposition parse "attachment; filename=test" mustEqual
+		)
+	}
+
+	test("ContentDisposition should parse with a token parameter") {
+		assertEquals(
+			ContentDisposition parse "attachment; filename=test",
 			Some(ContentDisposition(ContentDispositionType.Attachment, Some("test")))
-		}
-		"parse with a quoted parameter" in {
-			ContentDisposition parse "attachment; filename=\"test\"" mustEqual
+		)
+	}
+
+	test("ContentDisposition should parse with a quoted parameter") {
+		assertEquals(
+			ContentDisposition parse "attachment; filename=\"test\"",
 			Some(ContentDisposition(ContentDispositionType.Attachment, Some("test")))
-		}
-		"parse with a utf-8 star parameter" in {
-			ContentDisposition parse "attachment; filename*=UTF-8''t%c3%a4st" mustEqual
+		)
+	}
+
+	test("ContentDisposition should parse with a utf-8 star parameter") {
+		assertEquals(
+			ContentDisposition parse "attachment; filename*=UTF-8''t%c3%a4st",
 			Some(ContentDisposition(ContentDispositionType.Attachment, Some("täst")))
-		}
-		"parse with a iso-8859-1 star parameter" in {
-			ContentDisposition parse "attachment; filename*=ISO-8859-1''t%e4st" mustEqual
+		)
+	}
+
+	test("ContentDisposition should parse with a iso-8859-1 star parameter") {
+		assertEquals(
+			ContentDisposition parse "attachment; filename*=ISO-8859-1''t%e4st",
 			Some(ContentDisposition(ContentDispositionType.Attachment, Some("täst")))
-		}
-		"parse mixed parameters" in {
-			ContentDisposition parse "attachment; filename=foo; filename*=UTF-8''t%c3%a4st" mustEqual
+		)
+	}
+
+	test("ContentDisposition should parse mixed parameters") {
+		assertEquals(
+			ContentDisposition parse "attachment; filename=foo; filename*=UTF-8''t%c3%a4st",
 			Some(ContentDisposition(ContentDispositionType.Attachment, Some("täst")))
-		}
-		"parse mixed parameters" in {
-			ContentDisposition parse "attachment; filename*=UTF-8''t%c3%a4st; filename=foo" mustEqual
+		)
+	}
+
+	test("ContentDisposition should parse mixed parameters") {
+		assertEquals(
+			ContentDisposition parse "attachment; filename*=UTF-8''t%c3%a4st; filename=foo",
 			Some(ContentDisposition(ContentDispositionType.Attachment, Some("täst")))
-		}
+		)
 	}
 }

@@ -1,27 +1,28 @@
 package scwebapp.util
 
-import org.specs2.mutable._
+import minitest._
 
 import scwebapp.data.MimeType
 
-class MimeMappingTest extends Specification {
-	"forFileName" should {
-		"recognize a png" in {
-			MimeMapping.default forFileName "test.png" mustEqual
+object MimeMappingTest extends SimpleTestSuite {
+	test("MimeMapping forFileName should") {
+		assertEquals(
+			MimeMapping.default forFileName "test.png",
 			Some(MimeType("image", "png"))
-		}
-	}
-	"forExtension" should {
-		"recognize a png" in {
-			MimeMapping.default forExtension "png" mustEqual
-			Some(MimeType("image", "png"))
-		}
+		)
 	}
 
-	"forExtension" should {
-		"recognize a mixed case extension" in {
-			MimeMapping.default forExtension "JpEg" mustEqual
+	test("MimeMapping forExtension should") {
+		assertEquals(
+			MimeMapping.default forExtension "png",
+			Some(MimeType("image", "png"))
+		)
+	}
+
+	test("MimeMapping forExtension should") {
+		assertEquals(
+			MimeMapping.default forExtension "JpEg",
 			Some(MimeType("image", "jpeg"))
-		}
+		)
 	}
 }

@@ -1,19 +1,21 @@
 package scwebapp.header
 
-import org.specs2.mutable._
+import minitest._
 
 import scwebapp.data._
 
-class AuthorizationTest extends Specification {
-	"Authorization" should {
-		"parse basic" in {
-			Authorization parse "Basic Zm9vOmJhcg==" mustEqual
+object AuthorizationTest extends SimpleTestSuite {
+	test("Authorization Basic should parse basic") {
+		assertEquals(
+			Authorization parse "Basic Zm9vOmJhcg==",
 			Some(Authorization(BasicAuthorization("foo", "bar")))
-		}
+		)
+	}
 
-		"unparse basic" in {
-			Authorization unparse Authorization(BasicAuthorization("foo", "bar")) mustEqual
+	test("Authorization Basic should unparse basic") {
+		assertEquals(
+			Authorization unparse Authorization(BasicAuthorization("foo", "bar")),
 			"Basic Zm9vOmJhcg=="
-		}
+		)
 	}
 }

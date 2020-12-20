@@ -1,51 +1,76 @@
 package scwebapp.header
 
-import org.specs2.mutable._
+import minitest._
 
 import scwebapp.data._
 
-class AcceptEncodingTest extends Specification {
-	"AcceptEncoding" should {
-		"parse empty" in {
-			AcceptEncoding parse "" mustEqual
+object AcceptEncodingTest extends SimpleTestSuite {
+	test("AcceptEncoding should parse empty") {
+		assertEquals(
+			AcceptEncoding parse "",
 			Some(AcceptEncoding(Vector.empty))
-		}
-		"parse any" in {
-			AcceptEncoding parse "*" mustEqual
-			Some(AcceptEncoding(Vector(AcceptEncodingMatch(AcceptEncodingPattern.Wildcard,None))))
-		}
-		"parse any with quality" in {
-			AcceptEncoding parse "*;q=1" mustEqual
-			Some(AcceptEncoding(Vector(AcceptEncodingMatch(AcceptEncodingPattern.Wildcard,Some(QValue.one)))))
-		}
-		"parse identity" in {
-			AcceptEncoding parse "identity" mustEqual
-			Some(AcceptEncoding(Vector(AcceptEncodingMatch(AcceptEncodingPattern.Fixed(AcceptEncodingType.Identity),None))))
-		}
-		"parse gzip" in {
-			AcceptEncoding parse "gzip" mustEqual
-			Some(AcceptEncoding(Vector(AcceptEncodingMatch(AcceptEncodingPattern.Fixed(AcceptEncodingType.Other(ContentEncodingType.Gzip)),None))))
-		}
+		)
+	}
 
-		"accept identity when empty" in {
-			AcceptEncoding parse "" map { _ acceptance AcceptEncodingType.Identity } mustEqual
+	test("AcceptEncoding should parse any") {
+		assertEquals(
+			AcceptEncoding parse "*",
+			Some(AcceptEncoding(Vector(AcceptEncodingMatch(AcceptEncodingPattern.Wildcard,None))))
+		)
+	}
+
+	test("AcceptEncoding should parse any with quality") {
+		assertEquals(
+			AcceptEncoding parse "*;q=1",
+			Some(AcceptEncoding(Vector(AcceptEncodingMatch(AcceptEncodingPattern.Wildcard,Some(QValue.one)))))
+		)
+	}
+
+	test("AcceptEncoding should parse identity") {
+		assertEquals(
+			AcceptEncoding parse "identity",
+			Some(AcceptEncoding(Vector(AcceptEncodingMatch(AcceptEncodingPattern.Fixed(AcceptEncodingType.Identity),None))))
+		)
+	}
+
+	test("AcceptEncoding should parse gzip") {
+		assertEquals(
+			AcceptEncoding parse "gzip",
+			Some(AcceptEncoding(Vector(AcceptEncodingMatch(AcceptEncodingPattern.Fixed(AcceptEncodingType.Other(ContentEncodingType.Gzip)),None))))
+		)
+	}
+
+	test("AcceptEncoding should accept identity when empty") {
+		assertEquals(
+			AcceptEncoding parse "" map { _ acceptance AcceptEncodingType.Identity },
 			Some(QValue(1000))
-		}
-		"not accept gzip when empty" in {
-			AcceptEncoding parse "" map { _ acceptance AcceptEncodingType.Other(ContentEncodingType.Gzip) } mustEqual
+		)
+	}
+
+	test("AcceptEncoding should not accept gzip when empty") {
+		assertEquals(
+			AcceptEncoding parse "" map { _ acceptance AcceptEncodingType.Other(ContentEncodingType.Gzip) },
 			Some(QValue(0))
-		}
-		"accept gzip with star" in {
-			AcceptEncoding parse "*;q=0.5" map { _ acceptance AcceptEncodingType.Other(ContentEncodingType.Gzip) } mustEqual
+		)
+	}
+	test("AcceptEncoding should accept gzip with star") {
+		assertEquals(
+			AcceptEncoding parse "*;q=0.5" map { _ acceptance AcceptEncodingType.Other(ContentEncodingType.Gzip) },
 			Some(QValue(500))
-		}
-		"accept gzip with quality" in {
-			AcceptEncoding parse "gzip;q=0.5" map { _ acceptance AcceptEncodingType.Other(ContentEncodingType.Gzip) } mustEqual
+		)
+	}
+
+	test("AcceptEncoding should accept gzip with quality") {
+		assertEquals(
+			AcceptEncoding parse "gzip;q=0.5" map { _ acceptance AcceptEncodingType.Other(ContentEncodingType.Gzip) },
 			Some(QValue(500))
-		}
-		"override specific with wildcard" in {
-			AcceptEncoding parse "*;q=0.7,gzip;q=0.5" map { _ acceptance AcceptEncodingType.Other(ContentEncodingType.Gzip) } mustEqual
+		)
+	}
+
+	test("AcceptEncoding should override specific with wildcard") {
+		assertEquals(
+			AcceptEncoding parse "*;q=0.7,gzip;q=0.5" map { _ acceptance AcceptEncodingType.Other(ContentEncodingType.Gzip) },
 			Some(QValue(500))
-		}
+		)
 	}
 }

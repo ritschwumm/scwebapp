@@ -1,32 +1,44 @@
 package scwebapp.format
 
-import org.specs2.mutable._
+import minitest._
 
 import scutil.lang.Charsets.utf_8
 
 import scwebapp.data._
 
-class UrlEncodingTest extends Specification {
-	"parsing query parameters should" should {
-		"return empty for an empty string" in {
-			UrlEncoding.parseQueryParameters("", utf_8) mustEqual
+object UrlEncodingTest extends SimpleTestSuite {
+	test("parsing query parameters should return empty for an empty string") {
+		assertEquals(
+			UrlEncoding.parseQueryParameters("", utf_8),
 			Right(CaseParameters.empty)
-		}
-		"decode missing = as empty parameter" in {
-			UrlEncoding.parseQueryParameters("test", utf_8) mustEqual
+		)
+	}
+
+	test("parsing query parameters should decode missing = as empty parameter") {
+		assertEquals(
+			UrlEncoding.parseQueryParameters("test", utf_8),
 			Right(CaseParameters(Vector("test" -> "")))
-		}
-		"decode a single value" in {
-			UrlEncoding.parseQueryParameters("foo=bar", utf_8) mustEqual
+		)
+	}
+
+	test("parsing query parameters should decode a single value") {
+		assertEquals(
+			UrlEncoding.parseQueryParameters("foo=bar", utf_8),
 			Right(CaseParameters(Vector("foo" -> "bar")))
-		}
-		"decode multiple values" in {
-			UrlEncoding.parseQueryParameters("foo=bar&x=y", utf_8) mustEqual
+		)
+	}
+
+	test("parsing query parameters should decode multiple values") {
+		assertEquals(
+			UrlEncoding.parseQueryParameters("foo=bar&x=y", utf_8),
 			Right(CaseParameters(Vector("foo" -> "bar", "x" -> "y")))
-		}
-		"decode utf-8 in key and value" in {
-			UrlEncoding.parseQueryParameters("f%C3%B6%C3%B6=b%C3%A4r", utf_8) mustEqual
+		)
+	}
+
+	test("parsing query parameters should decode utf-8 in key and value") {
+		assertEquals(
+			UrlEncoding.parseQueryParameters("f%C3%B6%C3%B6=b%C3%A4r", utf_8),
 			Right(CaseParameters(Vector("föö" -> "bär")))
-		}
+		)
 	}
 }

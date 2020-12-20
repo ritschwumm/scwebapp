@@ -40,7 +40,7 @@ trait HttpRequest {
 	// decoded according to server settings which by default (in tomcat) is ISO-8859-1.
 	// this is not influenced by setCharacterEncoding or setEncoding
 	def fullPathServlet:String	=
-			ISeq(peer.getServletPath, peer.getPathInfo) filter { _ != null } mkString ""
+			Seq(peer.getServletPath, peer.getPathInfo) filter { _ != null } mkString ""
 
 	def pathInfoServlet:Option[String]	=
 			Option(peer.getPathInfo)
