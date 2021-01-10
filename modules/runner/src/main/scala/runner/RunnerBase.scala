@@ -13,16 +13,16 @@ import scwebapp.HttpHandler
 import scwebapp.servlet.HttpIO
 
 object RunnerBase extends Logging {
-	def start(config:ServerConfig, application:() => (Disposable, HttpHandler)):Unit	= {
+	def start(config:ServerConfig, application:Using[HttpHandler]):Unit	= {
 		// starts with /
 		// does not end with /
 		// is "" for the root context
 		val contextPath	= config.path.value.replaceAll("/$", "")
 
-		val (disposable, httpHandler)	=
+		val (httpHandler, disposable)	=
 			try {
 				INFO(s"starting application")
-				application()
+				application.open()
 			}
 			catch { case e:Exception	=>
 				ERROR("cannot start application", e)

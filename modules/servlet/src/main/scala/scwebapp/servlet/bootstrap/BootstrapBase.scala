@@ -10,18 +10,13 @@ import scwebapp.servlet.implicits._
 
 /** make an object extending this and annotate it with javax.servlet.annotation.WebListener */
 trait BootstrapBase extends ServletContextListener with Logging {
-	// TODO return a Using
-	protected def startup(props:String=>Option[String]):(Disposable, HttpHandler)
-
-	//------------------------------------------------------------------------------
-
 	@volatile private var disposable:Option[Disposable]	= None
 
 	def contextInitialized(ev:ServletContextEvent):Unit	= {
 		val sc	= ev.getServletContext
 
 		INFO("starting application")
-		val (tmp,handler)	= startup(sc.initParameters firstString _)
+		val (handler,tmp)	= startup(sc.initParameters firstString _).open()
 		disposable			= Some(tmp)
 
 		INFO("creating web servlet")
@@ -37,4 +32,6 @@ trait BootstrapBase extends ServletContextListener with Logging {
 		INFO("stopping application")
 		disposable	foreach { _.dispose() }
 	}
+
+	protected def startup(props:String=>Option[String]):Using[HttpHandler]
 }
