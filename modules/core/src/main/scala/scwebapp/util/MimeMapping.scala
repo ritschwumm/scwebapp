@@ -1023,20 +1023,20 @@ object MimeMapping {
 
 final case class MimeMapping(table:Seq[(String,String)]) {
 	private val byExtension	=
-			table
-			.collapseMap { case (extension, typ) =>
-				MimeType parse typ map (extension -> _)
-			}
-			.toMap
+		table
+		.mapFilter { case (extension, typ) =>
+			MimeType parse typ map (extension -> _)
+		}
+		.toMap
 
 	def forFileName(it:String):Option[MimeType]	=
-			extension(it) flatMap forExtension
+		extension(it) flatMap forExtension
 
 	def forExtension(it:String):Option[MimeType]	=
-			byExtension get (it toLowerCase Locale.US)
+		byExtension get (it toLowerCase Locale.US)
 
 	private def extension(it:String):Option[String]	=
-			it indexOfChar '.' map { idx =>
-				it substring idx+1
-			}
+		it indexOfChar '.' map { idx =>
+			it substring idx+1
+		}
 }

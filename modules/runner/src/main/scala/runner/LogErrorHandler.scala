@@ -21,7 +21,7 @@ final class LogErrorHandler extends ErrorHandler with Logging {
 				},
 				Option(request getAttribute "javax.servlet.error.request_uri")	map (_.toString) map LogValue.string,
 				Option(request getAttribute "javax.servlet.error.servlet_name")	map (_.toString) map LogValue.string
-			).collapse
+			).flattenOption
 		)
 		writer write code.toString
 	}

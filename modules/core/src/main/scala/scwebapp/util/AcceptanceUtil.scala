@@ -8,7 +8,7 @@ object AcceptanceUtil {
 	@SuppressWarnings(Array("org.wartremover.warts.TraversableOps"))
 	def acceptance[T](matches:Seq[T])(extract:T=>Option[(Int,QValue)]):Option[QValue]	=
 		matches
-		.collapseMap(extract)
+		.mapFilter(extract)
 		// get the highest rank
 		.groupBy	{ case (level, qvalue)	=> level 	}
 		.toVector

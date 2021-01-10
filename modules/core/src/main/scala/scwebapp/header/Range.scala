@@ -32,5 +32,5 @@ object Range extends HeaderType[Range] {
 
 final case class Range(patterns:Nes[RangePattern]) {
 	def inclusiveRanges(total:Long):Seq[InclusiveRange]	=
-		patterns.toVector collapseMap { _ toInclusiveRange total }
+		patterns.toVector mapFilter { _ toInclusiveRange total }
 }

@@ -1,5 +1,7 @@
 package scwebapp.servlet
 
+import scala.language.implicitConversions
+
 import javax.servlet._
 import javax.servlet.http._
 

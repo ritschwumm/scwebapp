@@ -1,5 +1,7 @@
 package scwebapp.servlet
 
+import scala.language.implicitConversions
+
 import java.util.{ Enumeration=>JEnumeration }
 
 import javax.servlet._

@@ -46,7 +46,7 @@ object SetCookie extends HeaderType[SetCookie] {
 			)
 
 		val headPart	= it.name + "=" + it.value
-		val tailParts	= avs.collapse map CookieAv.unparse
+		val tailParts	= avs.flattenOption map CookieAv.unparse
 		headPart +: tailParts mkString ";"
 	}
 

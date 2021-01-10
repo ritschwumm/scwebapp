@@ -1,5 +1,7 @@
 package scwebapp
 
+import scala.language.implicitConversions
+
 object HeaderValue {
 	implicit def fromHeader[T:HeaderType](header:T):HeaderValue	=
 		implicitly[HeaderType[T]] headerValue header
