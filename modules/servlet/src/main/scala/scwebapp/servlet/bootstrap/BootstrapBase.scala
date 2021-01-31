@@ -3,35 +3,26 @@ package scwebapp.servlet.bootstrap
 import javax.servlet._
 
 import scutil.lang._
-import scutil.log._
 
 import scwebapp._
 import scwebapp.servlet.implicits._
 
 /** make an object extending this and annotate it with javax.servlet.annotation.WebListener */
-trait BootstrapBase extends ServletContextListener with Logging {
-	@volatile private var disposer:Option[Io[Unit]]	= None
+trait HttpHandlerServletContextListener extends BootstrapServletContextListener {
+	protected final def application(sc:ServletContext):IoResource[Unit]	=
+		for {
+			handler	<-	handler(sc.initParameters firstString _)
+			_		<-	IoResource delay {
+							sc.mount(
+								name			= "HttpHandlerServlet",
+								handler			= handler,
+								mappings		= Vector("/*"),
+								loadOnStartup	= Some(100),
+								multipartConfig	= None
+							)
+						}
+		}
+		yield ()
 
-	def contextInitialized(ev:ServletContextEvent):Unit	= {
-		val sc	= ev.getServletContext
-
-		INFO("starting application")
-		val (handler,tmp)	= startup(sc.initParameters firstString _).open.unsafeRun()
-		disposer			= Some(tmp)
-
-		INFO("creating web servlet")
-		sc.mount(
-			name			= "WebServlet",
-			handler			= handler,
-			mappings		= Vector("/*"),
-			loadOnStartup	= Some(100)
-		)
-	}
-
-	def contextDestroyed(ev:ServletContextEvent):Unit	= {
-		INFO("stopping application")
-		disposer	foreach { _.unsafeRun() }
-	}
-
-	protected def startup(props:String=>Option[String]):IoResource[HttpHandler]
+	protected def handler(props:String=>Option[String]):IoResource[HttpHandler]
 }

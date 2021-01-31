@@ -24,12 +24,14 @@ final class ServletContextExtension(peer:ServletContext) {
 		name:String,
 		handler:HttpHandler,
 		mappings:Seq[String],
-		loadOnStartup:Option[Int]
+		loadOnStartup:Option[Int],
+		multipartConfig:Option[MultipartConfigElement]
 	):ServletRegistration.Dynamic	= {
 		val servlet	= new HttpHandlerServlet(handler)
 		val dynamic	= peer.addServlet(name, servlet)
 		dynamic addMapping (mappings:_*)
-		loadOnStartup foreach dynamic.setLoadOnStartup
+		loadOnStartup	foreach dynamic.setLoadOnStartup
+		multipartConfig	foreach dynamic.setMultipartConfig
 		dynamic	setAsyncSupported true
 		dynamic
 	}
