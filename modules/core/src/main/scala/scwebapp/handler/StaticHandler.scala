@@ -81,7 +81,7 @@ extends Logging {
 		(basePath +: path).toVector mkString "/"
 
 	private def readResource(path:String):Option[ByteString]	=
-		getClass.getClassLoader.classpathResourceProvider readByteString path
+		getClass.getClassLoader.classpathResource(path).map(_.byteString)
 
 	private def parsePath(it:String):Option[Path]	=
 		it splitAroundChar '/' optionBy { _ forall validPart } flatMap Nes.fromSeq
