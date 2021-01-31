@@ -19,7 +19,7 @@ object RunnerBase extends Logging {
 		// is "" for the root context
 		val contextPath	= config.path.value.replaceAll("/$", "")
 
-		val (httpHandler, disposable)	=
+		val (httpHandler, disposer)	=
 			try {
 				INFO(s"starting application")
 				application.open()
@@ -85,7 +85,7 @@ object RunnerBase extends Logging {
 
 				INFO("stopping server")
 				server.stop()
-				disposable.dispose()
+				disposer.dispose()
 			}
 		}
 

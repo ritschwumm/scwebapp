@@ -7,7 +7,7 @@ import java.util.{ Set=>JSet }
 import javax.servlet._
 
 import scutil.jdk.implicits._
-import scutil.resource._
+import scutil.classpath._
 
 import scwebapp._
 import scwebapp.data._
@@ -40,8 +40,8 @@ final class ServletContextExtension(peer:ServletContext) {
 	def realPath(path:String):Option[String]	=
 		Option(peer getRealPath path)
 
-	def resources:ResourceProvider	=
-		new ResourceProvider(path => Option(peer getResource path))
+	def resources:ClasspathResourceProvider	=
+		new ClasspathResourceProvider(path => Option(peer getResource path))
 
 	def resourcePaths(base:String):Option[Set[String]]	=
 		Option(peer getResourcePaths base) map { _.asInstanceOf[JSet[String]].toSet }
