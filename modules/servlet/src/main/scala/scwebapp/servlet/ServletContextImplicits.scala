@@ -40,8 +40,8 @@ final class ServletContextExtension(peer:ServletContext) {
 	def realPath(path:String):Option[String]	=
 		Option(peer getRealPath path)
 
-	def resources:ClasspathResourceProvider	=
-		new ClasspathResourceProvider(path => Option(peer getResource path))
+	def resource(path:String):Option[ClasspathResource]	=
+		Option(peer getResource path) map (new ClasspathResource(_))
 
 	def resourcePaths(base:String):Option[Set[String]]	=
 		Option(peer getResourcePaths base) map { _.asInstanceOf[JSet[String]].toSet }
