@@ -13,7 +13,7 @@ import scwebapp.HttpHandler
 import scwebapp.servlet.HttpIO
 
 object RunnerBase extends Logging {
-	def start(config:ServerConfig, application:Using[HttpHandler]):Unit	= {
+	def start(config:ServerConfig, application:IoResource[HttpHandler]):Unit	= {
 		// starts with /
 		// does not end with /
 		// is "" for the root context
@@ -22,7 +22,7 @@ object RunnerBase extends Logging {
 		val (httpHandler, disposer)	=
 			try {
 				INFO(s"starting application")
-				application.open()
+				application.open.unsafeRun()
 			}
 			catch { case e:Exception	=>
 				ERROR("cannot start application", e)
@@ -85,7 +85,7 @@ object RunnerBase extends Logging {
 
 				INFO("stopping server")
 				server.stop()
-				disposer.dispose()
+				disposer.unsafeRun()
 			}
 		}
 
