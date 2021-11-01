@@ -20,8 +20,8 @@ object UrlEncoding {
 
 	private def uriDecode(encoding:Charset)(queryString:String):Either[String,String]	=
 		URIComponent forCharset encoding decode queryString leftMap {
-			case URIComponentInvalid(position)		=> show"invalid uri encoding at position ${position}"
-			case URIComponentException(underlying)	=> show"invalid character encoding: ${underlying.getMessage}"
+			case URIComponentProblem.Invalid(position)		=> show"invalid uri encoding at position ${position}"
+			case URIComponentProblem.Exception(underlying)	=> show"invalid character encoding: ${underlying.getMessage}"
 		}
 
 	private def urlDecode(encoding:Charset)(formData:String):Either[String,String]	=
