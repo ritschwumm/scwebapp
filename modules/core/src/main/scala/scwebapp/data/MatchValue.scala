@@ -28,7 +28,7 @@ object MatchValue {
 
 	//------------------------------------------------------------------------------
 
-	final case object Wildcard							extends MatchValue
+	case object Wildcard								extends MatchValue
 	final case class EntityTags(values:Nes[ETagValue])	extends MatchValue
 }
 

@@ -29,8 +29,8 @@ object AcceptEncodingPattern {
 
 	//------------------------------------------------------------------------------
 
-	final case object Wildcard						extends AcceptEncodingPattern
-	final case class  Fixed(typ:AcceptEncodingType)	extends AcceptEncodingPattern
+	case object Wildcard							extends AcceptEncodingPattern
+	final case class Fixed(typ:AcceptEncodingType)	extends AcceptEncodingPattern
 
 }
 

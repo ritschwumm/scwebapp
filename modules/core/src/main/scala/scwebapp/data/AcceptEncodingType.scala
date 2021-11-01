@@ -27,7 +27,7 @@ object AcceptEncodingType {
 
 	//------------------------------------------------------------------------------
 
-	final case object Identity							extends AcceptEncodingType
+	case object Identity								extends AcceptEncodingType
 	final case class  Other(typ:ContentEncodingType)	extends AcceptEncodingType
 
 }

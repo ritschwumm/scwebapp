@@ -30,7 +30,7 @@ object MediaPattern {
 
 	//------------------------------------------------------------------------------
 
-	final case object WildWild									extends MediaPattern
+	case object WildWild										extends MediaPattern
 	final case class TypeWild(major:String)						extends MediaPattern
 	final case class TypeSubtype(major:String, minor:String)	extends MediaPattern
 }
