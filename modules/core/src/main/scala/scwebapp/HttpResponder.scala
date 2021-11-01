@@ -7,10 +7,6 @@ import scutil.time._
 import scwebapp.status._
 
 object HttpResponder {
-	@deprecated("use HttpResponder.sync", "0.258.0")
-	def apply(response:HttpResponse):HttpResponder	=
-		sync(response)
-
 	def sync(response:HttpResponse):HttpResponder	=
 		Sync(response)
 

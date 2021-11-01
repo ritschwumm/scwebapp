@@ -18,10 +18,6 @@ object HttpOutput {
 	val empty:HttpOutput	=
 		withOutputStream(constant(()))
 
-	@deprecated("use combineAll", "0.258.0")
-	def concat(its:Seq[HttpOutput]):HttpOutput	=
-		combineAll(its)
-
 	def combineAll(its:Iterable[HttpOutput]):HttpOutput	=
 		(its foldLeft empty)(_ combine _)
 
