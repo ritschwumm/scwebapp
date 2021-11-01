@@ -2,7 +2,7 @@ Global / onChangedBuildSource := ReloadOnSourceChanges
 
 inThisBuild(Seq(
 	organization	:= "de.djini",
-	version			:= "0.259.0",
+	version			:= "0.260.0",
 
 	scalaVersion	:= "2.13.5",
 	scalacOptions	++= Seq(
@@ -71,8 +71,8 @@ lazy val `scwebapp-servlet`	=
 	(project in file("modules/servlet"))
 	.settings(
 		libraryDependencies	++= Seq(
-			"de.djini"		%%	"scutil-jdk"		% "0.205.0"	% "compile",
-			"javax.servlet"	%	"javax.servlet-api"	% "3.1.0"	% "provided"
+			"de.djini"			%%	"scutil-jdk"			% "0.205.0"	% "compile",
+			"jakarta.servlet"	%	"jakarta.servlet-api"	% "5.0.0"	% "provided"
 		)
 	)
 	.dependsOn(
@@ -83,7 +83,7 @@ lazy val `scwebapp-runner`	=
 	(project in file("modules/runner"))
 	.settings(
 		libraryDependencies		++= Seq(
-			"org.eclipse.jetty"	%	"jetty-server"	% "9.4.40.v20210413"	% "compile"
+			"org.eclipse.jetty"	%	"jetty-server"	% "11.0.2"	% "compile"
 		)
 	)
 	.dependsOn(

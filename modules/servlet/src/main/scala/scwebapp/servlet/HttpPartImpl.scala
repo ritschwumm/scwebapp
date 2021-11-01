@@ -3,7 +3,7 @@ package scwebapp.servlet
 import java.util.{ Collection=>JCollection }
 import java.io.InputStream
 
-import javax.servlet.http.Part
+import jakarta.servlet.http.Part
 
 import scala.jdk.CollectionConverters._
 

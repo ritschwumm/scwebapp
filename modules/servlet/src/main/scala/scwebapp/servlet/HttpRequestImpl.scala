@@ -4,8 +4,8 @@ import java.util.{ Enumeration=>JEnumeration }
 import java.io.IOException
 import java.io.InputStream
 
-import javax.servlet.ServletException
-import javax.servlet.http.HttpServletRequest
+import jakarta.servlet.ServletException
+import jakarta.servlet.http.HttpServletRequest
 
 import scala.jdk.CollectionConverters._
 

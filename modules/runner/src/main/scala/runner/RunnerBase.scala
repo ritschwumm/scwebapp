@@ -1,9 +1,9 @@
 package scwebapp.runner
 
-import javax.servlet.http._
+import jakarta.servlet.http._
 
 import org.eclipse.jetty.server._
-import org.eclipse.jetty.server.handler.AbstractHandler
+import org.eclipse.jetty.server.handler._
 
 import scutil.lang._
 import scutil.lang.implicits._
@@ -14,10 +14,12 @@ import scwebapp.servlet.HttpIO
 
 object RunnerBase extends Logging {
 	def start(config:ServerConfig, application:IoResource[HttpHandler]):Unit	= {
+		/*
 		// starts with /
 		// does not end with /
 		// is "" for the root context
 		val contextPath	= config.path.value.replaceAll("/$", "")
+		*/
 
 		val (httpHandler, disposer)	=
 			try {
@@ -29,21 +31,16 @@ object RunnerBase extends Logging {
 				sys exit 1
 			}
 
-		val handler		=
+		val applicationHandler		=
 			new AbstractHandler {
 				// throws IOException, ServletException
 				def handle(target:String, baseRequest:Request, request:HttpServletRequest, response:HttpServletResponse):Unit	= {
-					if (target startsWith (contextPath + "/")) {
-						baseRequest setContextPath contextPath
-						HttpIO.execute(request, response, httpHandler)
-						baseRequest setHandled true
-					}
-					else {
-						// TODO what if not?
-						ERROR("unexpected request", target)
-					}
+					HttpIO.execute(request, response, httpHandler)
+					baseRequest setHandled true
 				}
 			}
+		val contextHandler	= new ContextHandler(config.path.value)
+		contextHandler	setHandler	applicationHandler
 
 		val server	= new Server(config.bindAdr)
 
@@ -60,7 +57,7 @@ object RunnerBase extends Logging {
 		httpConnector	setIdleTimeout	config.idleTimeout.millis
 
 		server	setConnectors		Array(httpConnector)
-		server	setHandler			handler
+		server	setHandler			contextHandler
 		server	setStopAtShutdown	true
 		server	setStopTimeout		7000
 

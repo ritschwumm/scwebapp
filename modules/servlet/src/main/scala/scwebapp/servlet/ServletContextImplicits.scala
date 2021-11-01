@@ -4,7 +4,7 @@ import scala.language.implicitConversions
 
 import java.util.{ Set=>JSet }
 
-import javax.servlet._
+import jakarta.servlet._
 
 import scutil.jdk.implicits._
 import scutil.classpath._

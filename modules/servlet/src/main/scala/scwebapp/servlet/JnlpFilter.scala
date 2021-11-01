@@ -3,8 +3,8 @@ package scwebapp.servlet
 import java.io._
 import java.nio.charset.Charset
 
-import javax.servlet._
-import javax.servlet.http._
+import jakarta.servlet._
+import jakarta.servlet.http._
 
 import scala.collection.mutable
 
@@ -33,11 +33,11 @@ final class BootServletContextListener extends ServletContextListener {
 final class JnlpFilter extends Filter with Logging {
 	@volatile private var filterConfig:Option[FilterConfig] 	= None
 
-	def init(filterConfig:FilterConfig):Unit	= {
+	override def init(filterConfig:FilterConfig):Unit	= {
 		this.filterConfig	= Some(filterConfig)
 	}
 
-	def destroy():Unit	= {
+	override def destroy():Unit	= {
 		this.filterConfig	= None
 	}
 

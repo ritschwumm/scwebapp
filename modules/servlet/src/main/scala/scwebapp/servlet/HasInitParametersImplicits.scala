@@ -4,7 +4,7 @@ import scala.language.implicitConversions
 
 import java.util.{ Enumeration=>JEnumeration }
 
-import javax.servlet._
+import jakarta.servlet._
 
 import scutil.jdk.implicits._
 

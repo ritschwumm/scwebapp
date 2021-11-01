@@ -1,6 +1,6 @@
 package scwebapp.servlet.bootstrap
 
-import javax.servlet._
+import jakarta.servlet._
 
 import scutil.lang._
 
@@ -8,11 +8,11 @@ import scutil.lang._
 trait BootstrapServletContextListener extends ServletContextListener{
 	@volatile private var disposer:Io[Unit]	= Io.unit
 
-	final def contextInitialized(ev:ServletContextEvent):Unit	= {
+	override final def contextInitialized(ev:ServletContextEvent):Unit	= {
 		disposer	= application(ev.getServletContext).openVoid.unsafeRun()
 	}
 
-	final def contextDestroyed(ev:ServletContextEvent):Unit	= {
+	override final def contextDestroyed(ev:ServletContextEvent):Unit	= {
 		disposer.unsafeRun()
 	}
 

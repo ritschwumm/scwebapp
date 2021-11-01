@@ -1,6 +1,6 @@
 package scwebapp.servlet.bootstrap
 
-import javax.servlet._
+import jakarta.servlet._
 
 import scutil.lang._
 

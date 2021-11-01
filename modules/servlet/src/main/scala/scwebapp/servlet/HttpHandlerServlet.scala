@@ -1,6 +1,6 @@
 package scwebapp.servlet
 
-import javax.servlet.http._
+import jakarta.servlet.http._
 
 import scutil.lang.Charsets
 
