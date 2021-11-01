@@ -116,5 +116,5 @@ extends Logging {
 			case _									=> false
 		}
 
-	private val badRequest	= HttpResponder(HttpResponse(BAD_REQUEST))
+	private val badRequest	= HttpResponder.sync(HttpResponse(BAD_REQUEST))
 }

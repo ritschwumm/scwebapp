@@ -18,7 +18,7 @@ object SourceHandler {
 
 	def plan(source:SourceData):HttpHandler	=
 		request =>
-		HttpResponder(
+		HttpResponder.sync(
 			request.method match {
 				case Right(GET)		=> respond(request, source, true)
 				case Right(HEAD)	=> respond(request, source, false)
@@ -209,7 +209,7 @@ object SourceHandler {
 						ranges
 						.flatMap	{ r => Vector(boundaryOutput(ContentRangeValue.full(r, total)), source range r) }
 						.appended	(finishOutput)
-						.into		(HttpOutput.concat)
+						.into		(HttpOutput.combineAll)
 					}
 					else HttpOutput.empty
 

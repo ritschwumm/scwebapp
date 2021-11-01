@@ -7,6 +7,7 @@ import scutil.time._
 import scwebapp.status._
 
 object HttpResponder {
+	@deprecated("use HttpResponder.sync", "0.258.0")
 	def apply(response:HttpResponse):HttpResponder	=
 		sync(response)
 
@@ -29,19 +30,6 @@ object HttpResponder {
 		(resp, channel.put)
 	}
 
-	/*
-	def sync2(response:HttpResponse):HttpResponder	= {
-		val channel	= new Channel[HttpResponse]
-		channel put response
-		HttpResponderAsync(
-			channel.get,
-			MilliDuration.day,
-			timeoutResponse,
-			errorResponse
-		)
-	}
-	*/
-
 	private val timeoutResponse	= thunk { statusResponse(REQUEST_TIMEOUT)		}
 	private val errorResponse	= thunk { statusResponse(INTERNAL_SERVER_ERROR)	}
 	private def statusResponse(status:HttpStatus):HttpResponse	=
@@ -53,14 +41,14 @@ object HttpResponder {
 
 	//------------------------------------------------------------------------------
 
-	final case class Sync(
+	private[scwebapp] final case class Sync(
 		response:HttpResponse
 	)
 	extends HttpResponder {
 		def modify(func:HttpResponse=>HttpResponse):HttpResponder	= Sync(func(response))
 	}
 
-	final case class Async(
+	private[scwebapp] final case class Async(
 		response:Effect[Effect[HttpResponse]],
 		timeout:MilliDuration,
 		timeoutResponse:Thunk[HttpResponse],

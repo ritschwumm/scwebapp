@@ -18,8 +18,12 @@ object HttpOutput {
 	val empty:HttpOutput	=
 		withOutputStream(constant(()))
 
+	@deprecated("use combineAll", "0.258.0")
 	def concat(its:Seq[HttpOutput]):HttpOutput	=
-		(its foldLeft empty)(_ ~> _)
+		combineAll(its)
+
+	def combineAll(its:Iterable[HttpOutput]):HttpOutput	=
+		(its foldLeft empty)(_ combine _)
 
 	//------------------------------------------------------------------------------
 
@@ -95,7 +99,9 @@ object HttpOutput {
 trait HttpOutput {
 	def intoOutputStream(ost:OutputStream):Unit
 
-	final def ~> (that:HttpOutput):HttpOutput	=
+	final def ~> (that:HttpOutput):HttpOutput	= combine(that)
+
+	final def combine(that:HttpOutput):HttpOutput	=
 		HttpOutput withOutputStream { ost =>
 			this intoOutputStream ost
 			that intoOutputStream ost
