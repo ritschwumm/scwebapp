@@ -2,12 +2,12 @@ package scwebapp.data
 
 import java.nio.charset.Charset
 
-import scutil.lang.implicits._
-import scutil.lang._
-import scutil.codec._
+import scutil.lang.implicits.*
+import scutil.lang.*
+import scutil.codec.*
 
-import scwebapp.format._
-import scparse.ng.text._
+import scwebapp.format.*
+import scparse.ng.text.*
 
 // @see http://www.ietf.org/rfc/rfc2617.txt
 object BasicAuthorization {
@@ -28,7 +28,7 @@ object BasicAuthorization {
 		)
 
 	private object parsers {
-		import HttpParsers._
+		import HttpParsers.*
 
 		val COLON	= TextParser is ':'
 

@@ -2,14 +2,14 @@ package scwebapp
 
 import java.nio.charset.Charset
 
-import scutil.core.implicits._
-import scutil.lang._
-import scutil.codec._
+import scutil.core.implicits.*
+import scutil.lang.*
+import scutil.codec.*
 
 import scwebapp.factory.mimeType
-import scwebapp.header._
-import scwebapp.data._
-import scwebapp.format._
+import scwebapp.header.*
+import scwebapp.data.*
+import scwebapp.format.*
 
 trait HttpRequest {
 	//------------------------------------------------------------------------------

@@ -1,9 +1,9 @@
 package scwebapp.data
 
-import scutil.lang._
+import scutil.lang.*
 
-import scwebapp.format._
-import scparse.ng.text._
+import scwebapp.format.*
+import scparse.ng.text.*
 
 object MatchValue {
 	// NOTE this is special as we provide a complete tag
@@ -17,7 +17,7 @@ object MatchValue {
 		}
 
 	private object parsers {
-		import HttpParsers._
+		import HttpParsers.*
 
 		val wildcardValue:TextParser[MatchValue]	= symbol('*') tag Wildcard
 		val etagsValue:TextParser[MatchValue]		= hash1(ETagValue.parser) map EntityTags.apply

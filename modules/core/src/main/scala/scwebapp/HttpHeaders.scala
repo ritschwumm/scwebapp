@@ -2,10 +2,10 @@ package scwebapp
 
 import java.nio.charset.Charset
 
-import scutil.core.implicits._
+import scutil.core.implicits.*
 
-import scwebapp.header._
-import scwebapp.data._
+import scwebapp.header.*
+import scwebapp.data.*
 
 final case class HttpHeaders(params:NoCaseParameters) {
 	/** Left if invalid, Right(None) if missing, Right(Some) if valid */

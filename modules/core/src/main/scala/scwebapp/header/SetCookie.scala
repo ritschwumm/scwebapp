@@ -1,11 +1,11 @@
 package scwebapp.header
 
-import scutil.core.implicits._
+import scutil.core.implicits.*
 
 import scwebapp.HeaderType
-import scwebapp.data._
-import scwebapp.format._
-import scparse.ng.text._
+import scwebapp.data.*
+import scwebapp.format.*
+import scparse.ng.text.*
 
 // TODO make sure responses with a cookie are not cached
 
@@ -51,8 +51,8 @@ object SetCookie extends HeaderType[SetCookie] {
 	}
 
 	private object parsers {
-		import HttpParsers._
-		import CookieParsers._
+		import HttpParsers.*
+		import CookieParsers.*
 
 		// TODO wrong
 		lazy val finished:TextParser[SetCookie]	= value within OWS

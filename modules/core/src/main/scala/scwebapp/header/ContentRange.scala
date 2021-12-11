@@ -1,9 +1,9 @@
 package scwebapp.header
 
 import scwebapp.HeaderType
-import scwebapp.data._
-import scwebapp.format._
-import scparse.ng.text._
+import scwebapp.data.*
+import scwebapp.format.*
+import scparse.ng.text.*
 
 object ContentRange extends HeaderType[ContentRange] {
 	val key	= "Content-Range"
@@ -15,7 +15,7 @@ object ContentRange extends HeaderType[ContentRange] {
 		ContentRangeValue unparse it.value
 
 	private object parsers {
-		import HttpParsers._
+		import HttpParsers.*
 
 		val value:TextParser[ContentRange]		= ContentRangeValue.parser map ContentRange.apply
 		val finished:TextParser[ContentRange]	= value finishRight LWSP

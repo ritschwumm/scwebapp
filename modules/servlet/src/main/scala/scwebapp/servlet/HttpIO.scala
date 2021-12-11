@@ -2,12 +2,12 @@ package scwebapp.servlet
 
 import java.util.concurrent.atomic.AtomicBoolean
 
-import jakarta.servlet._
-import jakarta.servlet.http._
+import jakarta.servlet.*
+import jakarta.servlet.http.*
 
-import scutil.lang._
+import scutil.lang.*
 
-import scwebapp._
+import scwebapp.*
 
 object HttpIO {
 	def execute(servletRequest:HttpServletRequest, servletResponse:HttpServletResponse, handler:HttpHandler):Unit	= {

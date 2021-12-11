@@ -1,10 +1,10 @@
 package scwebapp.header
 
-import minitest._
+import minitest.*
 
-import scutil.lang._
+import scutil.lang.*
 
-import scwebapp.data._
+import scwebapp.data.*
 
 object RangeTest extends SimpleTestSuite {
 	test("Range should parse a simple range") {

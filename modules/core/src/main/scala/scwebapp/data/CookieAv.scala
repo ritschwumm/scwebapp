@@ -1,7 +1,7 @@
 package scwebapp.data
 
-import scwebapp.format._
-import scparse.ng.text._
+import scwebapp.format.*
+import scparse.ng.text.*
 
 object CookieAv {
 	lazy val parser:TextParser[CookieAv]	=
@@ -19,7 +19,7 @@ object CookieAv {
 		}
 
 	private object parsers {
-		import HttpParsers._
+		import HttpParsers.*
 
 		val SEMICOLON	= TextParser is ';'
 

@@ -1,9 +1,9 @@
 package scwebapp.header
 
 import scwebapp.HeaderType
-import scwebapp.data._
-import scwebapp.format._
-import scparse.ng.text._
+import scwebapp.data.*
+import scwebapp.format.*
+import scparse.ng.text.*
 
 object WWWAuthenticate extends HeaderType[WWWAuthenticate] {
 	val key	= "WWW-Authenticate"
@@ -15,7 +15,7 @@ object WWWAuthenticate extends HeaderType[WWWAuthenticate] {
 		BasicAuthenticate unparse it.value
 
 	private object parsers {
-		import HttpParsers._
+		import HttpParsers.*
 
 		val value:TextParser[WWWAuthenticate]		= BasicAuthenticate.parser map WWWAuthenticate.apply
 		val finished:TextParser[WWWAuthenticate]	= value finishRight LWSP

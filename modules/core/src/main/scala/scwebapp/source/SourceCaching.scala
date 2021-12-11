@@ -1,6 +1,6 @@
 package scwebapp.source
 
-import scwebapp.data._
+import scwebapp.data.*
 
 object SourceCaching {
 	case object			Silent								extends SourceCaching

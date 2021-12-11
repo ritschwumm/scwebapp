@@ -1,7 +1,7 @@
 package scwebapp
 
 object HttpMethod {
-	import method._
+	import method.*
 
 	val all:Seq[HttpMethod]	=
 		Vector[HttpMethod](

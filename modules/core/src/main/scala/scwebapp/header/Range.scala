@@ -1,12 +1,12 @@
 package scwebapp.header
 
-import scutil.core.implicits._
-import scutil.lang._
+import scutil.core.implicits.*
+import scutil.lang.*
 
 import scwebapp.HeaderType
-import scwebapp.data._
-import scwebapp.format._
-import scparse.ng.text._
+import scwebapp.data.*
+import scwebapp.format.*
+import scparse.ng.text.*
 
 object Range extends HeaderType[Range] {
 	val key	= "Range"
@@ -19,7 +19,7 @@ object Range extends HeaderType[Range] {
 		(it.patterns.toVector map RangePattern.unparse mkString ",")
 
 	private object parsers {
-		import HttpParsers._
+		import HttpParsers.*
 
 		val bytesUnit:TextParser[String]				= symbolN(RangeType.keys.bytes)
 		val byteRangeSet:TextParser[Nes[RangePattern]]	= hash1(RangePattern.parser)

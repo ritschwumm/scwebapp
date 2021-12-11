@@ -1,9 +1,9 @@
 package scwebapp.data
 
-import scutil.core.implicits._
+import scutil.core.implicits.*
 
-import scwebapp.format._
-import scparse.ng.text._
+import scwebapp.format.*
+import scparse.ng.text.*
 
 object QValue {
 	val zero	= QValue(0)
@@ -23,7 +23,7 @@ object QValue {
 	}
 
 	private object parsers {
-		import HttpParsers._
+		import HttpParsers.*
 
 		lazy val value:TextParser[QValue]	=
 			low orElse high map { case (h,l) =>

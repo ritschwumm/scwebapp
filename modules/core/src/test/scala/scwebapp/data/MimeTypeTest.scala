@@ -1,6 +1,6 @@
 package scwebapp.data
 
-import minitest._
+import minitest.*
 
 object MimeTypeTest extends SimpleTestSuite {
 	test("MimeType should parse without parameters") {

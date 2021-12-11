@@ -2,9 +2,9 @@ package scwebapp.factory
 
 import java.nio.charset.Charset
 
-import scutil.core.implicits._
+import scutil.core.implicits.*
 
-import scwebapp.data._
+import scwebapp.data.*
 
 object mimeType {
 	//------------------------------------------------------------------------------

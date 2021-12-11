@@ -1,7 +1,7 @@
 package scwebapp.handler
 
-import scutil.core.implicits._
-import scutil.lang._
+import scutil.core.implicits.*
+import scutil.lang.*
 
 final class SimpleCache[K,V](load:K=>Option[V]) {
 	private val cache:Synchronized[Map[K,V]]	= Synchronized(Map.empty)

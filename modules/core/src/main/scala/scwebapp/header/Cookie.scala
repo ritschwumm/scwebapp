@@ -1,9 +1,9 @@
 package scwebapp.header
 
 import scwebapp.HeaderType
-import scwebapp.data._
-import scwebapp.format._
-import scparse.ng.text._
+import scwebapp.data.*
+import scwebapp.format.*
+import scparse.ng.text.*
 
 object Cookie extends HeaderType[Cookie] {
 	val key	= "Cookie"
@@ -15,8 +15,8 @@ object Cookie extends HeaderType[Cookie] {
 		HttpUnparsers parameters it.values
 
 	private object parsers {
-		import HttpParsers._
-		import CookieParsers._
+		import HttpParsers.*
+		import CookieParsers.*
 
 		val cookie_string:TextParser[Seq[(String,String)]]	= cookie_pair seqSepBy (TextParser.is(';') next SP)
 

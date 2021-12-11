@@ -1,9 +1,9 @@
 package scwebapp.header
 
 import scwebapp.HeaderType
-import scwebapp.data._
-import scwebapp.format._
-import scparse.ng.text._
+import scwebapp.data.*
+import scwebapp.format.*
+import scparse.ng.text.*
 import scwebapp.util.AcceptanceUtil
 
 object Accept extends HeaderType[Accept] {
@@ -16,7 +16,7 @@ object Accept extends HeaderType[Accept] {
 		it.ranges map MediaRange.unparse mkString ","
 
 	private object parsers {
-		import HttpParsers._
+		import HttpParsers.*
 
 		val value:TextParser[Accept]	= hash(MediaRange.parser) map Accept.apply
 		val finished:TextParser[Accept]	= value finishRight LWSP

@@ -1,7 +1,7 @@
 package scwebapp.header
 
 import scwebapp.HeaderType
-import scwebapp.data._
+import scwebapp.data.*
 
 object IfMatch extends HeaderType[IfMatch] {
 	val key	= "If-Match"

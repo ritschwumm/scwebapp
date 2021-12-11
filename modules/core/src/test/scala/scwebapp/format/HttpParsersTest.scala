@@ -1,10 +1,10 @@
 package scwebapp.format
 
-import minitest._
+import minitest.*
 
 import scutil.lang.Charsets
 
-import scparse.ng.text._
+import scparse.ng.text.*
 
 object HttpParsersTest extends SimpleTestSuite {
 	test("star parameters should parse a star parameter name") {

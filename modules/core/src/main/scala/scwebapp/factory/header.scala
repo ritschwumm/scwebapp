@@ -1,8 +1,8 @@
 package scwebapp.factory
 
 import scwebapp.HeaderValue
-import scwebapp.header._
-import scwebapp.data._
+import scwebapp.header.*
+import scwebapp.data.*
 
 object header {
 	// type helper

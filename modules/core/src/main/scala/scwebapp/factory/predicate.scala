@@ -1,8 +1,8 @@
 package scwebapp.factory
 
-import scutil.core.implicits._
+import scutil.core.implicits.*
 
-import scwebapp._
+import scwebapp.*
 
 object predicate {
 	def Method(method:HttpMethod):HttpPredicate	=

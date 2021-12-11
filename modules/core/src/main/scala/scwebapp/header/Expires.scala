@@ -1,9 +1,9 @@
 package scwebapp.header
 
 import scwebapp.HeaderType
-import scwebapp.data._
-import scwebapp.format._
-import scparse.ng.text._
+import scwebapp.data.*
+import scwebapp.format.*
+import scparse.ng.text.*
 
 object Expires extends HeaderType[Expires] {
 	val key	= "Expires"
@@ -15,7 +15,7 @@ object Expires extends HeaderType[Expires] {
 		HttpDate unparse it.value
 
 	private object parsers {
-		import HttpParsers._
+		import HttpParsers.*
 
 		val value:TextParser[Expires]		= dateValue map Expires.apply
 		val finished:TextParser[Expires]	= value finishRight LWSP

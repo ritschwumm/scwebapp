@@ -1,6 +1,6 @@
 package scwebapp
 
-import scwebapp.factory._
+import scwebapp.factory.*
 
 object instances {
 	export predicate.*

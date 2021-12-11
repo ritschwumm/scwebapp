@@ -1,9 +1,9 @@
 package scwebapp.header
 
 import scwebapp.HeaderType
-import scwebapp.data._
-import scwebapp.format._
-import scparse.ng.text._
+import scwebapp.data.*
+import scwebapp.format.*
+import scparse.ng.text.*
 
 // TODO only handles basic authentication
 
@@ -18,7 +18,7 @@ object Authorization extends HeaderType[Authorization] {
 		BasicAuthorization unparse it.value
 
 	private object parsers {
-		import HttpParsers._
+		import HttpParsers.*
 
 		val value:TextParser[Authorization]		= BasicAuthorization.parser map Authorization.apply
 		val finished:TextParser[Authorization]	= value finishRight LWSP

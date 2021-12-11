@@ -1,6 +1,6 @@
 package scwebapp.format
 
-import minitest._
+import minitest.*
 
 object HttpUnparsersTest extends SimpleTestSuite {
 	test("quoteStar should leave alphanumerics alone") {

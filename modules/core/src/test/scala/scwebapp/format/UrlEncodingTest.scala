@@ -1,10 +1,10 @@
 package scwebapp.format
 
-import minitest._
+import minitest.*
 
 import scutil.lang.Charsets.utf_8
 
-import scwebapp.data._
+import scwebapp.data.*
 
 object UrlEncodingTest extends SimpleTestSuite {
 	test("parsing query parameters should return empty for an empty string") {

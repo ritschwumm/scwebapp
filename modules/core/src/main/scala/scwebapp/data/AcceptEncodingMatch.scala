@@ -1,7 +1,7 @@
 package scwebapp.data
 
-import scwebapp.format._
-import scparse.ng.text._
+import scwebapp.format.*
+import scparse.ng.text.*
 
 object AcceptEncodingMatch {
 	val default	= AcceptEncodingMatch(AcceptEncodingPattern.Fixed(AcceptEncodingType.Identity), Some(QValue.one))
@@ -15,7 +15,7 @@ object AcceptEncodingMatch {
 		(HttpUnparsers			qParamPart	it.quality)
 
 	private object parsers {
-		import HttpParsers._
+		import HttpParsers.*
 
 		val qParam:TextParser[QValue]	=
 			symbol('q') right symbol('=') right (QValue.parser eatLeft LWSP)

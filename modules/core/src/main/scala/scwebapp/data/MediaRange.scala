@@ -1,7 +1,7 @@
 package scwebapp.data
 
-import scwebapp.format._
-import scparse.ng.text._
+import scwebapp.format.*
+import scparse.ng.text.*
 
 object MediaRange {
 	lazy val parser:TextParser[MediaRange]	= parsers.value
@@ -11,7 +11,7 @@ object MediaRange {
 		(HttpUnparsers parameterList it.parameters)
 
 	private object parsers {
-		import HttpParsers._
+		import HttpParsers.*
 
 		val value:TextParser[MediaRange]	=
 			MediaValue.parser next parameterList map (MediaRange.apply _).tupled

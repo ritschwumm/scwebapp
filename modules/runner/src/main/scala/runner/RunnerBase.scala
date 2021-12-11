@@ -1,13 +1,13 @@
 package scwebapp.runner
 
-import jakarta.servlet.http._
+import jakarta.servlet.http.*
 
-import org.eclipse.jetty.server._
-import org.eclipse.jetty.server.handler._
+import org.eclipse.jetty.server.*
+import org.eclipse.jetty.server.handler.*
 
-import scutil.lang._
-import scutil.lang.implicits._
-import scutil.log._
+import scutil.lang.*
+import scutil.lang.implicits.*
+import scutil.log.*
 
 import scwebapp.HttpHandler
 import scwebapp.servlet.HttpIO

@@ -1,6 +1,6 @@
 package scwebapp.factory
 
-import scwebapp.data._
+import scwebapp.data.*
 
 // @see http://www.w3.org/QA/2002/04/valid-dtd-list.html
 object docType {

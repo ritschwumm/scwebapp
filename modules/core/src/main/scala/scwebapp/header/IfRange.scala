@@ -1,9 +1,9 @@
 package scwebapp.header
 
 import scwebapp.HeaderType
-import scwebapp.data._
-import scwebapp.format._
-import scparse.ng.text._
+import scwebapp.data.*
+import scwebapp.format.*
+import scparse.ng.text.*
 
 object IfRange extends HeaderType[IfRange] {
 	val key	= "If-Range"
@@ -15,7 +15,7 @@ object IfRange extends HeaderType[IfRange] {
 		IfRangeValue unparse it.value
 
 	private object parsers {
-		import HttpParsers._
+		import HttpParsers.*
 
 		val value:TextParser[IfRange]		= IfRangeValue.parser map IfRange.apply
 		val finished:TextParser[IfRange]	= value finishRight LWSP

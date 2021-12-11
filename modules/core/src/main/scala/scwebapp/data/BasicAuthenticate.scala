@@ -1,10 +1,10 @@
 package scwebapp.data
 
-import scutil.core.implicits._
-import scutil.lang._
+import scutil.core.implicits.*
+import scutil.lang.*
 
-import scwebapp.format._
-import scparse.ng.text._
+import scwebapp.format.*
+import scparse.ng.text.*
 
 object BasicAuthenticate {
 	lazy val parser:TextParser[BasicAuthenticate]	= parsers.value
@@ -15,7 +15,7 @@ object BasicAuthenticate {
 	}
 
 	private object parsers {
-		import HttpParsers._
+		import HttpParsers.*
 
 		final case class Challenge(name:String, parameters:Seq[(String,String)])
 

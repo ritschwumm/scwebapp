@@ -2,11 +2,11 @@ package scwebapp.data
 
 import java.nio.charset.Charset
 
-import scutil.core.implicits._
-import scutil.lang._
+import scutil.core.implicits.*
+import scutil.lang.*
 
-import scwebapp.format._
-import scparse.ng.text._
+import scwebapp.format.*
+import scparse.ng.text.*
 
 // top-level:	text image audio video application multipart message
 
@@ -24,7 +24,7 @@ object MimeType {
 		(HttpUnparsers parameterList it.parameters)
 
 	private object parsers {
-		import HttpParsers._
+		import HttpParsers.*
 
 		val major:TextParser[String]			= token
 		val minor:TextParser[String]			= token

@@ -1,6 +1,6 @@
 package scwebapp.data
 
-import minitest._
+import minitest.*
 
 object RangePatternTest extends SimpleTestSuite {
 	test("parsing request range should work for a from-to range") {

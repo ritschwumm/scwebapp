@@ -1,6 +1,6 @@
 package scwebapp.util
 
-import minitest._
+import minitest.*
 
 import scwebapp.data.MimeType
 

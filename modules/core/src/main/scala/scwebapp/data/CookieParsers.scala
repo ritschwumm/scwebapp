@@ -1,10 +1,10 @@
 package scwebapp.data
 
-import scwebapp.format._
-import scparse.ng.text._
+import scwebapp.format.*
+import scparse.ng.text.*
 
 object CookieParsers {
-	import HttpParsers._
+	import HttpParsers.*
 
 	private lazy val EQ	= TextParser.is('=')
 

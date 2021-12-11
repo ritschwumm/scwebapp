@@ -1,6 +1,6 @@
 package scwebapp.header
 
-import minitest._
+import minitest.*
 
 object SetCookieTest extends SimpleTestSuite {
 	test("SetCookie should do at least something") {

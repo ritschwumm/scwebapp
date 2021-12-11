@@ -2,12 +2,12 @@ package scwebapp.format
 
 import java.nio.charset.Charset
 
-import scutil.core.implicits._
-import scutil.lang._
-import scutil.codec._
+import scutil.core.implicits.*
+import scutil.lang.*
+import scutil.codec.*
 
-import scwebapp.data._
-import scparse.ng.text._
+import scwebapp.data.*
+import scparse.ng.text.*
 
 object HttpParsers {
 	val ctlChars		= ((0 to 31) :+ 127) map { _.toChar } mkString ""

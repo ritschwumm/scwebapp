@@ -1,9 +1,9 @@
 package scwebapp.header
 
 import scwebapp.HeaderType
-import scwebapp.data._
-import scwebapp.format._
-import scparse.ng.text._
+import scwebapp.data.*
+import scwebapp.format.*
+import scparse.ng.text.*
 
 object AcceptRanges extends HeaderType[AcceptRanges] {
 	val key	= "Accept-Ranges"
@@ -15,7 +15,7 @@ object AcceptRanges extends HeaderType[AcceptRanges] {
 		RangeType unparse it.rangeType
 
 	private object parsers {
-		import HttpParsers._
+		import HttpParsers.*
 
 		val value:TextParser[AcceptRanges]		= RangeType.parser map AcceptRanges.apply
 		val finished:TextParser[AcceptRanges]	= value finishRight LWSP

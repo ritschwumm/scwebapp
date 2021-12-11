@@ -1,6 +1,6 @@
 package scwebapp
 
-import scutil.lang._
+import scutil.lang.*
 
 // NOTE this what cats-effect calls a Deferred
 final class Channel[T] {

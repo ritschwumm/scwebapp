@@ -1,8 +1,8 @@
 package scwebapp.servlet.bootstrap
 
-import scutil.core.implicits._
-import scutil.lang._
-import scutil.log._
+import scutil.core.implicits.*
+import scutil.lang.*
+import scutil.log.*
 
 object Configurator extends Logging {
 	def configure[C](source:String=>Option[String], schema:Vector[Property[C]], initial:C):C	= {

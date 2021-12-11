@@ -1,8 +1,8 @@
 package scwebapp.format
 
-import scutil.core.implicits._
+import scutil.core.implicits.*
 
-import scwebapp.data._
+import scwebapp.data.*
 
 object HttpUnparsers {
 	def qParam(it:QValue):String	=

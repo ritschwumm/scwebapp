@@ -1,5 +1,9 @@
 package scwebapp.data
 
+import java.util.{ Enumeration as JEnumeration }
+
+import scutil.jdk.implicits.*
+
 import scwebapp.format.CaseUtil
 
 sealed trait Parameters {
@@ -29,6 +33,14 @@ object CaseParameters {
 
 	def apply(values:Seq[(String,String)]):CaseParameters	=
 		new CaseParameters(values)
+
+	@SuppressWarnings(Array("org.wartremover.warts.AsInstanceOf"))
+	def extract(names:JEnumeration[String], value:String=>String):CaseParameters	=
+		CaseParameters(
+			names.asInstanceOf[JEnumeration[String]].toIterator.toVector.map{ name =>
+				name -> value(name)
+			}
+		)
 }
 
 /** case sensitive */

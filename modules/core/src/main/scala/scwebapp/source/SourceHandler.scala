@@ -1,17 +1,17 @@
 package scwebapp.source
 
-import scutil.core.implicits._
-import scutil.lang._
-import scutil.codec._
+import scutil.core.implicits.*
+import scutil.lang.*
+import scutil.codec.*
 
-import scwebapp._
-import scwebapp.method._
-import scwebapp.status._
-import scwebapp.data._
-import scwebapp.format._
-import scwebapp.header._
-import scwebapp.factory.mimeType._
-import scwebapp.factory.header._
+import scwebapp.*
+import scwebapp.method.*
+import scwebapp.status.*
+import scwebapp.data.*
+import scwebapp.format.*
+import scwebapp.header.*
+import scwebapp.factory.mimeType.*
+import scwebapp.factory.header.*
 
 object SourceHandler {
 	private val gzipBufferSize	= 8192

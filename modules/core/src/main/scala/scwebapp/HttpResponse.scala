@@ -1,6 +1,6 @@
 package scwebapp
 
-import scwebapp.status._
+import scwebapp.status.*
 
 final case class HttpResponse(
 	status:HttpStatus			= OK,

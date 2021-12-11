@@ -1,16 +1,16 @@
 package scwebapp.servlet
 
-import java.io._
+import java.io.*
 import java.nio.charset.Charset
 
-import jakarta.servlet._
-import jakarta.servlet.http._
+import jakarta.servlet.*
+import jakarta.servlet.http.*
 
 import scala.collection.mutable
 
-//import scutil.core.implicits._
-import scutil.lang._
-import scutil.log._
+//import scutil.core.implicits.*
+import scutil.lang.*
+import scutil.log.*
 
 /**
 replaces "$$codebase" with the parent of the JNLP file itself

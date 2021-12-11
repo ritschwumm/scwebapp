@@ -1,6 +1,6 @@
 package scwebapp
 
-import scutil.lang._
+import scutil.lang.*
 
 object ChannelState {
 	final case class Initial[T]()						extends ChannelState[T]

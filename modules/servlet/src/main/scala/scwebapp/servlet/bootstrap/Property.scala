@@ -1,6 +1,6 @@
 package scwebapp.servlet.bootstrap
 
-import scutil.lang._
+import scutil.lang.*
 
 object Property {
 	def lens[C,V](key:String, lens:Lens[C,V], parse:String=>Either[String,V]):Property[C]	=

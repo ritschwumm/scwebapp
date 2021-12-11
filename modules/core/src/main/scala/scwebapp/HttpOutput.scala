@@ -1,14 +1,14 @@
 package scwebapp
 
-import java.io._
+import java.io.*
 import java.nio.charset.Charset
 import java.util.zip.GZIPOutputStream
 
 import scala.annotation.tailrec
 
-import scutil.core.implicits._
-import scutil.jdk.implicits._
-import scutil.lang._
+import scutil.core.implicits.*
+import scutil.jdk.implicits.*
+import scutil.lang.*
 
 import scwebapp.data.InclusiveRange
 

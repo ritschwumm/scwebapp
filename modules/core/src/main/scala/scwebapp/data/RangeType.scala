@@ -1,7 +1,7 @@
 package scwebapp.data
 
-import scwebapp.format._
-import scparse.ng.text._
+import scwebapp.format.*
+import scparse.ng.text.*
 
 object RangeType {
 	// TODO get rid of this
@@ -19,7 +19,7 @@ object RangeType {
 		}
 
 	private object parsers {
-		import HttpParsers._
+		import HttpParsers.*
 
 		val value:TextParser[RangeType]		=
 			token

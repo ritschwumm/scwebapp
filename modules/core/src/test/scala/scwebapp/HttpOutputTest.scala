@@ -1,6 +1,6 @@
 package scwebapp
 
-import minitest._
+import minitest.*
 
 import java.io.ByteArrayOutputStream
 

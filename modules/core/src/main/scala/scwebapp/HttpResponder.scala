@@ -1,10 +1,10 @@
 package scwebapp
 
-import scutil.core.implicits._
-import scutil.lang._
-import scutil.time._
+import scutil.core.implicits.*
+import scutil.lang.*
+import scutil.time.*
 
-import scwebapp.status._
+import scwebapp.status.*
 
 object HttpResponder {
 	def sync(response:HttpResponse):HttpResponder	=

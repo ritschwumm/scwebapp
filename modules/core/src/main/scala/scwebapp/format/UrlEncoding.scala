@@ -4,10 +4,10 @@ import java.net.URLDecoder
 import java.nio.charset.Charset
 import java.io.UnsupportedEncodingException
 
-import scutil.core.implicits._
-import scutil.codec._
+import scutil.core.implicits.*
+import scutil.codec.*
 
-import scwebapp.data._
+import scwebapp.data.*
 
 object UrlEncoding {
 	// TODO String is not a great problem type

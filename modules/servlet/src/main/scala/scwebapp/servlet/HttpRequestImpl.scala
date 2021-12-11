@@ -1,18 +1,18 @@
 package scwebapp.servlet
 
-import java.util.{ Enumeration=>JEnumeration }
+import java.util.{ Enumeration as JEnumeration }
 import java.io.IOException
 import java.io.InputStream
 
 import jakarta.servlet.ServletException
 import jakarta.servlet.http.HttpServletRequest
 
-import scala.jdk.CollectionConverters._
+import scala.jdk.CollectionConverters.*
 
-import scutil.core.implicits._
+import scutil.core.implicits.*
 
-import scwebapp._
-import scwebapp.data._
+import scwebapp.*
+import scwebapp.data.*
 
 private final class HttpRequestImpl(peer:HttpServletRequest) extends HttpRequest {
 	//------------------------------------------------------------------------------

@@ -1,9 +1,9 @@
 package scwebapp.header
 
 import scwebapp.HeaderType
-import scwebapp.data._
-import scwebapp.format._
-import scparse.ng.text._
+import scwebapp.data.*
+import scwebapp.format.*
+import scparse.ng.text.*
 
 object ETag extends HeaderType[ETag] {
 	val key	= "ETag"
@@ -15,7 +15,7 @@ object ETag extends HeaderType[ETag] {
 		ETagValue unparse it.value
 
 	private object parsers {
-		import HttpParsers._
+		import HttpParsers.*
 
 		val value:TextParser[ETag]		= ETagValue.parser map ETag.apply
 		val finished:TextParser[ETag]	= value finishRight LWSP

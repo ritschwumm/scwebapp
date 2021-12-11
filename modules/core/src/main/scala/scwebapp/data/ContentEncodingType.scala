@@ -1,7 +1,7 @@
 package scwebapp.data
 
-import scwebapp.format._
-import scparse.ng.text._
+import scwebapp.format.*
+import scparse.ng.text.*
 
 object ContentEncodingType {
 	lazy val parser:TextParser[ContentEncodingType]	= parsers.value
@@ -15,7 +15,7 @@ object ContentEncodingType {
 		}
 
 	private object parsers {
-		import HttpParsers._
+		import HttpParsers.*
 
 		val value:TextParser[ContentEncodingType]	=
 			token

@@ -1,8 +1,8 @@
 package scwebapp.header
 
-import minitest._
+import minitest.*
 
-import scwebapp.data._
+import scwebapp.data.*
 
 object CookieTest extends SimpleTestSuite {
 	test("Cookie should parse a simple cookie") {

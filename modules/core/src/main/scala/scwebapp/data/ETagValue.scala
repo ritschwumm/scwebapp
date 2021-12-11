@@ -1,9 +1,9 @@
 package scwebapp.data
 
-import scutil.core.implicits._
+import scutil.core.implicits.*
 
-import scwebapp.format._
-import scparse.ng.text._
+import scwebapp.format.*
+import scparse.ng.text.*
 
 object ETagValue {
 	lazy val parser:TextParser[ETagValue]	= parsers.value
@@ -13,7 +13,7 @@ object ETagValue {
 		HttpUnparsers.quotedString(it.value)
 
 	private object parsers {
-		import HttpParsers._
+		import HttpParsers.*
 
 		val weak:TextParser[Boolean]		= symbolN("W/").flag
 		val value:TextParser[ETagValue]	= weak next quotedString map (ETagValue.apply _).tupled

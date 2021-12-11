@@ -1,8 +1,8 @@
 package scwebapp.servlet.bootstrap
 
-import jakarta.servlet._
+import jakarta.servlet.*
 
-import scutil.lang._
+import scutil.lang.*
 
 /** make an object extending this and annotate it with javax.servlet.annotation.WebListener */
 trait BootstrapServletContextListener extends ServletContextListener{

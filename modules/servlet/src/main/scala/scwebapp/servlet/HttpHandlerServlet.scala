@@ -1,10 +1,10 @@
 package scwebapp.servlet
 
-import jakarta.servlet.http._
+import jakarta.servlet.http.*
 
 import scutil.lang.Charsets
 
-import scwebapp._
+import scwebapp.*
 
 object HttpHandlerServlet {
 	val defaultEncoding	= Charsets.utf_8

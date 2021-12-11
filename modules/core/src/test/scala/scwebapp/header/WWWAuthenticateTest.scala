@@ -1,8 +1,8 @@
 package scwebapp.header
 
-import minitest._
+import minitest.*
 
-import scwebapp.data._
+import scwebapp.data.*
 
 object WWWAuthenticateTest extends SimpleTestSuite {
 	test("WWWAuthenticate should unparse a simple realm without charset") {

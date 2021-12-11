@@ -1,7 +1,7 @@
 package scwebapp.data
 
-import scwebapp.format._
-import scparse.ng.text._
+import scwebapp.format.*
+import scparse.ng.text.*
 
 object IfRangeValue {
 	lazy val parser:TextParser[IfRangeValue]	= parsers.value
@@ -13,7 +13,7 @@ object IfRangeValue {
 		}
 
 	private object parsers {
-		import HttpParsers._
+		import HttpParsers.*
 
 		val date:TextParser[IfRangeValue]		= dateValue map IsHttpDate.apply
 		val etag:TextParser[IfRangeValue]		= ETagValue.parser map EntityTag.apply

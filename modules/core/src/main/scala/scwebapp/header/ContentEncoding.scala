@@ -1,9 +1,9 @@
 package scwebapp.header
 
 import scwebapp.HeaderType
-import scwebapp.data._
-import scwebapp.format._
-import scparse.ng.text._
+import scwebapp.data.*
+import scwebapp.format.*
+import scparse.ng.text.*
 
 object ContentEncoding extends HeaderType[ContentEncoding] {
 	val key	= "Content-Encoding"
@@ -15,7 +15,7 @@ object ContentEncoding extends HeaderType[ContentEncoding] {
 		ContentEncodingType unparse it.typ
 
 	private object parsers {
-		import HttpParsers._
+		import HttpParsers.*
 
 		val value:TextParser[ContentEncoding]		= ContentEncodingType.parser map ContentEncoding.apply
 		val finished:TextParser[ContentEncoding]	= value finishRight LWSP

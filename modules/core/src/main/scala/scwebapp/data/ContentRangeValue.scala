@@ -1,9 +1,9 @@
 package scwebapp.data
 
-import scutil.core.implicits._
+import scutil.core.implicits.*
 
-import scwebapp.format._
-import scparse.ng.text._
+import scwebapp.format.*
+import scparse.ng.text.*
 
 object ContentRangeValue {
 	def total(size:Long):ContentRangeValue	=
@@ -24,7 +24,7 @@ object ContentRangeValue {
 		}
 
 	private object parsers {
-		import HttpParsers._
+		import HttpParsers.*
 
 		val STAR	= TextParser is '*'
 		val DASH	= TextParser is '-'

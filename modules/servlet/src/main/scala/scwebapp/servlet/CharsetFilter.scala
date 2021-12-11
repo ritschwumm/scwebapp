@@ -1,6 +1,6 @@
 package scwebapp.servlet
 
-import jakarta.servlet._
+import jakarta.servlet.*
 
 /** sets request and response character encodings to the value of the init-parameter "charset" */
 final class CharsetFilter extends Filter {

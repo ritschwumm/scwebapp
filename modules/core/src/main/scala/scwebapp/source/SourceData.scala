@@ -1,11 +1,11 @@
 package scwebapp.source
 
-import java.io._
+import java.io.*
 
 import scutil.time.MilliInstant
 
 import scwebapp.HttpOutput
-import scwebapp.data._
+import scwebapp.data.*
 
 object SourceData {
 	def httpDateContentId(lastModified:HttpDate, size:Long):String	=

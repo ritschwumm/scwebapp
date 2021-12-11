@@ -1,9 +1,9 @@
 package scwebapp.data
 
-import minitest._
+import minitest.*
 
-import scwebapp.format._
-import scparse.ng.text._
+import scwebapp.format.*
+import scparse.ng.text.*
 
 object QValueTest extends SimpleTestSuite {
 	val parser	= QValue.parser finishRight HttpParsers.LWSP

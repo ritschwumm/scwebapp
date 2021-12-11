@@ -1,8 +1,8 @@
 package scwebapp.header
 
-import minitest._
+import minitest.*
 
-import scwebapp.data._
+import scwebapp.data.*
 
 object ContentDispositionTest extends SimpleTestSuite {
 	test("ContentDisposition should unparse") {

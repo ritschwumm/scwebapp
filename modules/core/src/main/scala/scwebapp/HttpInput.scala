@@ -1,11 +1,11 @@
 package scwebapp
 
-import java.io._
+import java.io.*
 import java.nio.charset.Charset
 import java.util.zip.GZIPInputStream
 
-import scutil.jdk.implicits._
-import scutil.lang._
+import scutil.jdk.implicits.*
+import scutil.lang.*
 
 object HttpInput {
 	def outofInputStream(ist:Thunk[InputStream]):HttpInput	=

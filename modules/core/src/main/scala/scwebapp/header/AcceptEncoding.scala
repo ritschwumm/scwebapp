@@ -1,11 +1,11 @@
 package scwebapp.header
 
-import scutil.core.implicits._
+import scutil.core.implicits.*
 
 import scwebapp.HeaderType
-import scwebapp.data._
-import scwebapp.format._
-import scparse.ng.text._
+import scwebapp.data.*
+import scwebapp.format.*
+import scparse.ng.text.*
 import scwebapp.util.AcceptanceUtil
 
 object AcceptEncoding extends HeaderType[AcceptEncoding] {
@@ -18,7 +18,7 @@ object AcceptEncoding extends HeaderType[AcceptEncoding] {
 		it.matches map AcceptEncodingMatch.unparse mkString ","
 
 	object parsers {
-		import HttpParsers._
+		import HttpParsers.*
 
 		val value:TextParser[AcceptEncoding]	= hash(AcceptEncodingMatch.parser) map AcceptEncoding.apply
 		val finished:TextParser[AcceptEncoding]	= value finishRight LWSP

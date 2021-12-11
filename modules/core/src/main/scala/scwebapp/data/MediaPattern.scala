@@ -1,9 +1,9 @@
 package scwebapp.data
 
-import scutil.core.implicits._
+import scutil.core.implicits.*
 
-import scwebapp.format._
-import scparse.ng.text._
+import scwebapp.format.*
+import scparse.ng.text.*
 
 object MediaPattern {
 	lazy val parser:TextParser[MediaPattern]	= parsers.value
@@ -16,7 +16,7 @@ object MediaPattern {
 		}
 
 	private object parsers {
-		import HttpParsers._
+		import HttpParsers.*
 
 		val major:TextParser[String]	= token
 		val minor:TextParser[String]	= token

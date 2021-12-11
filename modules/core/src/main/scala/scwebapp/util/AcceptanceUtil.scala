@@ -1,8 +1,8 @@
 package scwebapp.util
 
-import scutil.core.implicits._
+import scutil.core.implicits.*
 
-import scwebapp.data._
+import scwebapp.data.*
 
 object AcceptanceUtil {
 	@SuppressWarnings(Array("org.wartremover.warts.TraversableOps"))

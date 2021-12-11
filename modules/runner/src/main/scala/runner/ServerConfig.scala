@@ -1,10 +1,10 @@
 package scwebapp.runner
 
-import java.net._
+import java.net.*
 
-import scutil.core.implicits._
-import scutil.lang._
-import scutil.time._
+import scutil.core.implicits.*
+import scutil.lang.*
+import scutil.time.*
 
 object ServerConfig {
 	val L	= Lens.Gen[ServerConfig]

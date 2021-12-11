@@ -4,8 +4,8 @@ import java.io.Writer
 import jakarta.servlet.http.HttpServletRequest
 import org.eclipse.jetty.server.handler.ErrorHandler
 
-import scutil.core.implicits._
-import scutil.log._
+import scutil.core.implicits.*
+import scutil.log.*
 
 final class LogErrorHandler extends ErrorHandler with Logging {
 	//@throws(classOf[IOException])

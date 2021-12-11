@@ -2,7 +2,7 @@ package scwebapp.util
 
 import java.util.Locale
 
-import scutil.core.implicits._
+import scutil.core.implicits.*
 
 import scwebapp.data.MimeType
 

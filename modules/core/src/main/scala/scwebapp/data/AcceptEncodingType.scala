@@ -1,7 +1,7 @@
 package scwebapp.data
 
-import scwebapp.format._
-import scparse.ng.text._
+import scwebapp.format.*
+import scparse.ng.text.*
 
 object AcceptEncodingType {
 	lazy val parser:TextParser[AcceptEncodingType]	= parsers.value
@@ -13,7 +13,7 @@ object AcceptEncodingType {
 		}
 
 	private object parsers {
-		import HttpParsers._
+		import HttpParsers.*
 
 		val identity:TextParser[AcceptEncodingType]	=
 			token map CaseUtil.lowerCase filter (_ == "identity") named "identity \"identity\"" tag Identity

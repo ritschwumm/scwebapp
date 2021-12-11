@@ -1,9 +1,9 @@
 package scwebapp.header
 
 import scwebapp.HeaderType
-import scwebapp.data._
-import scwebapp.format._
-import scparse.ng.text._
+import scwebapp.data.*
+import scwebapp.format.*
+import scparse.ng.text.*
 
 object ContentType extends HeaderType[ContentType] {
 	val key	= "Content-Type"
@@ -15,7 +15,7 @@ object ContentType extends HeaderType[ContentType] {
 		MimeType unparse it.typ
 
 	private object parsers {
-		import HttpParsers._
+		import HttpParsers.*
 
 		val value:TextParser[ContentType]		= MimeType.parser map ContentType.apply
 		val finished:TextParser[ContentType]	= value finishRight LWSP

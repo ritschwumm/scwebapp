@@ -1,9 +1,9 @@
 package scwebapp.data
 
-import scutil.core.implicits._
+import scutil.core.implicits.*
 
-import scwebapp.format._
-import scparse.ng.text._
+import scwebapp.format.*
+import scparse.ng.text.*
 
 object RangePattern {
 	lazy val parser:TextParser[RangePattern]	=
@@ -17,7 +17,7 @@ object RangePattern {
 		}
 
 	private object parsers {
-		import HttpParsers._
+		import HttpParsers.*
 
 		val bytePos:TextParser[Long]						= DIGIT.nes.stringify map { _.toLong } eatLeft LWSP
 		val byteRangeSpec:TextParser[(Long,Option[Long])]	= bytePos left symbol('-') next bytePos.option

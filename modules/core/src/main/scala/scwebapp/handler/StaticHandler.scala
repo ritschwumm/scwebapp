@@ -1,17 +1,17 @@
 package scwebapp.handler
 
-import scutil.core.implicits._
-import scutil.jdk.implicits._
-import scutil.lang._
-import scutil.log._
-import scutil.codec._
-import scutil.security._
+import scutil.core.implicits.*
+import scutil.jdk.implicits.*
+import scutil.lang.*
+import scutil.log.*
+import scutil.codec.*
+import scutil.security.*
 
-import scwebapp._
-import scwebapp.instances._
-import scwebapp.status._
-import scwebapp.source._
-import scwebapp.data._
+import scwebapp.*
+import scwebapp.instances.*
+import scwebapp.status.*
+import scwebapp.source.*
+import scwebapp.data.*
 import scwebapp.util.MimeMapping
 
 object StaticHandler {

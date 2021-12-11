@@ -1,8 +1,8 @@
 package scwebapp.header
 
 import scwebapp.HeaderType
-import scwebapp.format._
-import scparse.ng.text._
+import scwebapp.format.*
+import scparse.ng.text.*
 
 object ContentLength extends HeaderType[ContentLength] {
 	val key	= "Content-Length"
@@ -14,7 +14,7 @@ object ContentLength extends HeaderType[ContentLength] {
 		it.value.toString
 
 	private object parsers {
-		import HttpParsers._
+		import HttpParsers.*
 
 		val value:TextParser[ContentLength]		= longUnsigned eatLeft LWSP map ContentLength.apply
 		val finished:TextParser[ContentLength]	= value finishRight LWSP

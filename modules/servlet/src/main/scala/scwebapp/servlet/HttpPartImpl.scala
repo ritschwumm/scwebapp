@@ -1,16 +1,16 @@
 package scwebapp.servlet
 
-import java.util.{ Collection=>JCollection }
+import java.util.{ Collection as JCollection }
 import java.io.InputStream
 
 import jakarta.servlet.http.Part
 
-import scala.jdk.CollectionConverters._
+import scala.jdk.CollectionConverters.*
 
-import scutil.core.implicits._
+import scutil.core.implicits.*
 
-import scwebapp._
-import scwebapp.data._
+import scwebapp.*
+import scwebapp.data.*
 
 private final class HttpPartImpl(peer:Part) extends HttpPart {
 	def name:String	= peer.getName

@@ -1,6 +1,6 @@
 package scwebapp.header
 
-import scutil.core.implicits._
+import scutil.core.implicits.*
 
 import scwebapp.HeaderType
 
