@@ -17,6 +17,9 @@ object AcceptEncodingMatch {
 	private object parsers {
 		import HttpParsers._
 
+		val qParam:TextParser[QValue]	=
+			symbol('q') right symbol('=') right (QValue.parser eatLeft LWSP)
+
 		val value:TextParser[AcceptEncodingMatch]		=
 			AcceptEncodingPattern.parser next (symbol(';') right qParam).option map (AcceptEncodingMatch.apply _).tupled
 	}

@@ -23,6 +23,7 @@ object HttpDate {
 	//------------------------------------------------------------------------------
 
 	def parse(str:String):Option[HttpDate]	=
+		// TODO this sucks
 		synchronized {
 			allFormats collectFirstSome parseDateWith(str)
 		}

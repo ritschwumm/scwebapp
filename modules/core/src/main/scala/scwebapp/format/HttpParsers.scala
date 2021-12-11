@@ -160,8 +160,11 @@ object HttpParsers {
 
 	//------------------------------------------------------------------------------
 
+	/*
+	// TODO has been copied into two other places to avoid a cyclic dependency from HttpParsers to QValue and back
 	val qParam:TextParser[QValue]	=
 		symbol('q') right symbol('=') right (QValue.parser eatLeft LWSP)
+	*/
 
 	//------------------------------------------------------------------------------
 
