@@ -12,7 +12,7 @@ import scutil.log.*
 import scwebapp.HttpHandler
 import scwebapp.servlet.HttpIO
 
-object RunnerBase extends Logging {
+object Server extends Logging {
 	def start(config:ServerConfig, application:IoResource[HttpHandler]):Unit	= {
 		/*
 		// starts with /
