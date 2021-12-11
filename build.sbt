@@ -2,16 +2,16 @@ Global / onChangedBuildSource := ReloadOnSourceChanges
 
 inThisBuild(Seq(
 	organization	:= "de.djini",
-	version			:= "0.269.0",
+	version			:= "0.270.0",
 
-	scalaVersion	:= "2.13.7",
+	scalaVersion	:= "3.1.0",
 	scalacOptions	++= Seq(
 		"-feature",
 		"-deprecation",
 		"-unchecked",
-		"-Werror",
-		"-Xlint",
-		"-Xsource:3",
+		"-Wunused:all",
+		"-Xfatal-warnings",
+		"-Ykind-projector:underscores",
 	),
 
 	versionScheme	:= Some("early-semver"),
@@ -61,8 +61,8 @@ lazy val `scwebapp-core`	=
 	(project in file("modules/core"))
 	.settings(
 		libraryDependencies	++= Seq(
-			"de.djini"		%%	"scutil-jdk"	% "0.213.0"	% "compile",
-			"de.djini"		%%	"scparse-ng"	% "0.220.0"	% "compile",
+			"de.djini"		%%	"scutil-jdk"	% "0.214.0"	% "compile",
+			"de.djini"		%%	"scparse-ng"	% "0.221.0"	% "compile",
 			"io.monix"		%%	"minitest"		% "2.9.6"	% "test"
 		),
 		testFrameworks	+= new TestFramework("minitest.runner.Framework"),
@@ -72,7 +72,7 @@ lazy val `scwebapp-servlet`	=
 	(project in file("modules/servlet"))
 	.settings(
 		libraryDependencies	++= Seq(
-			"de.djini"			%%	"scutil-jdk"			% "0.213.0"	% "compile",
+			"de.djini"			%%	"scutil-jdk"			% "0.214.0"	% "compile",
 			"jakarta.servlet"	%	"jakarta.servlet-api"	% "5.0.0"	% "provided"
 		)
 	)

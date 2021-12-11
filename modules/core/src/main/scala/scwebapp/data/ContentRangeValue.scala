@@ -35,9 +35,9 @@ object ContentRangeValue {
 				InclusiveRange(s, e)
 			}
 
-		val full:TextParser[ContentRangeValue]		= irange left SLASH next longUnsigned map Full.tupled
+		val full:TextParser[ContentRangeValue]			= irange left SLASH next longUnsigned map Full.apply.tupled
 		val fromTo:TextParser[ContentRangeValue]		= irange left SLASH left STAR map Bare.apply
-		val total:TextParser[ContentRangeValue]		= STAR right longUnsigned map Total.apply
+		val total:TextParser[ContentRangeValue]			= STAR right longUnsigned map Total.apply
 		val rangeValue:TextParser[ContentRangeValue]	= full orElse fromTo orElse total
 
 		val value:TextParser[ContentRangeValue]		= symbolN(RangeType.keys.bytes) right rangeValue

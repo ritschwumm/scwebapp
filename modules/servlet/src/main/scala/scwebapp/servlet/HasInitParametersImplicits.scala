@@ -22,7 +22,7 @@ trait HasInitParametersImplicits {
 	implicit def FilterConfigHasInitParameters(peer:FilterConfig):HasInitParameters	=
 		new HasInitParametersImpl(peer.getInitParameterNames, peer.getInitParameter)
 
-	private final class HasInitParametersImpl(names: =>JEnumeration[_], value:String=>String) extends HasInitParameters {
+	private final class HasInitParametersImpl(names: =>JEnumeration[?], value:String=>String) extends HasInitParameters {
 		@SuppressWarnings(Array("org.wartremover.warts.AsInstanceOf"))
 		def initParameters:CaseParameters	=
 			CaseParameters(

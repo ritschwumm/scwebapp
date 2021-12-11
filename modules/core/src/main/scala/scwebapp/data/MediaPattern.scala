@@ -23,7 +23,7 @@ object MediaPattern {
 
 		val wildWild:TextParser[MediaPattern]		= symbolN("*/*") tag WildWild
 		val typeWild:TextParser[MediaPattern]		= major left symbol('/') left symbol('*') map TypeWild.apply
-		val typeSubtype:TextParser[MediaPattern]	= major left symbol('/') next minor map TypeSubtype.tupled
+		val typeSubtype:TextParser[MediaPattern]	= major left symbol('/') next minor map TypeSubtype.apply.tupled
 
 		val value:TextParser[MediaPattern]			= wildWild orElse typeWild orElse typeSubtype eatLeft LWSP
 	}
