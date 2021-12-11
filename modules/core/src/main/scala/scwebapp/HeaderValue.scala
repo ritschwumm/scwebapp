@@ -4,7 +4,7 @@ import scala.language.implicitConversions
 
 object HeaderValue {
 	implicit def fromHeader[T:HeaderType](header:T):HeaderValue	=
-		implicitly[HeaderType[T]] headerValue header
+		summon[HeaderType[T]] headerValue header
 }
 
 final case class HeaderValue(name:String, value:String)

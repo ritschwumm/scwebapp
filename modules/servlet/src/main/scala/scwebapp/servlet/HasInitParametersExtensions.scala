@@ -10,9 +10,7 @@ import scutil.jdk.implicits._
 
 import scwebapp.data._
 
-object HasInitParametersImplicits extends HasInitParametersImplicits
-
-trait HasInitParametersImplicits {
+object HasInitParametersExtensions {
 	implicit def ServletContextHasInitParameters(peer:ServletContext):HasInitParameters	=
 		new HasInitParametersImpl(peer.getInitParameterNames, peer.getInitParameter)
 

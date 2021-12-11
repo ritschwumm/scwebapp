@@ -6,9 +6,7 @@ import scutil.core.implicits._
 
 import scwebapp.data._
 
-object mimeType extends mimeType
-
-trait mimeType {
+object mimeType {
 	//------------------------------------------------------------------------------
 	//## text
 

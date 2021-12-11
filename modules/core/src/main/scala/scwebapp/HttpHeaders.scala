@@ -8,13 +8,13 @@ import scwebapp.header._
 import scwebapp.data._
 
 final case class HttpHeaders(params:NoCaseParameters) {
-	/** Fail is invalid, Win(None) if missing, Win(Some) if valid */
+	/** Left if invalid, Right(None) if missing, Right(Some) if valid */
 	def first[T](typ:HeaderType[T]):Either[String,Option[T]]	=
-		(params firstString typ.key map typ.parseEither).sequenceEither
+		params.firstString(typ.key).map(typ.parseEither).sequenceEither
 
-	/** Fail is invalid, Win(None) if missing, Win(Some) if valid */
+	/** Left if invalid, Right(None) if missing, Right(Some) if valid */
 	def all[T](typ:HeaderType[T]):Either[String,Seq[T]]	=
-		(params get typ.key map typ.parseEither).sequenceEither
+		params.get(typ.key).map(typ.parseEither).sequenceEither
 
 	//------------------------------------------------------------------------------
 

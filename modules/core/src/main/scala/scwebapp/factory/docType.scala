@@ -2,10 +2,8 @@ package scwebapp.factory
 
 import scwebapp.data._
 
-object docType extends docType
-
 // @see http://www.w3.org/QA/2002/04/valid-dtd-list.html
-trait docType {
+object docType {
 	val	html_401_strict			= DocType("""<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">""")
 	val html_401_transitional	= DocType("""<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">""")
 	val html_401_frameset		= DocType("""<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">""")

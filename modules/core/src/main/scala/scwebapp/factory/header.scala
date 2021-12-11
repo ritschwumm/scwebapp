@@ -4,9 +4,7 @@ import scwebapp.HeaderValue
 import scwebapp.header._
 import scwebapp.data._
 
-object header extends header
-
-trait header {
+object header {
 	// type helper
 	type HeaderValues	= Seq[HeaderValue]
 	def HeaderValues(values:HeaderValue*):Seq[HeaderValue]	= values.toVector

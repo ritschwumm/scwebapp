@@ -4,9 +4,7 @@ import scutil.core.implicits._
 
 import scwebapp._
 
-object predicate extends predicate
-
-trait predicate {
+object predicate {
 	def Method(method:HttpMethod):HttpPredicate	=
 		_.method.toOption == Some(method)
 

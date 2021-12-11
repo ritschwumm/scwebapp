@@ -5,9 +5,7 @@ import scala.language.implicitConversions
 import jakarta.servlet._
 import jakarta.servlet.http._
 
-object HasAttributesImplicits extends HasAttributesImplicits
-
-trait HasAttributesImplicits {
+object HasAttributesExtensions {
 	implicit def ServletRequestHasAttributes(peer:ServletRequest):HasAttributes	=
 		new HasAttributesImpl(peer.getAttribute, peer.setAttribute, peer.removeAttribute)
 

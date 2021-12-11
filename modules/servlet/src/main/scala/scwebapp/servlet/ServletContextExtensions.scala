@@ -12,9 +12,7 @@ import scutil.classpath._
 import scwebapp._
 import scwebapp.data._
 
-object ServletContextImplicits extends ServletContextImplicits
-
-trait ServletContextImplicits {
+object ServletContextExtensions {
 	implicit def extendServletContext(peer:ServletContext):ServletContextExtension		=
 		new ServletContextExtension(peer)
 }

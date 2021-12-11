@@ -5,7 +5,7 @@ import jakarta.servlet._
 import scutil.lang._
 
 import scwebapp._
-import scwebapp.servlet.implicits._
+import scwebapp.servlet.extensions._
 
 /** make an object extending this and annotate it with javax.servlet.annotation.WebListener */
 trait HttpHandlerServletContextListener extends BootstrapServletContextListener {
