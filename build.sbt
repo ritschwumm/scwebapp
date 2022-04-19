@@ -2,9 +2,9 @@ Global / onChangedBuildSource := ReloadOnSourceChanges
 
 inThisBuild(Seq(
 	organization	:= "de.djini",
-	version			:= "0.278.0",
+	version			:= "0.279.0",
 
-	scalaVersion	:= "3.1.1",
+	scalaVersion	:= "3.1.2",
 	scalacOptions	++= Seq(
 		"-feature",
 		"-deprecation",
@@ -61,8 +61,8 @@ lazy val `scwebapp-core`	=
 	(project in file("modules/core"))
 	.settings(
 		libraryDependencies	++= Seq(
-			"de.djini"		%%	"scutil-jdk"	% "0.220.0"	% "compile",
-			"de.djini"		%%	"scparse-ng"	% "0.227.0"	% "compile",
+			"de.djini"		%%	"scutil-jdk"	% "0.221.0"	% "compile",
+			"de.djini"		%%	"scparse-ng"	% "0.228.0"	% "compile",
 			"io.monix"		%%	"minitest"		% "2.9.6"	% "test"
 		),
 		testFrameworks	+= new TestFramework("minitest.runner.Framework"),
@@ -72,7 +72,7 @@ lazy val `scwebapp-servlet`	=
 	(project in file("modules/servlet"))
 	.settings(
 		libraryDependencies	++= Seq(
-			"de.djini"			%%	"scutil-jdk"			% "0.220.0"	% "compile",
+			"de.djini"			%%	"scutil-jdk"			% "0.221.0"	% "compile",
 			"jakarta.servlet"	%	"jakarta.servlet-api"	% "5.0.0"	% "provided"
 		)
 	)
@@ -84,7 +84,7 @@ lazy val `scwebapp-runner`	=
 	(project in file("modules/runner"))
 	.settings(
 		libraryDependencies		++= Seq(
-			"org.eclipse.jetty"	%	"jetty-server"	% "11.0.7"	% "compile"
+			"org.eclipse.jetty"	%	"jetty-server"	% "11.0.9"	% "compile"
 		)
 	)
 	.dependsOn(
