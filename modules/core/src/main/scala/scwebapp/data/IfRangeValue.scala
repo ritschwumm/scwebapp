@@ -20,14 +20,12 @@ object IfRangeValue {
 
 		val value:TextParser[IfRangeValue]	= date orElse etag
 	}
-
-	//------------------------------------------------------------------------------
-
-	final case class IsHttpDate(value:HttpDate)	extends IfRangeValue
-	final case class EntityTag(value:ETagValue)	extends IfRangeValue
 }
 
-sealed trait IfRangeValue {
+enum IfRangeValue {
+	case IsHttpDate(value:HttpDate)
+	case EntityTag(value:ETagValue)
+
 	// TODO why add a second here?
 	def needsFull(eTag:ETagValue, lastModified:HttpDate):Boolean	=
 		this match {

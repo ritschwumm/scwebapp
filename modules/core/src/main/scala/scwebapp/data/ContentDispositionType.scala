@@ -24,11 +24,9 @@ object ContentDispositionType {
 			}
 			.named ("ContentDispositionType")
 	}
-
-	//------------------------------------------------------------------------------
-
-	case object Attachment	extends ContentDispositionType
-	case object Inline		extends ContentDispositionType
 }
 
-sealed trait ContentDispositionType
+enum ContentDispositionType {
+	case Attachment
+	case Inline
+}

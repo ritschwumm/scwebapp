@@ -28,14 +28,12 @@ object ContentEncodingType {
 			}
 			.named ("ContentEncodingType")
 	}
-
-	//------------------------------------------------------------------------------
-
-	// NOTE no identity here, that's only allowed for acceptance checks
-	case object Gzip		extends ContentEncodingType
-	case object Compress	extends ContentEncodingType
-	case object Deflate		extends ContentEncodingType
-	case object Br			extends ContentEncodingType
 }
 
-sealed trait ContentEncodingType
+enum ContentEncodingType {
+	// NOTE no identity here, that's only allowed for acceptance checks
+	case Gzip
+	case Compress
+	case Deflate
+	case Br
+}

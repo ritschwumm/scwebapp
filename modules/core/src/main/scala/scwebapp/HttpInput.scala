@@ -8,7 +8,7 @@ import scutil.jdk.implicits.*
 import scutil.lang.*
 
 object HttpInput {
-	def outofInputStream(ist:Thunk[InputStream]):HttpInput	=
+	def ofInputStream(ist:Thunk[InputStream]):HttpInput	=
 		new HttpInput {
 			def withInputStream[T](handler:InputStream=>T):T	= handler(ist())
 		}

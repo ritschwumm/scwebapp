@@ -42,12 +42,10 @@ object ContentRangeValue {
 
 		val value:TextParser[ContentRangeValue]		= symbolN(RangeType.keys.bytes) right rangeValue
 	}
-
-	//------------------------------------------------------------------------------
-
-	final case class Bare(irange:InclusiveRange)			extends ContentRangeValue
-	final case class Total(size:Long)						extends ContentRangeValue
-	final case class Full(irange:InclusiveRange, size:Long)	extends ContentRangeValue
 }
 
-sealed trait ContentRangeValue
+enum ContentRangeValue {
+	case Bare(irange:InclusiveRange)
+	case Total(size:Long)
+	case Full(irange:InclusiveRange, size:Long)
+}

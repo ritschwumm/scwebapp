@@ -29,9 +29,9 @@ object RangeType {
 			}
 			.named("RangeType")
 	}
-
-	case object IsNone	extends RangeType
-	case object Bytes	extends RangeType
 }
 
-sealed trait RangeType
+enum RangeType {
+	case IsNone
+	case Bytes
+}

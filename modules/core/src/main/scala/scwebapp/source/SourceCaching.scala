@@ -2,10 +2,8 @@ package scwebapp.source
 
 import scwebapp.data.*
 
-object SourceCaching {
-	case object			Silent								extends SourceCaching
-	case object			Disabled  							extends SourceCaching
-	final case class	Expires(when:HttpDate=>HttpDate)	extends SourceCaching
+enum SourceCaching {
+	case Silent
+	case Disabled
+	case Expires(when:HttpDate=>HttpDate)
 }
-
-sealed trait SourceCaching

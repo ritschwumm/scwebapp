@@ -10,7 +10,7 @@ import scutil.lang.implicits.*
 import scutil.log.*
 
 import scwebapp.HttpHandler
-import scwebapp.servlet.HttpIO
+import scwebapp.servlet.HttpIo
 
 object Server extends Logging {
 	def start(config:ServerConfig, application:IoResource[HttpHandler]):Unit	= {
@@ -35,7 +35,7 @@ object Server extends Logging {
 			new AbstractHandler {
 				// throws IOException, ServletException
 				def handle(target:String, baseRequest:Request, request:HttpServletRequest, response:HttpServletResponse):Unit	= {
-					HttpIO.execute(request, response, httpHandler)
+					HttpIo.execute(request, response, httpHandler)
 					baseRequest setHandled true
 				}
 			}

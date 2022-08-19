@@ -15,6 +15,6 @@ final class HttpHandlerServlet(handler:HttpHandler) extends HttpServlet {
 		if (request.getCharacterEncoding eq null) {
 			request setCharacterEncoding HttpHandlerServlet.defaultEncoding.name
 		}
-		HttpIO.execute(request, response, handler)
+		HttpIo.execute(request, response, handler)
 	}
 }

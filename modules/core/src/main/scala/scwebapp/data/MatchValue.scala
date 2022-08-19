@@ -25,14 +25,12 @@ object MatchValue {
 		val value:TextParser[MatchValue]	= wildcardValue orElse etagsValue
 		val finished:TextParser[MatchValue]	= value finishRight LWSP
 	}
-
-	//------------------------------------------------------------------------------
-
-	case object Wildcard								extends MatchValue
-	final case class EntityTags(values:Nes[ETagValue])	extends MatchValue
 }
 
-sealed trait MatchValue {
+enum MatchValue {
+	case Wildcard
+	case EntityTags(values:Nes[ETagValue])
+
 	def matches(it:ETagValue):Boolean	=
 		this match {
 			case MatchValue.Wildcard		=> true

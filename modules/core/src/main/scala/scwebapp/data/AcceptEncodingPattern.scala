@@ -26,15 +26,12 @@ object AcceptEncodingPattern {
 		val value:TextParser[AcceptEncodingPattern]	=
 			wildcard orElse fixed
 	}
-
-	//------------------------------------------------------------------------------
-
-	case object Wildcard							extends AcceptEncodingPattern
-	final case class Fixed(typ:AcceptEncodingType)	extends AcceptEncodingPattern
-
 }
 
-sealed trait AcceptEncodingPattern {
+enum AcceptEncodingPattern {
+	case Wildcard
+	case Fixed(typ:AcceptEncodingType)
+
 	// returns rank, if any
 	def matches(typ:AcceptEncodingType):Option[Int]	=
 		this matchOption {

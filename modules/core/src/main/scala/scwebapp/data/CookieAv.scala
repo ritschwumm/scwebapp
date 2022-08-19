@@ -48,16 +48,14 @@ object CookieAv {
 		lazy val duration:TextParser[HttpDuration]		= longPositive map HttpDuration.apply
 		lazy val something:TextParser[String]			= ((CTL orElse SEMICOLON).not right CHAR).seq.stringify
 	}
-
-	//------------------------------------------------------------------------------
-
-	final case class Expires(date:HttpDate)			extends CookieAv
-	final case class MaxAge(duration:HttpDuration)	extends CookieAv
-	final case class Domain(domain:String)			extends CookieAv
-	final case class Path(path:String)				extends CookieAv
-	case object Secure								extends CookieAv
-	case object HttpOnly							extends CookieAv
-	final case class Extension(extension:String)	extends CookieAv
 }
 
-sealed trait CookieAv
+enum CookieAv {
+	case Expires(date:HttpDate)
+	case MaxAge(duration:HttpDuration)
+	case Domain(domain:String)
+	case Path(path:String)
+	case Secure
+	case HttpOnly
+	case Extension(extension:String)
+}

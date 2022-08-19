@@ -27,15 +27,13 @@ object MediaPattern {
 
 		val value:TextParser[MediaPattern]			= wildWild orElse typeWild orElse typeSubtype eatLeft LWSP
 	}
-
-	//------------------------------------------------------------------------------
-
-	case object WildWild										extends MediaPattern
-	final case class TypeWild(major:String)						extends MediaPattern
-	final case class TypeSubtype(major:String, minor:String)	extends MediaPattern
 }
 
-sealed trait MediaPattern {
+enum MediaPattern {
+	case WildWild
+	case TypeWild(major:String)
+	case TypeSubtype(major:String, minor:String)
+
 	// returns rank, if any
 	def matches(typ:MimeType):Option[Int]	=
 		this matchOption {

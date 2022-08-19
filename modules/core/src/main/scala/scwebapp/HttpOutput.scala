@@ -10,6 +10,7 @@ import scala.annotation.tailrec
 import scutil.core.implicits.*
 import scutil.jdk.implicits.*
 import scutil.lang.*
+import scutil.lang.tc.Monoid
 import scutil.io.*
 
 import scwebapp.data.InclusiveRange
@@ -22,6 +23,8 @@ object HttpOutput {
 
 	def combineAll(its:Iterable[HttpOutput]):HttpOutput	=
 		(its foldLeft empty)(_ combine _)
+
+	given Monoid[HttpOutput]	= Monoid.instance(empty, _ combine _)
 
 	//------------------------------------------------------------------------------
 

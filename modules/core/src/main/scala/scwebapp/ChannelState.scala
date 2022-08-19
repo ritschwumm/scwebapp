@@ -2,11 +2,9 @@ package scwebapp
 
 import scutil.lang.*
 
-object ChannelState {
-	final case class Initial[T]()						extends ChannelState[T]
-	final case class HasValue[T](value:T)				extends ChannelState[T]
-	final case class HasHandler[T](handler:Effect[T])	extends ChannelState[T]
-	final case class Final[T]()							extends ChannelState[T]
+enum ChannelState[T] {
+	case Initial[T]()						extends ChannelState[T]
+	case HasValue[T](value:T)				extends ChannelState[T]
+	case HasHandler[T](handler:Effect[T])	extends ChannelState[T]
+	case Final[T]()							extends ChannelState[T]
 }
-
-sealed trait ChannelState[T]

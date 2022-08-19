@@ -24,12 +24,9 @@ object AcceptEncodingType {
 		val value:TextParser[AcceptEncodingType]	=
 			identity orElse other
 	}
-
-	//------------------------------------------------------------------------------
-
-	case object Identity								extends AcceptEncodingType
-	final case class  Other(typ:ContentEncodingType)	extends AcceptEncodingType
-
 }
 
-sealed trait AcceptEncodingType
+enum AcceptEncodingType {
+	case Identity
+	case Other(typ:ContentEncodingType)
+}

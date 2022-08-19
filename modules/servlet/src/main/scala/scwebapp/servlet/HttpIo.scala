@@ -9,7 +9,7 @@ import scutil.lang.*
 
 import scwebapp.*
 
-object HttpIO {
+object HttpIo {
 	def execute(servletRequest:HttpServletRequest, servletResponse:HttpServletResponse, handler:HttpHandler):Unit	= {
 		val request		= readRequest(servletRequest)
 		val responder	= handler(request)

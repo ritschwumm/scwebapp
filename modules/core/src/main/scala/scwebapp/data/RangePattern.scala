@@ -29,15 +29,13 @@ object RangePattern {
 				case Right(b)			=> End(b)
 			}
 	}
-
-	//------------------------------------------------------------------------------
-
-	final case class Begin(start:Long)				extends RangePattern
-	final case class FromTo(start:Long, end:Long)	extends RangePattern
-	final case class End(size:Long)					extends RangePattern
 }
 
-sealed trait RangePattern {
+enum RangePattern {
+	case Begin(start:Long)
+	case FromTo(start:Long, end:Long)
+	case End(size:Long)
+
 	def toInclusiveRange(total:Long):Option[InclusiveRange]	= {
 		val last	= total - 1
 		this matchOption {
@@ -46,5 +44,4 @@ sealed trait RangePattern {
 			case RangePattern.End(count)			if count > 0  && count <= total					=> InclusiveRange(total - count,	last)
 		}
 	}
-
 }
