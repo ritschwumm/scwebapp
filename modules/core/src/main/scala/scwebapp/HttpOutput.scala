@@ -10,6 +10,7 @@ import scala.annotation.tailrec
 import scutil.core.implicits.*
 import scutil.jdk.implicits.*
 import scutil.lang.*
+import scutil.io.*
 
 import scwebapp.data.InclusiveRange
 
@@ -41,7 +42,7 @@ object HttpOutput {
 
 	def writeFile(data:Path):HttpOutput	=
 		withOutputStream { ost =>
-			data withInputStream { ist =>
+			MoreFiles.withInputStream(data) { ist =>
 				ist transferToPre9 ost
 			}
 		}
