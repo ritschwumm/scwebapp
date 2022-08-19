@@ -34,30 +34,21 @@ object HttpOutput {
 			ost.writeByteString(data, 0, data.size)
 		}
 
-	// TODO toInt is questionable
 	def writeByteStringRange(data:ByteString, range:InclusiveRange):HttpOutput	=
 		withOutputStream { ost =>
 			ost.writeByteString(data, range.start.toInt, range.length.toInt)
 		}
 
-	def writePathFile(data:Path):HttpOutput	=
-		writeFile(data.toFile)
-
-	def writePathFileRange(data:Path, range:InclusiveRange):HttpOutput	=
-		writeFileRange(data.toFile, range)
-
-	// TODO path get rid of this
-	def writeFile(data:File):HttpOutput	=
+	def writeFile(data:Path):HttpOutput	=
 		withOutputStream { ost =>
 			data withInputStream { ist =>
 				ist transferToPre9 ost
 			}
 		}
 
-	// TODO path get rid of this
-	def writeFileRange(data:File, range:InclusiveRange):HttpOutput	=
+	def writeFileRange(data:Path, range:InclusiveRange):HttpOutput	=
 		withOutputStream { ost =>
-			new RandomAccessFile(data, "r") use { input =>
+			new RandomAccessFile(data.toFile, "r") use { input =>
 				val buffer	= new Array[Byte](bufferSize)
 				input seek range.start
 				@tailrec
