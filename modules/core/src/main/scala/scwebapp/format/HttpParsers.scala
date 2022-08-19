@@ -100,7 +100,7 @@ object HttpParsers {
 		}
 	val pctEncoded:TextParser[Byte]				= TextParser.is('%') right hexByte
 	val attrCharByte:TextParser[Byte]			= attrChar map { _.toByte }
-	val valueCharBytes:TextParser[ByteString]	= (pctEncoded orElse attrCharByte).seq map ByteString.fromSeq
+	val valueCharBytes:TextParser[ByteString]	= (pctEncoded orElse attrCharByte).seq map ByteString.fromIterable
 
 	val mimeCharsetC:TextParser[Char]		= ALPHA orElse DIGIT orElse TextParser.anyOf("!#$%&+-^_`{}~")
 	val mimeCharset:TextParser[String]		= mimeCharsetC.nes.stringify
