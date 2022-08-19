@@ -6,6 +6,7 @@ import java.io.ByteArrayOutputStream
 
 import scutil.lang.Charsets
 
+@SuppressWarnings(Array("org.wartremover.warts.ToString"))
 object HttpOutputTest extends SimpleTestSuite {
 	test("HttpOutput should write into an OutputStream") {
 		val output	= HttpOutput withOutputStream { ost =>

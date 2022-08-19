@@ -38,6 +38,7 @@ object ServletContextExtensions {
 		def resource(path:String):Option[ClasspathResource]	=
 			Option(peer getResource path) map (new ClasspathResource(_))
 
+		@SuppressWarnings(Array("org.wartremover.warts.AsInstanceOf"))
 		def resourcePaths(base:String):Option[Set[String]]	=
 			Option(peer getResourcePaths base) map { _.asInstanceOf[JSet[String]].toSet }
 

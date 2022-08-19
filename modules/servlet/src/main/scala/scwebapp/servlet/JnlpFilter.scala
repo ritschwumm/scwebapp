@@ -68,6 +68,7 @@ final class JnlpFilter extends Filter with Logging {
 		}
 		else {
 			val input		= wrapper.written asString charset
+			@SuppressWarnings(Array("org.wartremover.warts.ToString"))
 			val codeBase	= httpRequest.getRequestURL.toString.replaceAll("/[^/]*$", "/")
 			val patched		= input.replace("$$codebase", codeBase)
 			val output		= patched getBytes charset
