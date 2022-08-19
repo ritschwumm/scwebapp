@@ -1,6 +1,7 @@
 package scwebapp.servlet.bootstrap
 
 import java.io.File
+import java.nio.file.Path
 
 import scutil.core.implicits.*
 
@@ -33,6 +34,10 @@ object Value {
 	def string(s:String):Either[String,String]	=
 		Right(s)
 
+	// TODO path deprecate this
 	def file(s:String):Either[String,File]	=
-		nonEmpty(s) map { new File(_) }
+		path(s).map(_.toFile)
+
+	def path(s:String):Either[String,Path]	=
+		nonEmpty(s) map { Path.of(_) }
 }

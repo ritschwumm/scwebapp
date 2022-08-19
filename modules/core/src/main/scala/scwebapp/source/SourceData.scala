@@ -1,6 +1,7 @@
 package scwebapp.source
 
 import java.io.*
+import java.nio.file.Path
 
 import scutil.time.MilliInstant
 
@@ -14,6 +15,26 @@ object SourceData {
 	def milliInstantContentId(lastModified:MilliInstant, size:Long):String	=
 		lastModified.millis.toString + "-" + size.toString
 
+	def forFilePath(
+		file:Path,
+		contentId:String,
+		lastModified:MilliInstant,
+		caching:SourceCaching,
+		mimeType:MimeType,
+		disposition:Option[SourceDisposition],
+		enableGZIP:Boolean
+	):SourceData	=
+		forFile(
+			file.toFile,
+			contentId,
+			lastModified,
+			caching,
+			mimeType,
+			disposition,
+			enableGZIP
+		)
+
+	// TODO path get rid of this
 	def forFile(
 		file:File,
 		contentId:String,

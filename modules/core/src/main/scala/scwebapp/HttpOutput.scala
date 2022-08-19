@@ -1,6 +1,7 @@
 package scwebapp
 
 import java.io.*
+import java.nio.file.Path
 import java.nio.charset.Charset
 import java.util.zip.GZIPOutputStream
 
@@ -39,6 +40,13 @@ object HttpOutput {
 			ost.writeByteString(data, range.start.toInt, range.length.toInt)
 		}
 
+	def writePathFile(data:Path):HttpOutput	=
+		writeFile(data.toFile)
+
+	def writePathFileRange(data:Path, range:InclusiveRange):HttpOutput	=
+		writeFileRange(data.toFile, range)
+
+	// TODO path get rid of this
 	def writeFile(data:File):HttpOutput	=
 		withOutputStream { ost =>
 			data withInputStream { ist =>
@@ -46,6 +54,7 @@ object HttpOutput {
 			}
 		}
 
+	// TODO path get rid of this
 	def writeFileRange(data:File, range:InclusiveRange):HttpOutput	=
 		withOutputStream { ost =>
 			new RandomAccessFile(data, "r") use { input =>
