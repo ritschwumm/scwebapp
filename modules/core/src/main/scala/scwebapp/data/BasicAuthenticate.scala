@@ -35,7 +35,7 @@ object BasicAuthenticate {
 			}
 
 		val value:TextParser[BasicAuthenticate]	=
-			challengeList collapseMap findBasicRealm named "basic realm"
+			challengeList mapFilter findBasicRealm named "basic realm"
 	}
 }
 

@@ -1,6 +1,5 @@
 package scwebapp.servlet.bootstrap
 
-import java.io.File
 import java.nio.file.Path
 
 import scutil.core.implicits.*

@@ -139,7 +139,7 @@ object HttpParsers {
 		}
 
 	val extValue:TextParser[String]	=
-		extValueOpt eatLeft LWSP collapseNamed "extValue"
+		extValueOpt eatLeft LWSP flattenOptionNamed "extValue"
 
 	val extParName:TextParser[String]	= parmName left TextParser.is('*')
 
@@ -183,10 +183,10 @@ object HttpParsers {
 		ALPHA orElse DIGIT orElse TextParser.anyOf("+/=")
 
 	def base64(charset:Charset):TextParser[String]	=
-		base64Char.seq.stringify collapseMap Base64.decodeByteString named "Base64" collapseMap { it => (charset decodeEitherByteString it).toOption } named s"String[${charset.name}]"
+		base64Char.seq.stringify mapFilter Base64.decodeByteString named "Base64" mapFilter { it => (charset decodeEitherByteString it).toOption } named s"String[${charset.name}]"
 
 	//------------------------------------------------------------------------------
 
 	val dateValue:TextParser[HttpDate]	=
-		TextParser.anyIn(32, 126).seq.stringify map { _.trim } collapseMap HttpDate.parse named "HttpDate"
+		TextParser.anyIn(32, 126).seq.stringify map { _.trim } mapFilter HttpDate.parse named "HttpDate"
 }
