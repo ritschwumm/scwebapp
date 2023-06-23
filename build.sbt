@@ -2,9 +2,9 @@ Global / onChangedBuildSource := ReloadOnSourceChanges
 
 inThisBuild(Seq(
 	organization	:= "de.djini",
-	version			:= "0.291.0",
+	version			:= "0.292.0",
 
-	scalaVersion	:= "3.2.1",
+	scalaVersion	:= "3.2.2",
 	scalacOptions	++= Seq(
 		"-feature",
 		"-deprecation",
@@ -15,7 +15,6 @@ inThisBuild(Seq(
 	),
 
 	versionScheme	:= Some("early-semver"),
-	conflictManager	:= ConflictManager.strict withOrganization "^(?!(org\\.scala-lang|org\\.scala-js)(\\..*)?)$",
 
 	wartremoverErrors	++= Seq(
 		Wart.AsInstanceOf,
@@ -62,7 +61,7 @@ lazy val `scwebapp-core`	=
 	.settings(
 		libraryDependencies	++= Seq(
 			"de.djini"		%%	"scutil-jdk"	% "0.233.0"	% "compile",
-			"de.djini"		%%	"scparse-ng"	% "0.240.0"	% "compile",
+			"de.djini"		%%	"scparse-ng"	% "0.241.0"	% "compile",
 			"io.monix"		%%	"minitest"		% "2.9.6"	% "test"
 		),
 		testFrameworks	+= new TestFramework("minitest.runner.Framework"),
@@ -84,7 +83,7 @@ lazy val `scwebapp-runner`	=
 	(project in file("modules/runner"))
 	.settings(
 		libraryDependencies		++= Seq(
-			"org.eclipse.jetty"	%	"jetty-server"	% "11.0.12"	% "compile"
+			"org.eclipse.jetty"	%	"jetty-server"	% "11.0.13"	% "compile"
 		)
 	)
 	.dependsOn(
