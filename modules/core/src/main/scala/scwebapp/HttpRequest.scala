@@ -4,12 +4,18 @@ import java.nio.charset.Charset
 
 import scutil.core.implicits.*
 import scutil.lang.*
-import scutil.codec.*
 
 import scwebapp.factory.mimeType
 import scwebapp.header.*
 import scwebapp.data.*
 import scwebapp.format.*
+
+//	requestURI		always contains contextPath, servletPath and pathInfo but is still URL-encoded
+//
+//	ROOT context	contextPath is empty
+//	mapping /foo/*	servletPath is "/foo", pathInfo contains the rest
+//	mapping /*		servletPath is empty, pathInfo contains the rest
+//	mapping *.foo	servletPath contains everything below the context, pathInfo is null
 
 trait HttpRequest {
 	//------------------------------------------------------------------------------
@@ -27,48 +33,38 @@ trait HttpRequest {
 
 	def method:Either[String,HttpMethod]
 
-	// requestURI		always contains contextPath, servletPath and pathInfo but is still URL-encoded
-	// ROOT context	contextPath is empty
-	// mapping /foo/*	servletPath is "/foo", pathInfo contains the rest
-	// mapping /*		servletPath is empty, pathInfo contains the rest
-	// *.foo mapping	servletPath contains everything below the context, pathInfo is null
+	//-----------------------------------------------------------------------------
+	//## path
 
 	/** full path including the contextPath */
 	def uri:String
+
+	/** context of the web app: empty for the root context, starting with a slash in a subcontext */
+	def contextPath:String
+
+	def servletPath:String
+
+	/** the full path after the context path, not yet url-decoded */
+	final def fullPath:HttpPath	=
+		uri.cutPrefix(contextPath).map(HttpPath.apply).getOrError(show"expected uri ${uri} to start with context path ${contextPath}")
 
 	/*
 	// decoded according to server settings which by default (in tomcat) is ISO-8859-1.
 	// this is not influenced by setCharacterEncoding or setEncoding
 	def fullPathServlet:String	=
 		Seq(peer.getServletPath, peer.getPathInfo).filter(_ != null).mkString("")
+	*/
 
+	final def pathInfo:HttpPath	=
+		fullPath.raw.cutPrefix(servletPath).map(HttpPath.apply).getOrError(show"expected uri ${uri} to start with context path ${contextPath} and servlet path ${servletPath}")
+
+	/*
 	def pathInfoServlet:Option[String]	=
 		Option(peer.getPathInfo)
 	*/
 
-	/** context of the web app */
-	def contextPath:String
-
-	def servletPath:String
-
-	/** the full path after the context path, not yet url-decoded */
-	final def fullPathRaw:String	=
-		uri.cutPrefix(contextPath).getOrError(show"expected uri ${uri} to start with context path ${contextPath}")
-
-	final def pathInfoRaw:String	=
-		fullPathRaw.cutPrefix(servletPath).getOrError(show"expected uri ${uri} to start with context path ${contextPath} and servlet path ${servletPath}")
-
-	final def fullPath(encoding:Charset):Either[URIComponentProblem,String]	=
-		URIComponent.forCharset(encoding).decode(fullPathRaw)
-
-	final def pathInfo(encoding:Charset):Either[URIComponentProblem,String]	=
-		URIComponent.forCharset(encoding).decode(pathInfoRaw)
-
-	final def fullPathUTF8:Either[URIComponentProblem,String]	=
-		fullPath(Charsets.utf_8)
-
-	final def pathInfoUTF8:Either[URIComponentProblem,String]	=
-		pathInfo(Charsets.utf_8)
+	//-----------------------------------------------------------------------------
+	//## query parameters
 
 	def queryString:Option[String]
 

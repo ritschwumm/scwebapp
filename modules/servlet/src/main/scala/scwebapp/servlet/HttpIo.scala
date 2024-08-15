@@ -47,7 +47,7 @@ object HttpIo {
 	}
 
 	private def readRequest(servletRequest:HttpServletRequest):HttpRequest	=
-		new HttpRequestImpl(servletRequest)
+		new HttpRequestAdapter(servletRequest)
 
 	private def writeResponse(response:HttpResponse, servletResponse:HttpServletResponse):Unit	= {
 		response.reason match {

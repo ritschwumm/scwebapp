@@ -14,7 +14,7 @@ import scutil.core.implicits.*
 import scwebapp.*
 import scwebapp.data.*
 
-private final class HttpRequestImpl(peer:HttpServletRequest) extends HttpRequest {
+private final class HttpRequestAdapter(peer:HttpServletRequest) extends HttpRequest {
 	//------------------------------------------------------------------------------
 	//## metadata
 
@@ -32,13 +32,17 @@ private final class HttpRequestImpl(peer:HttpServletRequest) extends HttpRequest
 
 	def secure:Boolean	= peer.isSecure
 
-	/** full path including the contextPath */
+	//-----------------------------------------------------------------------------
+	//## path
+
 	def uri:String	= peer.getRequestURI
 
-	/** context of the web app */
 	def contextPath:String	= peer.getContextPath
 
 	def servletPath:String	= peer.getServletPath
+
+	//-----------------------------------------------------------------------------
+	//## query
 
 	def queryString:Option[String]	= Option(peer.getQueryString)
 

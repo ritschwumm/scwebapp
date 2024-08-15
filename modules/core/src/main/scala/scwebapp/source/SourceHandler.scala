@@ -90,7 +90,7 @@ object SourceHandler {
 		val ifUnmodifiedSince	= requestHeaders.first(IfUnmodifiedSince).toOption.flatten
 		val preconditionFailed	=
 			ifMatch.cata (
-				ifUnmodifiedSince	exists { it => !it.wasModified(lastModified) },
+				ifUnmodifiedSince.exists{ it => !it.wasModified(lastModified) },
 				it => !it.matches(eTag)
 			)
 		if (preconditionFailed) {

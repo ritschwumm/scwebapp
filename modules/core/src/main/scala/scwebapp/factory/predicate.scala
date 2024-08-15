@@ -6,7 +6,7 @@ import scwebapp.*
 
 object predicate {
 	def Method(method:HttpMethod):HttpPredicate	=
-		_.method.toOption == Some(method)
+		_.method.toOption.exists(_ == method)
 
 	def ContextPath(path:String):HttpPredicate	=
 		_.contextPath ==== path
@@ -15,14 +15,14 @@ object predicate {
 		_.servletPath ==== path
 
 	def FullPathRaw(path:String):HttpPredicate	=
-		_.fullPathRaw ==== path
+		_.fullPath.raw ==== path
 
 	def FullPathUTF8(path:String):HttpPredicate	=
-		_.fullPathUTF8 exists (_ ==== path)
+		_.fullPath.utf8.exists(_ ==== path)
 
 	def PathInfoRaw(path:String):HttpPredicate	=
-		_.pathInfoRaw ==== path
+		_.pathInfo.raw ==== path
 
 	def PathInfoUTF8(path:String):HttpPredicate	=
-		_.pathInfoUTF8 exists (_ ==== path)
+		_.pathInfo.utf8.exists(_ ==== path)
 }

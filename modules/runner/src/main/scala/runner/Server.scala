@@ -28,7 +28,7 @@ object Server extends Logging {
 			}
 			catch { case e:Exception	=>
 				ERROR("cannot start application", e)
-				sys exit 1
+				sys.exit(1)
 			}
 
 		val applicationHandler		=
@@ -73,7 +73,7 @@ object Server extends Logging {
 		}
 		catch { case e:Exception	=>
 			ERROR("cannot start server", e)
-			sys exit 1
+			sys.exit(1)
 		}
 
 		def stop():Unit	= {
