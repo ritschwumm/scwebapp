@@ -6,7 +6,7 @@ object Property {
 	def lens[C,V](key:String, lens:Lens[C,V], parse:String=>Either[String,V]):Property[C]	=
 		Property(
 			key		= key,
-			mod		= raw => parse(raw) map lens.set,
+			mod		= raw => parse(raw).map(lens.set),
 			visible	= true
 		)
 }

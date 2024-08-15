@@ -23,8 +23,8 @@ object ServletContextExtensions {
 			val servlet	= new HttpHandlerServlet(handler)
 			val dynamic	= peer.addServlet(name, servlet)
 			dynamic.addMapping(mappings*)
-			loadOnStartup	foreach dynamic.setLoadOnStartup
-			multipartConfig	foreach dynamic.setMultipartConfig
+			loadOnStartup.foreach(dynamic.setLoadOnStartup)
+			multipartConfig.foreach(dynamic.setMultipartConfig)
 			dynamic.setAsyncSupported(true)
 			dynamic
 		}

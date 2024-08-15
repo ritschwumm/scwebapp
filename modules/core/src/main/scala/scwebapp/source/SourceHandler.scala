@@ -131,7 +131,7 @@ object SourceHandler {
 			acceptEncoding.exists(_.accepts(AcceptEncodingType.Other(ContentEncodingType.Gzip)))
 
 		val contentDisposition:Option[HeaderValue]		=
-			source.disposition map { case SourceDisposition(attachment, fileName) =>
+			source.disposition.map { case SourceDisposition(attachment, fileName) =>
 				HeaderValue.fromHeader(
 					ContentDisposition(
 						attachment.cata[ContentDispositionType](ContentDispositionType.Inline, ContentDispositionType.Attachment),
@@ -203,7 +203,7 @@ object SourceHandler {
 				def crlfOutput(ss:String*):HttpOutput	=
 					HttpOutput.writeString(
 						Charsets.us_ascii,
-						ss map (_ + "\r\n") mkString ""
+						ss.map(_ + "\r\n").mkString("")
 					)
 
 				val body	=

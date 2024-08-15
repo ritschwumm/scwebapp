@@ -73,11 +73,11 @@ private final class HttpRequestImpl(peer:HttpServletRequest) extends HttpRequest
 	def body:HttpInput	=
 		new HttpInput {
 			def withInputStream[T](handler:InputStream=>T):T	=
-					peer.getInputStream.use(handler)
+				peer.getInputStream.use(handler)
 		}
 
 	def parts:Either[HttpPartsProblem,Seq[HttpPart]]	=
-		catchHttpPartsProblem(peer.getParts.asScala.toVector) map { _ map { new HttpPartImpl(_) } }
+		catchHttpPartsProblem(peer.getParts.asScala.toVector).map(_.map(new HttpPartImpl(_)))
 
 	private def catchHttpPartsProblem[T](it: =>T):Either[HttpPartsProblem,T]	=
 		try {

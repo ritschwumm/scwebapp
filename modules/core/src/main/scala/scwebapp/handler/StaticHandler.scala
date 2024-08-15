@@ -40,11 +40,11 @@ extends Logging {
 		request => {
 			(
 				for {
-					raw			<-	request.fullPathUTF8.toOption	toRight Some(badRequest)
-					unprefixed	<-	raw.cutPrefix("/")				toRight Some(badRequest)
-					aliased		= 	alias get unprefixed getOrElse unprefixed
-					path		<-	parsePath(aliased)				toRight Some(badRequest)
-					source		<-	getSource(path)					toRight None
+					raw			<-	request.fullPathUTF8.toOption	.toRight(Some(badRequest))
+					unprefixed	<-	raw.cutPrefix("/")				.toRight (Some(badRequest))
+					aliased		=	alias.get(unprefixed).getOrElse(unprefixed)
+					path		<-	parsePath(aliased)				.toRight(Some(badRequest))
+					source		<-	getSource(path)					.toRight(None)
 				}
 				yield SourceHandler.plan(source).apply(request)
 			)

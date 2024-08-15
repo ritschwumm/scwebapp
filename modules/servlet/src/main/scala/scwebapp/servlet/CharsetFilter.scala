@@ -15,7 +15,7 @@ final class CharsetFilter extends Filter {
 	}
 
 	private def charset:String	=
-		configCharset getOrElse "UTF-8"
+		configCharset.getOrElse("UTF-8")
 
 	private def configCharset:Option[String]	=
 		for {

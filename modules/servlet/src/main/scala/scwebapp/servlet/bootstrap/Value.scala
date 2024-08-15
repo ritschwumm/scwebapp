@@ -21,18 +21,18 @@ object Value {
 	//## primitives
 
 	def boolean(s:String):Either[String,Boolean]	=
-		nonEmpty(s) flatMap {
+		nonEmpty(s).flatMap {
 			case "true"		=> Right(true)
 			case "false"	=> Right(false)
 			case x			=> Left("must be 'true' or 'false'")
 		}
 
 	def integer(s:String):Either[String,Int]	=
-		s.toIntOption toRight "must be a number"
+		s.toIntOption.toRight("must be a number")
 
 	def string(s:String):Either[String,String]	=
 		Right(s)
 
 	def path(s:String):Either[String,Path]	=
-		nonEmpty(s) map { Path.of(_) }
+		nonEmpty(s).map(Path.of(_))
 }

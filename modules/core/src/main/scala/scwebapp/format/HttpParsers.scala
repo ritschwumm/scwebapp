@@ -10,7 +10,7 @@ import scwebapp.data.*
 import scparse.ng.text.*
 
 object HttpParsers {
-	val ctlChars		= ((0 to 31) :+ 127) map { _.toChar } mkString ""
+	val ctlChars		= ((0 to 31) :+ 127).map(_.toChar).mkString("")
 	val separatorChars	= "()<>@,;:\\\"/[]?={} \t"
 	val nonTokenChars	= ctlChars + separatorChars
 
@@ -20,8 +20,8 @@ object HttpParsers {
 	val CHAR:TextParser[Char]		= rng(0, 127)
 	val UPALPHA:TextParser[Char]	= rng('A', 'Z')
 	val LOALPHA:TextParser[Char]	= rng('a', 'z')
-	val ALPHA:TextParser[Char]	= UPALPHA orElse LOALPHA
-	val LWS:TextParser[Char]		= CRLF.option next WSP.nes tag ' '
+	val ALPHA:TextParser[Char]		= UPALPHA `orElse` LOALPHA
+	val LWS:TextParser[Char]		= CRLF.option.next(WSP.nes).tag(' ')
 	*/
 
 	val OCTET:TextParser[Char]	= TextParser.anyIn(0, 255)
@@ -54,7 +54,7 @@ object HttpParsers {
 	val tokenSeparator:TextParser[Char]	= TextParser.anyOf(nonTokenChars)
 	val token:TextParser[String]		= tokenSeparator.not.right(CHAR).nes.stringify.eatLeft(LWSP)
 
-	// val ctext:Parser[Char]		= (sat('(') orElse sat(')')).prevents right TEXT
+	// val ctext:Parser[Char]		= (TextParser.is('(')  orElse TextParser.is(')')).prevents.right(TEXT)
 	// val comment:Parser[String]	= '(' ~> (quoted_pair_string | comment | ctext_string).* <~ ')' stringify
 
 	val quotedPair:TextParser[Char]		= TextParser.is('\\').right(CHAR)
@@ -70,7 +70,7 @@ object HttpParsers {
 
 	/*
 	val attribute:TextParser[String]					= token
-	val value:TextParser[String]						= token orElse quotedString
+	val value:TextParser[String]						= token `orElse` quotedString
 	val parameter:TextParser[(String,String)]			= attribute left symbol('=') next value
 	val nextParameter:TextParser[(String,String)]		= symbol(';') right parameter
 	val parameterList:TextParser[NoCaseParameters]	= nextParameter.seq.map(NoCaseParameters.apply)
@@ -89,7 +89,7 @@ object HttpParsers {
 	// @see https://tools.ietf.org/html/rfc5987
 
 	val hexNibble:TextParser[Int]	=
-		HEXDIG map {
+		HEXDIG.map {
 			case x if x >= '0'	&& x <= '9'	=> x - '0' + 0
 			case x if x >= 'a'	&& x <= 'f'	=> x - 'a' + 10
 			case x if x >= 'A'	&& x <= 'F'	=> x - 'A' + 10
@@ -99,7 +99,7 @@ object HttpParsers {
 			((h << 4) | l).toByte
 		}
 	val pctEncoded:TextParser[Byte]				= TextParser.is('%').right(hexByte)
-	val attrCharByte:TextParser[Byte]			= attrChar map { _.toByte }
+	val attrCharByte:TextParser[Byte]			= attrChar.map(_.toByte)
 	val valueCharBytes:TextParser[ByteString]	= pctEncoded.orElse( attrCharByte).seq.map(ByteString.fromIterable)
 
 	val mimeCharsetC:TextParser[Char]		= ALPHA `orElse` DIGIT `orElse` TextParser.anyOf("!#$%&+-^_`{}~")
@@ -152,11 +152,11 @@ object HttpParsers {
 
 	// moves extended parameters to the front
 	def extendedFirst(it:Seq[(Boolean,(String,String))]):Seq[(String,String)]	=
-		(it collect { case (true,	kv) => kv })	++
-		(it collect { case (false,	kv) => kv })
+		it.collect { case (true,	kv) => kv }	++
+		it.collect { case (false,	kv) => kv }
 
 	val parameterList:TextParser[NoCaseParameters]	=
-		manyParameters map { list => NoCaseParameters(extendedFirst(list)) }
+		manyParameters.map { list => NoCaseParameters(extendedFirst(list)) }
 
 	//------------------------------------------------------------------------------
 

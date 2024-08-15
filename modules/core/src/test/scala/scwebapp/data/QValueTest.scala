@@ -50,8 +50,8 @@ object QValueTest extends SimpleTestSuite {
 	}
 
 	test("QValue should roundtrip the complete range") {
-		val orig	= 0 to 1000 map QValue.apply
-		val trip	= orig map QValue.unparse map this.parseQValue
-		assertEquals(trip, (orig map Some.apply))
+		val orig	= (0 to 1000).map(QValue.apply)
+		val trip	= orig.map(QValue.unparse).map(this.parseQValue)
+		assertEquals(trip, orig.map(Some.apply))
 	}
 }

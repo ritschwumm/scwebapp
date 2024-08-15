@@ -19,7 +19,7 @@ object BasicAuthenticate {
 
 		final case class Challenge(name:String, parameters:Seq[(String,String)])
 
-		val simpleParameter:TextParser[(String,String)]	= regParameter map { _._2 }
+		val simpleParameter:TextParser[(String,String)]	= regParameter.map(_._2)
 		val challenge:TextParser[Challenge]				= token.next(hash(simpleParameter)).map(Challenge.apply.tupled)
 		val challengeList:TextParser[Nes[Challenge]]	= hash1(challenge)
 

@@ -15,7 +15,7 @@ object AcceptEncoding extends HeaderType[AcceptEncoding] {
 		parsers.finished.parseString(it).toOption
 
 	def unparse(it:AcceptEncoding):String	=
-		it.matches map AcceptEncodingMatch.unparse mkString ","
+		it.matches.map(AcceptEncodingMatch.unparse).mkString(",")
 
 	object parsers {
 		import HttpParsers.*

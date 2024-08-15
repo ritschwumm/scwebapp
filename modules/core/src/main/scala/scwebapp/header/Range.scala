@@ -16,7 +16,7 @@ object Range extends HeaderType[Range] {
 
 	def unparse(it:Range):String	=
 		RangeType.keys.bytes + "=" +
-		(it.patterns.toVector map RangePattern.unparse mkString ",")
+		it.patterns.toVector.map(RangePattern.unparse).mkString(",")
 
 	private object parsers {
 		import HttpParsers.*

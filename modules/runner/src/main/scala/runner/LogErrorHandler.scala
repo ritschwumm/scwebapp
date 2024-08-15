@@ -14,7 +14,7 @@ final class LogErrorHandler extends ErrorHandler with Logging {
 		WARN.log(
 			LogValue.string("handling error") +:
 			Vector[Option[LogValue]](
-				Option(message) map LogValue.string,
+				Option(message).map(LogValue.string),
 				Option(request.getAttribute("javax.servlet.error.exception")).map {
 					case e:Throwable	=> LogValue.throwable(e)
 					case x				=> LogValue.string(x.toString)

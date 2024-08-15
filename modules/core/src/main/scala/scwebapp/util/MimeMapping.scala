@@ -1030,7 +1030,7 @@ final case class MimeMapping(table:Seq[(String,String)]) {
 		.toMap
 
 	def forFileName(it:String):Option[MimeType]	=
-		nameExtension(it) flatMap forExtension
+		nameExtension(it).flatMap(forExtension)
 
 	def forExtension(it:String):Option[MimeType]	=
 		byExtension.get(it.toLowerCase(Locale.US))

@@ -27,7 +27,7 @@ object QValue {
 
 		lazy val value:TextParser[QValue]	=
 			low.orElse(high).map { (h,l) =>
-				QValue(digitVal(h) * 1000 + tailing(l.flattenMany map digitVal, 100))
+				QValue(digitVal(h) * 1000 + tailing(l.flattenMany.map(digitVal), 100))
 			}
 
 		lazy val finished:TextParser[QValue]	=

@@ -46,7 +46,7 @@ object SetCookie extends HeaderType[SetCookie] {
 			)
 
 		val headPart	= it.name + "=" + it.value
-		val tailParts	= avs.flattenOption map CookieAv.unparse
+		val tailParts	= avs.flattenOption.map(CookieAv.unparse)
 		headPart +: tailParts mkString ";"
 	}
 
@@ -58,7 +58,7 @@ object SetCookie extends HeaderType[SetCookie] {
 		lazy val finished:TextParser[SetCookie]	= value.within(OWS)
 
 		lazy val value:TextParser[SetCookie]	=
-			set_cookie_string map { case ((k, v), avs) =>
+			set_cookie_string.map { case ((k, v), avs) =>
 				SetCookie(
 					name		= k,
 					value		= v,

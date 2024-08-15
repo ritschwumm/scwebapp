@@ -13,7 +13,7 @@ object Accept extends HeaderType[Accept] {
 		parsers.finished.parseString(it).toOption
 
 	def unparse(it:Accept):String	=
-		it.ranges map MediaRange.unparse mkString ","
+		it.ranges.map(MediaRange.unparse).mkString(",")
 
 	private object parsers {
 		import HttpParsers.*

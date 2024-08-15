@@ -6,14 +6,14 @@ import scutil.log.*
 
 object Configurator extends Logging {
 	def configure[C](source:String=>Option[String], schema:Vector[Property[C]], initial:C):C	= {
-		val states				= schema map (property(_, source))
-		val (result, entries)	= states.sequenceState run initial
-		entries foreach {
+		val states				= schema.map(property(_, source))
+		val (result, entries)	= states.sequenceState.run(initial)
+		entries.foreach {
 			case Note.Default(key, value)			=> INFO(key, "using default value", value)
 			case Note.Change(key, value)			=> INFO(key, "configured to", value)
 			case Note.Error(key, value, message)	=> ERROR(key, "invalid value", value, message)
 		}
-		entries foreach {
+		entries.foreach {
 			case Note.Error(_,_,_)	=>	sys error "invalid configuration"
 			case _					=>
 		}

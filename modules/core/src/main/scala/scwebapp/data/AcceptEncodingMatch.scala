@@ -29,7 +29,7 @@ final case class AcceptEncodingMatch(
 	pattern:AcceptEncodingPattern,
 	quality:Option[QValue]
 ) {
-	val totalQuality	= quality getOrElse QValue.one
+	val totalQuality	= quality.getOrElse(QValue.one)
 
 	def acceptance(typ:AcceptEncodingType):Option[(Int,QValue)]	=
 		pattern.matches(typ).map(_ -> totalQuality)

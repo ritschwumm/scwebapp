@@ -20,11 +20,9 @@ final case class HttpHeaders(params:NoCaseParameters) {
 
 	def encoding:Either[String,Option[Charset]]	=
 		first(ContentType)
-		.map {
-			_ map {
-				_.typ.charset
-			}
-		}
+		.map(
+			_.map(_.typ.charset)
+		)
 		match {
 			case Left(x)						=> Left(x)
 			case Right(None)					=> Right(None)
@@ -37,11 +35,9 @@ final case class HttpHeaders(params:NoCaseParameters) {
 	// Parameters is for regular headers, not for multipart parts
 	def fileName:Either[String,Option[String]]	=
 		first(ContentDisposition)
-		.map {
-			_ map {
-				_.fileName
-			}
-		}
+		.map(
+			_.map(_.fileName)
+		)
 		match {
 			case Left(x)	=> Left(x)
 			case Right(x)	=> Right(x.flatten)

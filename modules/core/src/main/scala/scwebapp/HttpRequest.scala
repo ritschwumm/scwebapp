@@ -40,10 +40,10 @@ trait HttpRequest {
 	// decoded according to server settings which by default (in tomcat) is ISO-8859-1.
 	// this is not influenced by setCharacterEncoding or setEncoding
 	def fullPathServlet:String	=
-			Seq(peer.getServletPath, peer.getPathInfo) filter { _ != null } mkString ""
+		Seq(peer.getServletPath, peer.getPathInfo).filter(_ != null).mkString("")
 
 	def pathInfoServlet:Option[String]	=
-			Option(peer.getPathInfo)
+		Option(peer.getPathInfo)
 	*/
 
 	/** context of the web app */
@@ -93,7 +93,7 @@ trait HttpRequest {
 			_			<- mime.sameMajorAndMinor(mimeType.application_form)	.guardEither(show"unexpected content type ${mime.value}")
 			encodingOpt	<- mime.charset
 			string		= body.readString(Charsets.us_ascii)
-			encoding	= encodingOpt getOrElse defaultEncoding
+			encoding	= encodingOpt.getOrElse(defaultEncoding)
 			params		<- UrlEncoding.parseForm(string, encoding)
 		}
 		yield params

@@ -13,7 +13,7 @@ object MatchValue {
 	def unparse(it:MatchValue):String	=
 		it match {
 			case Wildcard		=> "*"
-			case EntityTags(x)	=> x.toVector map ETagValue.unparse mkString ","
+			case EntityTags(x)	=> x.toVector.map(ETagValue.unparse).mkString(",")
 		}
 
 	private object parsers {

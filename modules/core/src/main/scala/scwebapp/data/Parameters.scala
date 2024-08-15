@@ -19,13 +19,13 @@ sealed trait Parameters {
 		get(name).headOption
 
 	def firstInt(name:String):Option[Int]	=
-		firstString(name) flatMap { _.toIntOption }
+		firstString(name).flatMap(_.toIntOption)
 
 	def firstLong(name:String):Option[Long]	=
-		firstString(name) flatMap { _.toLongOption }
+		firstString(name).flatMap(_.toLongOption)
 
 	def firstDate(name:String):Option[HttpDate]	=
-		firstString(name) flatMap HttpDate.parse
+		firstString(name).flatMap(HttpDate.parse)
 }
 
 //------------------------------------------------------------------------------
@@ -51,10 +51,10 @@ final class CaseParameters(values:Seq[(String,String)]) extends Parameters {
 		values
 
 	def names:Set[String]	=
-		(values map { _._1 }).toSet
+		values.map(_._1).toSet
 
 	def get(name:String):Seq[String]	=
-		values collect	{ case (`name`, value) => value }
+		values.collect	{ case (`name`, value) => value }
 
 	def append(name:String, value:String):CaseParameters	=
 		new CaseParameters(values :+ (name -> value))
@@ -66,7 +66,7 @@ final class CaseParameters(values:Seq[(String,String)]) extends Parameters {
 		}
 
 	override def toString:String	=
-		"CaseParameters(" + (values map { case (k, v) => k + "=" + v } mkString ", ") + ")"
+		"CaseParameters(" + values.map{ (k, v) => k + "=" + v }.mkString(", ") + ")"
 }
 
 //------------------------------------------------------------------------------
@@ -81,13 +81,13 @@ object NoCaseParameters {
 /** case insensitive */
 final class NoCaseParameters(values:Seq[(String,String)]) extends Parameters {
 	def all:Seq[(String,String)]	=
-		values map { case (k,v) => (CaseUtil.lowerCase(k), v) }
+		values.map { (k,v) => (CaseUtil.lowerCase(k), v) }
 
 	def names:Set[String]	=
-		(values map { it => CaseUtil.lowerCase(it._1) }).toSet
+		values.map{ it => CaseUtil.lowerCase(it._1) }.toSet
 
 	def get(name:String):Seq[String]	=
-		values collect	{
+		values.collect	{
 			case (k, v) if (CaseUtil.lowerCase(k)) == (CaseUtil.lowerCase(name))	=> v
 		}
 
@@ -101,5 +101,5 @@ final class NoCaseParameters(values:Seq[(String,String)]) extends Parameters {
 		}
 
 	override def toString:String	=
-		"NoCaseParameters(" + (values map { case (k, v) => k + "=" + v } mkString ", ") + ")"
+		"NoCaseParameters(" + values.map { (k, v) => k + "=" + v }.mkString(", ") + ")"
 }

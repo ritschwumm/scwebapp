@@ -35,7 +35,7 @@ object HttpUnparsers {
 	def quotedString(s:String):String	=
 		"\"" +
 		(
-			s flatMap {
+			s.flatMap {
 				case '"'	=> "\\\""
 				case '\\'	=> "\\\\"
 				case '\r'	=> "\\\r"

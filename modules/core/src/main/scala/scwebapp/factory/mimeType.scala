@@ -22,7 +22,7 @@ object mimeType {
 
 	def text(minor:String, charset:Option[Charset]):MimeType	=
 		MimeType("text", minor,
-			NoCaseParameters(charset.toVector map { it =>
+			NoCaseParameters(charset.toVector.map { it =>
 				("charset" -> it.name)
 			})
 		)
