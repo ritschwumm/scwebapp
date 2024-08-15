@@ -14,7 +14,7 @@ object ServerConfig {
 			host		= None,
 			port		= InetPort(8080),
 			path		= ContextPath("/"),
-			idleTimeout	= 30000.millis
+			idleTimeout	= 30000.duration.millis
 		)
 }
 
