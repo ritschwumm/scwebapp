@@ -64,6 +64,12 @@ private final class HttpRequestAdapter(peer:HttpServletRequest) extends HttpRequ
 	//------------------------------------------------------------------------------
 	//## content
 
+	def body:HttpInput	=
+		new HttpInput {
+			def withInputStream[T](handler:InputStream=>T):T	=
+				peer.getInputStream.use(handler)
+		}
+
 	@SuppressWarnings(Array("org.wartremover.warts.AsInstanceOf"))
 	def parameters:CaseParameters	=
 		CaseParameters(
@@ -73,12 +79,6 @@ private final class HttpRequestAdapter(peer:HttpServletRequest) extends HttpRequ
 			}
 			yield name -> value
 		)
-
-	def body:HttpInput	=
-		new HttpInput {
-			def withInputStream[T](handler:InputStream=>T):T	=
-				peer.getInputStream.use(handler)
-		}
 
 	def parts:Either[HttpPartsProblem,Seq[HttpPart]]	=
 		catchHttpPartsProblem(peer.getParts.asScala.toVector).map(_.map(new HttpPartImpl(_)))
