@@ -58,7 +58,7 @@ object HttpOutput {
 				@tailrec
 				def loop(todo:Long):Unit	= {
 					if (todo != 0) {
-						val read	= input.read(buffer, 0, todo.min(buffer.length).toInt)
+						val read	= input.read(buffer, 0, todo.min(buffer.length.toLong).toInt)
 						if (read >= 0) {
 							ost.write(buffer, 0, read)
 							loop(todo - read)
