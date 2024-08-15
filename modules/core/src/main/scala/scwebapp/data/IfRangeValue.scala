@@ -8,17 +8,17 @@ object IfRangeValue {
 
 	def unparse(it:IfRangeValue):String	=
 		it match {
-			case IsHttpDate(x)	=> HttpDate unparse x
-			case EntityTag(x)	=> ETagValue unparse x
+			case IsHttpDate(x)	=> HttpDate.unparse(x)
+			case EntityTag(x)	=> ETagValue.unparse(x)
 		}
 
 	private object parsers {
 		import HttpParsers.*
 
-		val date:TextParser[IfRangeValue]		= dateValue map IsHttpDate.apply
-		val etag:TextParser[IfRangeValue]		= ETagValue.parser map EntityTag.apply
+		val date:TextParser[IfRangeValue]		= dateValue.map(IsHttpDate.apply)
+		val etag:TextParser[IfRangeValue]		= ETagValue.parser.map(EntityTag.apply)
 
-		val value:TextParser[IfRangeValue]	= date orElse etag
+		val value:TextParser[IfRangeValue]	= date.orElse(etag)
 	}
 }
 

@@ -12,13 +12,13 @@ object IfModifiedSince extends HeaderType[IfModifiedSince] {
 		parsers.finished.parseString(it).toOption
 
 	def unparse(it:IfModifiedSince):String	=
-		HttpDate unparse it.value
+		HttpDate.unparse(it.value)
 
 	private object parsers {
 		import HttpParsers.*
 
-		val value:TextParser[IfModifiedSince]		= dateValue map IfModifiedSince.apply
-		val finished:TextParser[IfModifiedSince]	= value finishRight LWSP
+		val value:TextParser[IfModifiedSince]		= dateValue.map(IfModifiedSince.apply)
+		val finished:TextParser[IfModifiedSince]	= value.finishRight(LWSP)
 	}
 }
 

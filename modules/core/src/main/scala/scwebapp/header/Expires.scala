@@ -12,13 +12,13 @@ object Expires extends HeaderType[Expires] {
 		parsers.finished.parseString(it).toOption
 
 	def unparse(it:Expires):String	=
-		HttpDate unparse it.value
+		HttpDate.unparse(it.value)
 
 	private object parsers {
 		import HttpParsers.*
 
-		val value:TextParser[Expires]		= dateValue map Expires.apply
-		val finished:TextParser[Expires]	= value finishRight LWSP
+		val value:TextParser[Expires]		= dateValue.map(Expires.apply)
+		val finished:TextParser[Expires]	= value.finishRight(LWSP)
 	}
 }
 

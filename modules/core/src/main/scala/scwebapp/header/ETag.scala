@@ -12,13 +12,13 @@ object ETag extends HeaderType[ETag] {
 		parsers.finished.parseString(it).toOption
 
 	def unparse(it:ETag):String	=
-		ETagValue unparse it.value
+		ETagValue.unparse(it.value)
 
 	private object parsers {
 		import HttpParsers.*
 
-		val value:TextParser[ETag]		= ETagValue.parser map ETag.apply
-		val finished:TextParser[ETag]	= value finishRight LWSP
+		val value:TextParser[ETag]		= ETagValue.parser.map(ETag.apply)
+		val finished:TextParser[ETag]	= value.finishRight(LWSP)
 	}
 }
 

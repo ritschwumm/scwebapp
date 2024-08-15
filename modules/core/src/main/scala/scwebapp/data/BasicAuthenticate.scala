@@ -11,7 +11,7 @@ object BasicAuthenticate {
 
 	def unparse(it:BasicAuthenticate):String	= {
 		val parameters	= Vector("realm" -> it.realm) ++ it.charset.map("charset" -> _)
-		"Basic " + parameters.map{case (name, value) => show"""$name="$value""""}.mkString(", ")
+		"Basic " + parameters.map{ (name, value) => show"""$name="$value""""}.mkString(", ")
 	}
 
 	private object parsers {
@@ -20,7 +20,7 @@ object BasicAuthenticate {
 		final case class Challenge(name:String, parameters:Seq[(String,String)])
 
 		val simpleParameter:TextParser[(String,String)]	= regParameter map { _._2 }
-		val challenge:TextParser[Challenge]				= token next hash(simpleParameter) map Challenge.apply.tupled
+		val challenge:TextParser[Challenge]				= token.next(hash(simpleParameter)).map(Challenge.apply.tupled)
 		val challengeList:TextParser[Nes[Challenge]]	= hash1(challenge)
 
 		// TODO handle more challenge kinds
@@ -35,7 +35,7 @@ object BasicAuthenticate {
 			}
 
 		val value:TextParser[BasicAuthenticate]	=
-			challengeList mapFilter findBasicRealm named "basic realm"
+			challengeList.mapFilter(findBasicRealm).named("basic realm")
 	}
 }
 

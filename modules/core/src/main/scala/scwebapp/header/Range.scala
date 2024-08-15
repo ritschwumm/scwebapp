@@ -23,14 +23,14 @@ object Range extends HeaderType[Range] {
 
 		val bytesUnit:TextParser[String]				= symbolN(RangeType.keys.bytes)
 		val byteRangeSet:TextParser[Nes[RangePattern]]	= hash1(RangePattern.parser)
-		val rangePatterns:TextParser[Nes[RangePattern]]	= bytesUnit right symbol('=') right byteRangeSet
+		val rangePatterns:TextParser[Nes[RangePattern]]	= bytesUnit.right(symbol('=')).right(byteRangeSet)
 
-		val value:TextParser[Range]		= rangePatterns map Range.apply
-		val finished:TextParser[Range]	= value finishRight LWSP
+		val value:TextParser[Range]		= rangePatterns.map(Range.apply)
+		val finished:TextParser[Range]	= value.finishRight(LWSP)
 	}
 }
 
 final case class Range(patterns:Nes[RangePattern]) {
 	def inclusiveRanges(total:Long):Seq[InclusiveRange]	=
-		patterns.toVector mapFilter { _ toInclusiveRange total }
+		patterns.toVector.mapFilter(_.toInclusiveRange(total))
 }

@@ -12,6 +12,6 @@ object MultipartUtil {
 	def multipartBoundary():String	=
 		random.string(
 			multipartChars,
-			30 + (random nextInt 10)
+			30 + random.nextInt(10)
 		)
 }

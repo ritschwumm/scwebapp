@@ -10,9 +10,9 @@ object AcceptanceUtil {
 		matches
 		.mapFilter(extract)
 		// get the highest rank
-		.groupBy	{ case (level, qvalue)	=> level 	}
+		.groupBy	{ (level, _)	=> level	}
 		.toVector
-		.sortBy		{ case (level, pairs)	=> level	}
+		.sortBy		{ (level, _)	=> level	}
 		.lastOption
 		.map(
 			// find maximum QValue in the highest rank

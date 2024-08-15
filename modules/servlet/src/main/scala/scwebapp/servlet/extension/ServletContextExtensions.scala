@@ -1,6 +1,6 @@
 package scwebapp.servlet.extension
 
-import java.util.{ Set=>JSet }
+import java.util.{ Set as JSet }
 
 import jakarta.servlet.*
 
@@ -22,25 +22,25 @@ object ServletContextExtensions {
 		):ServletRegistration.Dynamic	= {
 			val servlet	= new HttpHandlerServlet(handler)
 			val dynamic	= peer.addServlet(name, servlet)
-			dynamic.addMapping(mappings:_*)
+			dynamic.addMapping(mappings*)
 			loadOnStartup	foreach dynamic.setLoadOnStartup
 			multipartConfig	foreach dynamic.setMultipartConfig
-			dynamic	setAsyncSupported true
+			dynamic.setAsyncSupported(true)
 			dynamic
 		}
 
 		def mimeTypeFor(path:String):Option[MimeType]	=
-			Option(peer getMimeType path) flatMap MimeType.parse
+			Option(peer.getMimeType(path)).flatMap(MimeType.parse)
 
 		def realPath(path:String):Option[String]	=
-			Option(peer getRealPath path)
+			Option(peer.getRealPath(path))
 
 		def resource(path:String):Option[ClasspathResource]	=
-			Option(peer getResource path) map (new ClasspathResource(_))
+			Option(peer.getResource(path)).map(new ClasspathResource(_))
 
 		@SuppressWarnings(Array("org.wartremover.warts.AsInstanceOf"))
 		def resourcePaths(base:String):Option[Set[String]]	=
-			Option(peer getResourcePaths base) map { _.asInstanceOf[JSet[String]].toSet }
+			Option(peer.getResourcePaths(base)).map(_.asInstanceOf[JSet[String]].toSet)
 
 		def attribute[T<:AnyRef](name:String):HttpAttribute[T]	=
 			new HttpAttribute[T](

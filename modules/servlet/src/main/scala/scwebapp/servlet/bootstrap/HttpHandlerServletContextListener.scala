@@ -11,7 +11,7 @@ import scwebapp.servlet.extensions.*
 trait HttpHandlerServletContextListener extends BootstrapServletContextListener {
 	protected final def application(sc:ServletContext):IoResource[Unit]	=
 		for {
-			handler	<-	httpHandler(sc.initParameters firstString _)
+			handler	<-	httpHandler(sc.initParameters.firstString)
 			_		<-	IoResource delay {
 							sc.mount(
 								name			= "HttpHandlerServlet",

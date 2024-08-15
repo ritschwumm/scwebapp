@@ -18,8 +18,8 @@ object Accept extends HeaderType[Accept] {
 	private object parsers {
 		import HttpParsers.*
 
-		val value:TextParser[Accept]	= hash(MediaRange.parser) map Accept.apply
-		val finished:TextParser[Accept]	= value finishRight LWSP
+		val value:TextParser[Accept]	= hash(MediaRange.parser).map(Accept.apply)
+		val finished:TextParser[Accept]	= value.finishRight(LWSP)
 	}
 }
 
@@ -28,5 +28,5 @@ final case class Accept(ranges:Seq[MediaRange]) {
 		acceptance(typ) > QValue.zero
 
 	def acceptance(typ:MimeType):QValue	=
-		(AcceptanceUtil acceptance ranges)(_ acceptance typ) getOrElse QValue.one
+		AcceptanceUtil.acceptance(ranges)(_.acceptance(typ)).getOrElse(QValue.one)
 }

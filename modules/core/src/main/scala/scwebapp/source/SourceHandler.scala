@@ -30,7 +30,7 @@ object SourceHandler {
 		val contentType		= source.mimeType
 		val lastModified	= source.lastModified
 		// with URL-encoding we're safe with whitespace and line separators
-		val eTag			= ETagValue(false, HttpUnparsers quotedString (URIComponent.utf_8 encode source.contentId))
+		val eTag			= ETagValue(false, HttpUnparsers.quotedString(URIComponent.utf_8.encode(source.contentId)))
 
 		val cacheHeaders:Seq[HeaderValue]	=
 			source.caching match {
@@ -60,20 +60,20 @@ object SourceHandler {
 
 		val requestHeaders	= request.headers
 
-		val accept		= (requestHeaders first Accept).toOption.flatten
-		val notAccepted	= !(accept forall { _ accepts contentType })
+		val accept		= requestHeaders.first(Accept).toOption.flatten
+		val notAccepted	= !accept.forall(_.accepts(contentType))
 		if (notAccepted) {
 			return HttpResponse(
 				NOT_ACCEPTABLE,	None
 			)
 		}
 
-		val ifNoneMatch		= (requestHeaders first IfNoneMatch).toOption.flatten
-		val ifModifiedSince	= (requestHeaders first IfModifiedSince).toOption.flatten
+		val ifNoneMatch		= requestHeaders.first(IfNoneMatch).toOption.flatten
+		val ifModifiedSince	= requestHeaders.first(IfModifiedSince).toOption.flatten
 		val notModified		=
 			ifNoneMatch.cata(
-				(ifModifiedSince	exists { it => (it wasModified lastModified) }),
-				it => (it matches eTag)
+				ifModifiedSince.exists{ it => it.wasModified(lastModified) },
+				it => it.matches(eTag)
 			)
 		if (notModified) {
 			return HttpResponse(
@@ -86,11 +86,11 @@ object SourceHandler {
 			)
 		}
 
-		val ifMatch				= (requestHeaders first IfMatch).toOption.flatten
-		val ifUnmodifiedSince	= (requestHeaders first IfUnmodifiedSince).toOption.flatten
+		val ifMatch				= requestHeaders.first(IfMatch).toOption.flatten
+		val ifUnmodifiedSince	= requestHeaders.first(IfUnmodifiedSince).toOption.flatten
 		val preconditionFailed	=
 			ifMatch.cata (
-				ifUnmodifiedSince	exists { it => !(it wasModified lastModified) },
+				ifUnmodifiedSince	exists { it => !it.wasModified(lastModified) },
 				it => !it.matches(eTag)
 			)
 		if (preconditionFailed) {
@@ -98,25 +98,25 @@ object SourceHandler {
 		}
 
 		val needsFull	=
-			requestHeaders first IfRange match {
+			requestHeaders.first(IfRange) match {
 				case Left(_)		=> true
 				case Right(None)	=> false
 				case Right(Some(x))	=> x.needsFull(eTag, lastModified)
 			}
 
 		val total		= source.size
-		val range		= requestHeaders first Range
-		val rangesRaw	= range map { _ map { _ inclusiveRanges total } }
+		val range		= requestHeaders.first(Range)
+		val rangesRaw	= range.map(_.map(_.inclusiveRanges(total)))
 
 		// TODO should we fail when needsFull but range headers are invalid?
-		val full:InclusiveRange			= InclusiveRange full total
+		val full:InclusiveRange			= InclusiveRange.full(total)
 		val ranges:Seq[InclusiveRange]	=
 			(needsFull, rangesRaw) match {
 				case (true,		_)											=> Vector(full)
 				case (false,	Right(None))								=> Vector(full)
 				case (false,	Right(Some(ranges)))	if ranges.nonEmpty	=> ranges
 				case _	=>
-					val outRange	= ContentRangeValue total source.size
+					val outRange	= ContentRangeValue.total(source.size)
 					return HttpResponse(
 						REQUESTED_RANGE_NOT_SATISFIABLE,	None,
 						Vector(
@@ -125,16 +125,18 @@ object SourceHandler {
 					)
 			}
 
-		val acceptEncoding		= (requestHeaders first AcceptEncoding).toOption.flatten
+		val acceptEncoding		= requestHeaders.first(AcceptEncoding).toOption.flatten
 		val acceptsGzip:Boolean	=
 			source.enableGZIP &&
-			(acceptEncoding exists { _ accepts AcceptEncodingType.Other(ContentEncodingType.Gzip) })
+			acceptEncoding.exists(_.accepts(AcceptEncodingType.Other(ContentEncodingType.Gzip)))
 
 		val contentDisposition:Option[HeaderValue]		=
 			source.disposition map { case SourceDisposition(attachment, fileName) =>
-				HeaderValue fromHeader ContentDisposition(
-					attachment.cata[ContentDispositionType](ContentDispositionType.Inline, ContentDispositionType.Attachment),
-					fileName
+				HeaderValue.fromHeader(
+					ContentDisposition(
+						attachment.cata[ContentDispositionType](ContentDispositionType.Inline, ContentDispositionType.Attachment),
+						fileName
+					)
 				)
 			}
 
@@ -164,9 +166,9 @@ object SourceHandler {
 						if (acceptsGzip)		ContentEncoding(ContentEncodingType.Gzip)
 						else					ContentLength(r.length)
 					),
-						 if (!includeContent)	HttpOutput.empty
-					else if (acceptsGzip)		source range r gzip SourceHandler.gzipBufferSize
-					else						source range r
+					if		(!includeContent)	HttpOutput.empty
+					else if (acceptsGzip)		source.range(r).gzip(SourceHandler.gzipBufferSize)
+					else						source.range(r)
 				)
 			case Seq(r)	=>
 				HttpResponse(
@@ -188,8 +190,8 @@ object SourceHandler {
 					crlfOutput(
 						"",
 						show"--${boundary}",
-						ContentType unparse ContentType(contentType),
-						ContentRange unparse ContentRange(r)
+						ContentType.unparse(ContentType(contentType)),
+						ContentRange.unparse(ContentRange(r))
 					)
 
 				def finishOutput:HttpOutput	=

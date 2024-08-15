@@ -19,7 +19,7 @@ object UrlEncoding {
 		decode(formData, urlDecode(encoding))
 
 	private def uriDecode(encoding:Charset)(queryString:String):Either[String,String]	=
-		URIComponent forCharset encoding decode queryString leftMap {
+		URIComponent.forCharset(encoding).decode(queryString).leftMap {
 			case URIComponentProblem.Invalid(position)		=> show"invalid uri encoding at position ${position}"
 			case URIComponentProblem.Exception(underlying)	=> show"invalid character encoding: ${underlying.getMessage}"
 		}
@@ -39,12 +39,12 @@ object UrlEncoding {
 					data
 					.splitAroundChar ('&')
 					.map { part =>
-						part splitAroundFirstChar '=' match {
-							case Some((key, value))	=> decode(key) zip decode(value)
-							case None				=> decode(part) map (_ -> "")
+						part.splitAroundFirstChar('=') match {
+							case Some((key, value))	=> decode(key) `zip` decode(value)
+							case None				=> decode(part).map (_ -> "")
 						}
 					}
 
-			triedPairs.sequenceEither map CaseParameters.apply
+			triedPairs.sequenceEither.map(CaseParameters.apply)
 		}
 }

@@ -1,5 +1,7 @@
 package scwebapp.data
 
+import scala.compiletime.asMatchable
+
 import java.util.{ Enumeration as JEnumeration }
 
 import scutil.jdk.implicits.*
@@ -58,7 +60,7 @@ final class CaseParameters(values:Seq[(String,String)]) extends Parameters {
 		new CaseParameters(values :+ (name -> value))
 
 	override def equals(that:Any):Boolean	=
-		that match {
+		that.asMatchable match {
 			case x:CaseParameters	=> this.all == x.all
 			case _					=> false
 		}
@@ -79,21 +81,21 @@ object NoCaseParameters {
 /** case insensitive */
 final class NoCaseParameters(values:Seq[(String,String)]) extends Parameters {
 	def all:Seq[(String,String)]	=
-		values map { case (k,v) => (CaseUtil lowerCase k, v) }
+		values map { case (k,v) => (CaseUtil.lowerCase(k), v) }
 
 	def names:Set[String]	=
-		(values map { it => CaseUtil lowerCase it._1 }).toSet
+		(values map { it => CaseUtil.lowerCase(it._1) }).toSet
 
 	def get(name:String):Seq[String]	=
 		values collect	{
-			case (k, v) if (CaseUtil lowerCase k) == (CaseUtil lowerCase name)	=> v
+			case (k, v) if (CaseUtil.lowerCase(k)) == (CaseUtil.lowerCase(name))	=> v
 		}
 
 	def append(name:String, value:String):NoCaseParameters	=
 		new NoCaseParameters(values :+ (name -> value))
 
 	override def equals(that:Any):Boolean	=
-		that match {
+		that.asMatchable match {
 			case x:NoCaseParameters	=> this.all == x.all
 			case _					=> false
 		}

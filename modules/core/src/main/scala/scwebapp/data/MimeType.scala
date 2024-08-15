@@ -21,27 +21,27 @@ object MimeType {
 
 	def unparse(it:MimeType):String	=
 		it.major + "/" + it.minor +
-		(HttpUnparsers parameterList it.parameters)
+		HttpUnparsers.parameterList(it.parameters)
 
 	private object parsers {
 		import HttpParsers.*
 
 		val major:TextParser[String]			= token
 		val minor:TextParser[String]			= token
-		val typ:TextParser[(String,String)]	= major left symbol('/') next minor
+		val typ:TextParser[(String,String)]	= major.left(symbol('/')).next(minor)
 
 		val value:TextParser[MimeType]	=
-			typ next parameterList map {
+			typ.next(parameterList).map {
 				case ((major, minor), params) => MimeType(major, minor, params)
 			}
 
-		val finished:TextParser[MimeType]	= value finishRight LWSP
+		val finished:TextParser[MimeType]	= value.finishRight(LWSP)
 	}
 }
 
 final case class MimeType(major:String, minor:String, parameters:NoCaseParameters = NoCaseParameters.empty) {
 	def value:String =
-		MimeType unparse this
+		MimeType.unparse(this)
 
 	def addParameter(name:String, value:String):MimeType	=
 		copy(parameters = parameters.append(name, value))
@@ -51,9 +51,9 @@ final case class MimeType(major:String, minor:String, parameters:NoCaseParameter
 		this.minor == that.minor
 
 	def charset:Either[String,Option[Charset]]	=
-		(parameters firstString "charset")
+		parameters.firstString("charset")
 		.map { it =>
-			Charsets byName it leftMap constant(show"invalid charset ${it}")
+			Charsets.byName(it).leftMap(constant(show"invalid charset ${it}"))
 		}
 		.sequenceEither
 }

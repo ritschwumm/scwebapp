@@ -28,7 +28,7 @@ private final class HttpRequestImpl(peer:HttpServletRequest) extends HttpRequest
 	def localPort:Int	= peer.getLocalPort
 
 	def method:Either[String,HttpMethod]	=
-		HttpMethod lookup peer.getMethod toRight peer.getMethod
+		HttpMethod.lookup(peer.getMethod).toRight(peer.getMethod)
 
 	def secure:Boolean	= peer.isSecure
 
@@ -51,7 +51,7 @@ private final class HttpRequestImpl(peer:HttpServletRequest) extends HttpRequest
 			NoCaseParameters(
 				for {
 					name	<- peer.getHeaderNames.asInstanceOf[JEnumeration[String]].asScala.toVector
-					value	<- (peer getHeaders name).asInstanceOf[JEnumeration[String]].asScala
+					value	<- peer.getHeaders(name).asInstanceOf[JEnumeration[String]].asScala
 				}
 				yield name -> value
 			)
@@ -65,7 +65,7 @@ private final class HttpRequestImpl(peer:HttpServletRequest) extends HttpRequest
 		CaseParameters(
 			for {
 				name	<- peer.getParameterNames.asInstanceOf[JEnumeration[String]].asScala.toVector
-				value	<- peer getParameterValues name
+				value	<- peer.getParameterValues(name)
 			}
 			yield name -> value
 		)
@@ -73,7 +73,7 @@ private final class HttpRequestImpl(peer:HttpServletRequest) extends HttpRequest
 	def body:HttpInput	=
 		new HttpInput {
 			def withInputStream[T](handler:InputStream=>T):T	=
-					peer.getInputStream use handler
+					peer.getInputStream.use(handler)
 		}
 
 	def parts:Either[HttpPartsProblem,Seq[HttpPart]]	=

@@ -12,13 +12,13 @@ object IfRange extends HeaderType[IfRange] {
 		parsers.finished.parseString(it).toOption
 
 	def unparse(it:IfRange):String	=
-		IfRangeValue unparse it.value
+		IfRangeValue.unparse(it.value)
 
 	private object parsers {
 		import HttpParsers.*
 
-		val value:TextParser[IfRange]		= IfRangeValue.parser map IfRange.apply
-		val finished:TextParser[IfRange]	= value finishRight LWSP
+		val value:TextParser[IfRange]		= IfRangeValue.parser.map(IfRange.apply)
+		val finished:TextParser[IfRange]	= value.finishRight(LWSP)
 	}
 }
 

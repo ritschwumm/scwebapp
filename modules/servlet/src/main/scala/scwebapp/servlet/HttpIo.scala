@@ -20,7 +20,7 @@ object HttpIo {
 				typed[(HttpResponse=>Unit)=>Unit](responseCont)
 
 				val asyncCtx	= servletRequest.startAsync()
-				asyncCtx setTimeout timeout.millis
+				asyncCtx.setTimeout(timeout.millis)
 
 				val alive	= new AtomicBoolean(true)
 
@@ -34,12 +34,14 @@ object HttpIo {
 						asyncCtx.complete()
 					}
 				}
-				asyncCtx addListener new AsyncListener {
-					def onStartAsync(ev:AsyncEvent):Unit	= {}
-					def onComplete(ev:AsyncEvent):Unit		= { alive set false	}
-					def onTimeout(ev:AsyncEvent):Unit		= { completeWith(timeoutResponse())	}
-					def onError(ev:AsyncEvent):Unit			= { completeWith(errorResponse())	}
-				}
+				asyncCtx.addListener(
+						new AsyncListener {
+						def onStartAsync(ev:AsyncEvent):Unit	= {}
+						def onComplete(ev:AsyncEvent):Unit		= { alive.set(false)	}
+						def onTimeout(ev:AsyncEvent):Unit		= { completeWith(timeoutResponse())	}
+						def onError(ev:AsyncEvent):Unit			= { completeWith(errorResponse())	}
+					}
+				)
 				responseCont(completeWith)
 		}
 	}
@@ -57,6 +59,6 @@ object HttpIo {
 			servletResponse.addHeader(k, v)
 		}
 
-		response.body intoOutputStream servletResponse.getOutputStream
+		response.body.intoOutputStream(servletResponse.getOutputStream)
 	}
 }

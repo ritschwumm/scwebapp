@@ -31,7 +31,7 @@ object HttpParsersTest extends SimpleTestSuite {
 	test("star parameters should parse a star parameter's bytes") {
 		assertEquals(
 			HttpParsers.valueCharBytes.parseString("t%c3%a4st").toOption map { _.toVector },
-			Some(("täst" getBytes "utf-8").toVector)
+			Some("täst".getBytes("utf-8").toVector)
 		)
 	}
 

@@ -22,7 +22,7 @@ private final class HttpPartImpl(peer:Part) extends HttpPart {
 			NoCaseParameters(
 				for {
 					name	<- peer.getHeaderNames.asInstanceOf[JCollection[String]].asScala.toVector
-					value	<- (peer getHeaders name).asInstanceOf[JCollection[String]].asScala
+					value	<- peer.getHeaders(name).asInstanceOf[JCollection[String]].asScala
 				}
 				yield name	-> value
 			)
@@ -30,6 +30,6 @@ private final class HttpPartImpl(peer:Part) extends HttpPart {
 
 	def body:HttpInput	=
 		new HttpInput {
-			def withInputStream[T](handler:InputStream=>T):T	= peer.getInputStream use handler
+			def withInputStream[T](handler:InputStream=>T):T	= peer.getInputStream.use(handler)
 		}
 }

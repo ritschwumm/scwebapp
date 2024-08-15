@@ -6,7 +6,7 @@ import scwebapp.data.*
 
 object HttpUnparsers {
 	def qParam(it:QValue):String	=
-		"q=" + (QValue unparse it)
+		"q=" + QValue.unparse(it)
 
 	def qParamPart(it:Option[QValue]):String	=
 		it.cata(
@@ -21,8 +21,8 @@ object HttpUnparsers {
 
 	def parameters(it:Parameters):String	=
 		it.all
-		.map { case (k, v)	=> k + "=" + value(v) }
-		.mkString	(";")
+		.map{ (k, v)	=> k + "=" + value(v) }
+		.mkString(";")
 
 	//------------------------------------------------------------------------------
 
@@ -46,10 +46,10 @@ object HttpUnparsers {
 		"\""
 
 	def quoteStar_UTF8(s:String):String	=
-		"UTF-8''" + (s getBytes "UTF-8" map quoteStar1 mkString "")
+		"UTF-8''" + s.getBytes("UTF-8").map(quoteStar1).mkString("")
 
 	def quoteStar_ISO_8859_1(s:String):String	=
-		"ISO-8859-1''" + (s getBytes "ISO-8859-1" map quoteStar1 mkString "")
+		"ISO-8859-1''" + s.getBytes("ISO-8859-1").map(quoteStar1).mkString("")
 
 	private def quoteStar1(c:Byte):String	=
 		c match {

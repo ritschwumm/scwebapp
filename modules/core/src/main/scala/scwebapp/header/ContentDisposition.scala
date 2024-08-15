@@ -15,9 +15,9 @@ object ContentDisposition extends HeaderType[ContentDisposition] {
 
 	def unparse(it:ContentDisposition):String	= {
 		// TODO filter out bad characters in value
-		val typ				= ContentDispositionType unparse it.typ
-		val fileName		= it.fileName 	map { it => show"filename=${HttpUnparsers value it}"	}
-		val fileNameStar	= it.fileName	map { it => show"filename*=${HttpUnparsers quoteStar_UTF8 it}"	}
+		val typ				= ContentDispositionType.unparse(it.typ)
+		val fileName		= it.fileName 	map { it => show"filename=${HttpUnparsers.value(it)}"	}
+		val fileNameStar	= it.fileName	map { it => show"filename*=${HttpUnparsers.quoteStar_UTF8(it)}"	}
 		val parts			= Vector(typ) ++ fileName.toVector ++ fileNameStar.toVector
 		parts mkString ";"
 	}
@@ -27,12 +27,12 @@ object ContentDisposition extends HeaderType[ContentDisposition] {
 
 		// TODO handle *filename
 		val value:TextParser[ContentDisposition]	=
-			ContentDispositionType.parser next parameterList map { case (kind, params)	=>
-				val filename	= params firstString "filename"
+			ContentDispositionType.parser.next(parameterList).map { (kind, params)	=>
+				val filename	= params.firstString("filename")
 				ContentDisposition(kind, filename)
 			}
 
-		val finished:TextParser[ContentDisposition]	= value finishRight LWSP
+		val finished:TextParser[ContentDisposition]	= value.finishRight(LWSP)
 	}
 }
 

@@ -22,9 +22,9 @@ object HttpOutput {
 		withOutputStream(constant(()))
 
 	def combineAll(its:Iterable[HttpOutput]):HttpOutput	=
-		(its foldLeft empty)(_ combine _)
+		(its foldLeft empty)(_ `combine` _)
 
-	given Monoid[HttpOutput]	= Monoid.instance(empty, _ combine _)
+	given Monoid[HttpOutput]	= Monoid.instance(empty, _ `combine` _)
 
 	//------------------------------------------------------------------------------
 
@@ -46,7 +46,7 @@ object HttpOutput {
 	def writeFile(data:Path):HttpOutput	=
 		withOutputStream { ost =>
 			MoreFiles.withInputStream(data) { ist =>
-				ist transferToPre9 ost
+				ist.transferToPre9(ost)
 			}
 		}
 
@@ -54,11 +54,11 @@ object HttpOutput {
 		withOutputStream { ost =>
 			new RandomAccessFile(data.toFile, "r") use { input =>
 				val buffer	= new Array[Byte](bufferSize)
-				input seek range.start
+				input.seek(range.start)
 				@tailrec
 				def loop(todo:Long):Unit	= {
 					if (todo != 0) {
-						val read	= input.read(buffer, 0, (todo min buffer.length).toInt)
+						val read	= input.read(buffer, 0, todo.min(buffer.length).toInt)
 						if (read >= 0) {
 							ost.write(buffer, 0, read)
 							loop(todo - read)
@@ -72,7 +72,7 @@ object HttpOutput {
 	def pipeInputStream(data:Thunk[InputStream]):HttpOutput	=
 		withOutputStream { ost =>
 			data() use { ist =>
-				ist transferToPre9 ost
+				ist.transferToPre9(ost)
 			}
 		}
 
@@ -86,12 +86,12 @@ object HttpOutput {
 		}
 
 	def writeString(encoding:Charset, data:String):HttpOutput	=
-		withWriter(encoding)(_ write data)
+		withWriter(encoding)(_.write(data))
 
 	def pipeReader(encoding:Charset, data:Thunk[Reader]):HttpOutput	=
 		withWriter(encoding) { wr =>
 			data() use { rd =>
-				rd transferToPre10 wr
+				rd.transferToPre10(wr)
 			}
 		}
 }
@@ -103,8 +103,8 @@ trait HttpOutput {
 
 	final def combine(that:HttpOutput):HttpOutput	=
 		HttpOutput withOutputStream { ost =>
-			this intoOutputStream ost
-			that intoOutputStream ost
+			this.intoOutputStream(ost)
+			that.intoOutputStream(ost)
 		}
 
 	final def gzip(bufferSize:Int):HttpOutput	=

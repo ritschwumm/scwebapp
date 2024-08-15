@@ -12,13 +12,13 @@ object LastModified extends HeaderType[LastModified] {
 		parsers.finished.parseString(it).toOption
 
 	def unparse(it:LastModified):String	=
-		HttpDate unparse it.value
+		HttpDate.unparse(it.value)
 
 	private object parsers {
 		import HttpParsers.*
 
-		val value:TextParser[LastModified]		= dateValue map LastModified.apply
-		val finished:TextParser[LastModified]	= value finishRight LWSP
+		val value:TextParser[LastModified]		= dateValue.map(LastModified.apply)
+		val finished:TextParser[LastModified]	= value.finishRight(LWSP)
 	}
 }
 

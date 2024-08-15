@@ -12,13 +12,13 @@ object ContentType extends HeaderType[ContentType] {
 		parsers.finished.parseString(it).toOption
 
 	def unparse(it:ContentType):String	=
-		MimeType unparse it.typ
+		MimeType.unparse(it.typ)
 
 	private object parsers {
 		import HttpParsers.*
 
-		val value:TextParser[ContentType]		= MimeType.parser map ContentType.apply
-		val finished:TextParser[ContentType]	= value finishRight LWSP
+		val value:TextParser[ContentType]		= MimeType.parser.map(ContentType.apply)
+		val finished:TextParser[ContentType]	= value.finishRight(LWSP)
 	}
 }
 

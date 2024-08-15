@@ -41,24 +41,24 @@ extends Logging {
 			(
 				for {
 					raw			<-	request.fullPathUTF8.toOption	toRight Some(badRequest)
-					unprefixed	<-	raw cutPrefix "/"				toRight Some(badRequest)
+					unprefixed	<-	raw.cutPrefix("/")				toRight Some(badRequest)
 					aliased		= 	alias get unprefixed getOrElse unprefixed
 					path		<-	parsePath(aliased)				toRight Some(badRequest)
 					source		<-	getSource(path)					toRight None
 				}
-				yield SourceHandler plan source apply request
+				yield SourceHandler.plan(source).apply(request)
 			)
 			.map(Some.apply)
 			.merge
 		}
 
 	private def getSource(path:Path):Option[SourceData]	=
-		if (serverCached(path))	cache fetch path
+		if (serverCached(path))	cache.fetch(path)
 		else					loadSource(path)
 
 	// TODO lastModified should be configurable, maybe
 	private def loadSource(path:Path):Option[SourceData]	=
-		path into resourcePath into readResource map { bytes =>
+		path.into(resourcePath).into(readResource).map { bytes =>
 			val mimeType		= mimeTypeFor(path)
 			SourceData(
 				size			= bytes.size.toLong,
@@ -73,7 +73,7 @@ extends Logging {
 		}
 
 	private def hashString(it:ByteString):String =
-		Hex encodeByteString (
+		Hex.encodeByteString(
 			Hashing.hash("SHA-256", 1, it)
 		)
 
@@ -84,15 +84,15 @@ extends Logging {
 		getClass.getClassLoader.classpathResource(path).map(_.byteString)
 
 	private def parsePath(it:String):Option[Path]	=
-		it splitAroundChar '/' optionBy { _ forall validPart } flatMap Nes.fromSeq
+		it.splitAroundChar('/').optionBy(_.forall(validPart)).flatMap(Nes.fromSeq)
 
 	private def validPart(it:String):Boolean	=
 		it != ""	&&
 		it != ".."	&&
-		(re"[a-zA-Z0-9._-]+" test it)
+		re"[a-zA-Z0-9._-]+".test(it)
 
 	private def mimeTypeFor(it:Path):MimeType	=
-		MimeMapping.default forFileName it.last map fixCharset getOrElse application_octetStream
+		MimeMapping.default.forFileName(it.last).map(fixCharset).getOrElse(application_octetStream)
 
 	private def fixCharset(it:MimeType):MimeType	=
 		doCharset(it).cata(

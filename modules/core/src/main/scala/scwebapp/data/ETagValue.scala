@@ -15,8 +15,8 @@ object ETagValue {
 	private object parsers {
 		import HttpParsers.*
 
-		val weak:TextParser[Boolean]		= symbolN("W/").flag
-		val value:TextParser[ETagValue]	= weak next quotedString map (ETagValue.apply _).tupled
+		val weak:TextParser[Boolean]	= symbolN("W/").flag
+		val value:TextParser[ETagValue]	= weak.next(quotedString).map(ETagValue.apply.tupled)
 	}
 }
 

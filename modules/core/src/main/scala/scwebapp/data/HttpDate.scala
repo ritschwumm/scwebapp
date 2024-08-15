@@ -25,21 +25,21 @@ object HttpDate {
 	def parse(str:String):Option[HttpDate]	=
 		// TODO this sucks
 		synchronized {
-			allFormats collectFirstSome parseDateWith(str)
+			allFormats.collectFirstSome(parseDateWith(str))
 		}
 
 	def unparse(date:HttpDate):String	=
 		synchronized {
-			standardFormat format date.toDate
+			standardFormat.format(date.toDate)
 		}
 
 	//------------------------------------------------------------------------------
 
 	private val gmtZone:TimeZone	=
-		TimeZone getTimeZone "GMT"
+		TimeZone.getTimeZone("GMT")
 
 	private def mkFormat(pattern:String):DateFormat	=
-		new SimpleDateFormat(pattern, Locale.US) doto { _ setTimeZone gmtZone }
+		new SimpleDateFormat(pattern, Locale.US) doto { _.setTimeZone(gmtZone) }
 
 	private val standardFormat:DateFormat =
 		// RFC 822, updated by RFC 1123
@@ -56,7 +56,7 @@ object HttpDate {
 
 	private def parseDateWith(str:String)(format:DateFormat):Option[HttpDate]	=
 		try {
-			Some(HttpDate fromDate (format parse str))
+			Some(HttpDate.fromDate(format.parse(str)))
 		}
 		catch { case e:ParseException =>
 			None
@@ -69,6 +69,6 @@ final case class HttpDate(seconds:Long) extends Ordered[HttpDate] {
 
 	def compare(that:HttpDate):Int	= this.seconds compare that.seconds
 
-	def toDate:Date					= HttpDate toDate			this
-	def toMilliInstant:MilliInstant	= HttpDate toMilliInstant	this
+	def toDate:Date					= HttpDate.toDate(this)
+	def toMilliInstant:MilliInstant	= HttpDate.toMilliInstant(this)
 }

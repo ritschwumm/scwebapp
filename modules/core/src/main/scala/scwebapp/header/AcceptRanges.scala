@@ -12,13 +12,13 @@ object AcceptRanges extends HeaderType[AcceptRanges] {
 		parsers.finished.parseString(it).toOption
 
 	def unparse(it:AcceptRanges):String	=
-		RangeType unparse it.rangeType
+		RangeType.unparse(it.rangeType)
 
 	private object parsers {
 		import HttpParsers.*
 
-		val value:TextParser[AcceptRanges]		= RangeType.parser map AcceptRanges.apply
-		val finished:TextParser[AcceptRanges]	= value finishRight LWSP
+		val value:TextParser[AcceptRanges]		= RangeType.parser.map(AcceptRanges.apply)
+		val finished:TextParser[AcceptRanges]	= value.finishRight(LWSP)
 	}
 }
 

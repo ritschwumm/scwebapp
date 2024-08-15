@@ -16,8 +16,8 @@ object ContentLength extends HeaderType[ContentLength] {
 	private object parsers {
 		import HttpParsers.*
 
-		val value:TextParser[ContentLength]		= longUnsigned eatLeft LWSP map ContentLength.apply
-		val finished:TextParser[ContentLength]	= value finishRight LWSP
+		val value:TextParser[ContentLength]		= longUnsigned.eatLeft(LWSP).map(ContentLength.apply)
+		val finished:TextParser[ContentLength]	= value.finishRight(LWSP)
 	}
 }
 

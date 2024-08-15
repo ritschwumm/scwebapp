@@ -26,21 +26,21 @@ object ContentRangeValue {
 	private object parsers {
 		import HttpParsers.*
 
-		val STAR	= TextParser is '*'
-		val DASH	= TextParser is '-'
-		val SLASH	= TextParser is '/'
+		val STAR	= TextParser.is('*')
+		val DASH	= TextParser.is('-')
+		val SLASH	= TextParser.is('/')
 
 		val irange:TextParser[InclusiveRange]	=
-			longUnsigned left DASH next longUnsigned map { case (s, e) =>
+			longUnsigned.left(DASH).next(longUnsigned).map { (s, e) =>
 				InclusiveRange(s, e)
 			}
 
-		val full:TextParser[ContentRangeValue]			= irange left SLASH next longUnsigned map Full.apply.tupled
-		val fromTo:TextParser[ContentRangeValue]		= irange left SLASH left STAR map Bare.apply
-		val total:TextParser[ContentRangeValue]			= STAR right longUnsigned map Total.apply
-		val rangeValue:TextParser[ContentRangeValue]	= full orElse fromTo orElse total
+		val full:TextParser[ContentRangeValue]			= irange.left(SLASH).next(longUnsigned).map(Full.apply.tupled)
+		val fromTo:TextParser[ContentRangeValue]		= irange.left(SLASH).left(STAR).map(Bare.apply)
+		val total:TextParser[ContentRangeValue]			= STAR.right(longUnsigned).map(Total.apply)
+		val rangeValue:TextParser[ContentRangeValue]	= full.orElse(fromTo).orElse(total)
 
-		val value:TextParser[ContentRangeValue]		= symbolN(RangeType.keys.bytes) right rangeValue
+		val value:TextParser[ContentRangeValue]		= symbolN(RangeType.keys.bytes).right(rangeValue)
 	}
 }
 

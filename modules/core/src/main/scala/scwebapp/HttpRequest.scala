@@ -53,16 +53,16 @@ trait HttpRequest {
 
 	/** the full path after the context path, not yet url-decoded */
 	final def fullPathRaw:String	=
-		uri	cutPrefix contextPath getOrError show"expected uri ${uri} to start with context path ${contextPath}"
+		uri.cutPrefix(contextPath).getOrError(show"expected uri ${uri} to start with context path ${contextPath}")
 
 	final def pathInfoRaw:String	=
-		fullPathRaw	cutPrefix servletPath getOrError show"expected uri ${uri} to start with context path ${contextPath} and servlet path ${servletPath}"
+		fullPathRaw.cutPrefix(servletPath).getOrError(show"expected uri ${uri} to start with context path ${contextPath} and servlet path ${servletPath}")
 
 	final def fullPath(encoding:Charset):Either[URIComponentProblem,String]	=
-		URIComponent forCharset encoding decode fullPathRaw
+		URIComponent.forCharset(encoding).decode(fullPathRaw)
 
 	final def pathInfo(encoding:Charset):Either[URIComponentProblem,String]	=
-		URIComponent forCharset encoding decode pathInfoRaw
+		URIComponent.forCharset(encoding).decode(pathInfoRaw)
 
 	final def fullPathUTF8:Either[URIComponentProblem,String]	=
 		fullPath(Charsets.utf_8)
@@ -88,11 +88,11 @@ trait HttpRequest {
 
 	final def formParameters(defaultEncoding:Charset):Either[String,CaseParameters]	=
 		for {
-			contentType	<- (headers first ContentType):Either[String,Option[ContentType]]
-			mime		<- contentType map { _.typ }						toRight		show"missing content type"
-			_			<- mime sameMajorAndMinor mimeType.application_form	guardEither	show"unexpected content type ${mime.value}"
+			contentType	<- headers.first(ContentType):Either[String,Option[ContentType]]
+			mime		<- contentType.map(_.typ)								.toRight(show"missing content type")
+			_			<- mime.sameMajorAndMinor(mimeType.application_form)	.guardEither(show"unexpected content type ${mime.value}")
 			encodingOpt	<- mime.charset
-			string		= body readString Charsets.us_ascii
+			string		= body.readString(Charsets.us_ascii)
 			encoding	= encodingOpt getOrElse defaultEncoding
 			params		<- UrlEncoding.parseForm(string, encoding)
 		}

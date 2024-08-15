@@ -25,7 +25,7 @@ object Configurator extends Logging {
 		source(prop.key).cata[State[C,Note]](
 			State { s => (s, Note.Default(prop.key, s.toString)) },
 			raw => prop.mod(raw).cata[State[C,Note]](
-				error	=> State { s => (s, 		Note.Error(prop.key, raw.toString, error)) },
+				error	=> State { s => (s,			Note.Error(prop.key, raw.toString, error)) },
 				change	=> State { s => (change(s),	Note.Change(prop.key, if (prop.visible) raw.toString else "<redacted>")) }
 			)
 		)

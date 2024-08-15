@@ -9,20 +9,20 @@ object AcceptEncodingType {
 	def unparse(it:AcceptEncodingType):String	=
 		it match {
 			case Identity	=> "identity"
-			case Other(x)	=> ContentEncodingType unparse x
+			case Other(x)	=> ContentEncodingType.unparse(x)
 		}
 
 	private object parsers {
 		import HttpParsers.*
 
 		val identity:TextParser[AcceptEncodingType]	=
-			token map CaseUtil.lowerCase filter (_ == "identity") named "identity \"identity\"" tag Identity
+			token.map(CaseUtil.lowerCase).filter(_ == "identity").named("identity \"identity\"").tag(Identity)
 
 		val other:TextParser[AcceptEncodingType]	=
-			ContentEncodingType.parser map Other.apply
+			ContentEncodingType.parser.map(Other.apply)
 
 		val value:TextParser[AcceptEncodingType]	=
-			identity orElse other
+			identity.orElse(other)
 	}
 }
 

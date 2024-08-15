@@ -21,11 +21,11 @@ object MediaPattern {
 		val major:TextParser[String]	= token
 		val minor:TextParser[String]	= token
 
-		val wildWild:TextParser[MediaPattern]		= symbolN("*/*") tag WildWild
-		val typeWild:TextParser[MediaPattern]		= major left symbol('/') left symbol('*') map TypeWild.apply
-		val typeSubtype:TextParser[MediaPattern]	= major left symbol('/') next minor map TypeSubtype.apply.tupled
+		val wildWild:TextParser[MediaPattern]		= symbolN("*/*").tag(WildWild)
+		val typeWild:TextParser[MediaPattern]		= major.left(symbol('/')).left(symbol('*')).map(TypeWild.apply)
+		val typeSubtype:TextParser[MediaPattern]	= major.left(symbol('/')).next(minor).map(TypeSubtype.apply.tupled)
 
-		val value:TextParser[MediaPattern]			= wildWild orElse typeWild orElse typeSubtype eatLeft LWSP
+		val value:TextParser[MediaPattern]			= wildWild.orElse(typeWild).orElse(typeSubtype).eatLeft(LWSP)
 	}
 }
 

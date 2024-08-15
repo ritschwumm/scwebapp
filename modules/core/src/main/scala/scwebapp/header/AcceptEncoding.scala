@@ -20,8 +20,8 @@ object AcceptEncoding extends HeaderType[AcceptEncoding] {
 	object parsers {
 		import HttpParsers.*
 
-		val value:TextParser[AcceptEncoding]	= hash(AcceptEncodingMatch.parser) map AcceptEncoding.apply
-		val finished:TextParser[AcceptEncoding]	= value finishRight LWSP
+		val value:TextParser[AcceptEncoding]	= hash(AcceptEncodingMatch.parser).map(AcceptEncoding.apply)
+		val finished:TextParser[AcceptEncoding]	= value.finishRight(LWSP)
 	}
 }
 
@@ -30,7 +30,7 @@ final case class AcceptEncoding(matches:Seq[AcceptEncodingMatch]) {
 		acceptance(typ) > QValue.zero
 
 	def acceptance(typ:AcceptEncodingType):QValue	=
-		(AcceptanceUtil acceptance matches)(_ acceptance typ) getOrElse (
+		AcceptanceUtil.acceptance(matches)(_.acceptance(typ)).getOrElse(
 			// NOTE this is not duplicate...
 			(typ == AcceptEncodingType.Identity).cata(QValue.zero, QValue.one)
 		)

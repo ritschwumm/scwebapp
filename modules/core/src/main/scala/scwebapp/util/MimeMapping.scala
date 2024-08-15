@@ -1024,8 +1024,8 @@ object MimeMapping {
 final case class MimeMapping(table:Seq[(String,String)]) {
 	private val byExtension	=
 		table
-		.mapFilter { case (extension, typ) =>
-			MimeType parse typ map (extension -> _)
+		.mapFilter { (extension, typ) =>
+			MimeType.parse(typ).map (extension -> _)
 		}
 		.toMap
 
@@ -1033,10 +1033,10 @@ final case class MimeMapping(table:Seq[(String,String)]) {
 		nameExtension(it) flatMap forExtension
 
 	def forExtension(it:String):Option[MimeType]	=
-		byExtension get (it toLowerCase Locale.US)
+		byExtension.get(it.toLowerCase(Locale.US))
 
 	private def nameExtension(it:String):Option[String]	=
-		it lastIndexOfChar '.' map { idx =>
-			it substring idx+1
+		it.lastIndexOfChar('.').map { idx =>
+			it.substring(idx+1)
 		}
 }

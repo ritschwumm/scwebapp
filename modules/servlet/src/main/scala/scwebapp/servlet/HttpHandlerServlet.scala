@@ -13,7 +13,7 @@ object HttpHandlerServlet {
 final class HttpHandlerServlet(handler:HttpHandler) extends HttpServlet {
 	override def service(request:HttpServletRequest, response:HttpServletResponse):Unit	= {
 		if (request.getCharacterEncoding eq null) {
-			request setCharacterEncoding HttpHandlerServlet.defaultEncoding.name
+			request.setCharacterEncoding(HttpHandlerServlet.defaultEncoding.name)
 		}
 		HttpIo.execute(request, response, handler)
 	}

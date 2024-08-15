@@ -12,13 +12,13 @@ object WWWAuthenticate extends HeaderType[WWWAuthenticate] {
 		parsers.finished.parseString(it).toOption
 
 	def unparse(it:WWWAuthenticate):String	=
-		BasicAuthenticate unparse it.value
+		BasicAuthenticate.unparse(it.value)
 
 	private object parsers {
 		import HttpParsers.*
 
-		val value:TextParser[WWWAuthenticate]		= BasicAuthenticate.parser map WWWAuthenticate.apply
-		val finished:TextParser[WWWAuthenticate]	= value finishRight LWSP
+		val value:TextParser[WWWAuthenticate]		= BasicAuthenticate.parser.map(WWWAuthenticate.apply)
+		val finished:TextParser[WWWAuthenticate]	= value.finishRight(LWSP)
 	}
 }
 

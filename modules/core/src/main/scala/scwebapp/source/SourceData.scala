@@ -28,7 +28,7 @@ object SourceData {
 			size			= Files.size(file),
 			range			= HttpOutput.writeFileRange(file, _),
 			contentId		= contentId,
-			lastModified	= HttpDate fromMilliInstant lastModified,
+			lastModified	= HttpDate.fromMilliInstant(lastModified),
 			caching			= caching,
 			mimeType		= mimeType,
 			disposition		= disposition,

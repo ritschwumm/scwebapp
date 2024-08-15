@@ -20,7 +20,7 @@ object HttpDuration {
 		duration.seconds.toString
 
 	def parse(str:String):Option[HttpDuration]	=
-		str.toLongOption map HttpDuration.apply
+		str.toLongOption.map(HttpDuration.apply)
 }
 
 final case class HttpDuration(seconds:Long) extends Ordered[HttpDuration] {
@@ -32,5 +32,5 @@ final case class HttpDuration(seconds:Long) extends Ordered[HttpDuration] {
 
 	def compare(that:HttpDuration):Int	= this.seconds compare that.seconds
 
-	def toMilliDuration:MilliDuration	= HttpDuration toMilliDuration	this
+	def toMilliDuration:MilliDuration	= HttpDuration.toMilliDuration(this)
 }

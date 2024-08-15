@@ -12,13 +12,13 @@ object ContentRange extends HeaderType[ContentRange] {
 		parsers.finished.parseString(it).toOption
 
 	def unparse(it:ContentRange):String	=
-		ContentRangeValue unparse it.value
+		ContentRangeValue.unparse(it.value)
 
 	private object parsers {
 		import HttpParsers.*
 
-		val value:TextParser[ContentRange]		= ContentRangeValue.parser map ContentRange.apply
-		val finished:TextParser[ContentRange]	= value finishRight LWSP
+		val value:TextParser[ContentRange]		= ContentRangeValue.parser.map(ContentRange.apply)
+		val finished:TextParser[ContentRange]	= value.finishRight(LWSP)
 	}
 }
 

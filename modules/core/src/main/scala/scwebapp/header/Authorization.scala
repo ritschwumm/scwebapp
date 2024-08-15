@@ -15,13 +15,13 @@ object Authorization extends HeaderType[Authorization] {
 		parsers.finished.parseString(it).toOption
 
 	def unparse(it:Authorization):String	=
-		BasicAuthorization unparse it.value
+		BasicAuthorization.unparse(it.value)
 
 	private object parsers {
 		import HttpParsers.*
 
-		val value:TextParser[Authorization]		= BasicAuthorization.parser map Authorization.apply
-		val finished:TextParser[Authorization]	= value finishRight LWSP
+		val value:TextParser[Authorization]		= BasicAuthorization.parser.map(Authorization.apply)
+		val finished:TextParser[Authorization]	= value.finishRight(LWSP)
 	}
 }
 

@@ -4,7 +4,7 @@ import jakarta.servlet.*
 
 /** sets request and response character encodings to the value of the init-parameter "charset" */
 final class CharsetFilter extends Filter {
-	@volatile private var filterConfig:Option[FilterConfig] 	= None
+	@volatile private var filterConfig:Option[FilterConfig]	= None
 
 	override def init(filterConfig:FilterConfig):Unit	= {
 		this.filterConfig	= Some(filterConfig)
@@ -20,7 +20,7 @@ final class CharsetFilter extends Filter {
 	private def configCharset:Option[String]	=
 		for {
 			config	<- filterConfig
-			charset	<- Option(config getInitParameter "charset")
+			charset	<- Option(config.getInitParameter("charset"))
 		}
 		yield charset
 
@@ -28,8 +28,8 @@ final class CharsetFilter extends Filter {
 
 	def doFilter(request:ServletRequest, response:ServletResponse, filterChain:FilterChain):Unit	= {
 		// config.getServletContext log ("filter: " + response.getContentType)
-		request  setCharacterEncoding charset
-		response setCharacterEncoding charset
+		request.setCharacterEncoding(charset)
+		response.setCharacterEncoding(charset)
 		filterChain.doFilter(request, response)
 	}
 }

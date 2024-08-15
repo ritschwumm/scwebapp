@@ -52,7 +52,7 @@ object HttpResponder {
 	)
 	extends HttpResponder {
 		def modify(func:HttpResponse=>HttpResponse):HttpResponder	=
-			copy(response	= _ compose func into response)
+			copy(response	= _.compose(func) |> response)
 	}
 }
 

@@ -30,19 +30,19 @@ object SetCookie extends HeaderType[SetCookie] {
 				val expiresDate	=
 						if (duration == HttpDuration.zero)	HttpDate.zero
 						else								HttpDate.now() + duration
-				(HttpDuration unparse duration, HttpDate unparse expiresDate)
+				(HttpDuration.unparse(duration), HttpDate.unparse(expiresDate))
 			}
 			.unzip
 		*/
 
 		val avs:Vector[Option[CookieAv]]	=
 			Vector[Option[CookieAv]](
-				it.domain	map		CookieAv.Domain.apply,
-				it.path		map		CookieAv.Path.apply,
-				it.maxAge	map		CookieAv.MaxAge.apply,
-				it.expires	map		CookieAv.Expires.apply,
-				it.secure	option	CookieAv.Secure,
-				it.httpOnly	option	CookieAv.HttpOnly
+				it.domain	.map	(CookieAv.Domain.apply),
+				it.path		.map	(CookieAv.Path.apply),
+				it.maxAge	.map	(CookieAv.MaxAge.apply),
+				it.expires	.map	(CookieAv.Expires.apply),
+				it.secure	.option	(CookieAv.Secure),
+				it.httpOnly	.option	(CookieAv.HttpOnly),
 			)
 
 		val headPart	= it.name + "=" + it.value
@@ -55,7 +55,7 @@ object SetCookie extends HeaderType[SetCookie] {
 		import CookieParsers.*
 
 		// TODO wrong
-		lazy val finished:TextParser[SetCookie]	= value within OWS
+		lazy val finished:TextParser[SetCookie]	= value.within(OWS)
 
 		lazy val value:TextParser[SetCookie]	=
 			set_cookie_string map { case ((k, v), avs) =>
@@ -77,7 +77,7 @@ object SetCookie extends HeaderType[SetCookie] {
 		lazy val set_cookie_header:TextParser[((String,String),Seq[CookieAv])]	= sis("Set-Cookie:") right SP right set_cookie_string
 		*/
 
-		lazy val set_cookie_string:TextParser[((String,String),Seq[CookieAv])]	= cookie_pair next (TextParser.is(';') right CookieAv.parser).seq
+		lazy val set_cookie_string:TextParser[((String,String),Seq[CookieAv])]	= cookie_pair.next(TextParser.is(';').right(CookieAv.parser).seq)
 	}
 }
 
