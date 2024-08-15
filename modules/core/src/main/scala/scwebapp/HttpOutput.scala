@@ -46,7 +46,7 @@ object HttpOutput {
 	def writeFile(data:Path):HttpOutput	=
 		withOutputStream { ost =>
 			MoreFiles.withInputStream(data) { ist =>
-				ist.transferToPre9(ost)
+				ist.transferTo(ost)
 			}
 		}
 
@@ -72,7 +72,7 @@ object HttpOutput {
 	def pipeInputStream(data:Thunk[InputStream]):HttpOutput	=
 		withOutputStream { ost =>
 			data() use { ist =>
-				ist.transferToPre9(ost)
+				ist.transferTo(ost)
 			}
 		}
 
@@ -91,7 +91,7 @@ object HttpOutput {
 	def pipeReader(encoding:Charset, data:Thunk[Reader]):HttpOutput	=
 		withWriter(encoding) { wr =>
 			data() use { rd =>
-				rd.transferToPre10(wr)
+				rd.transferTo(wr)
 			}
 		}
 }
