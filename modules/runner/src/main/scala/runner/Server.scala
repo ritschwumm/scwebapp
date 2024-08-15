@@ -90,7 +90,7 @@ object Server extends Logging {
 			new Thread(() => stop())
 		)
 
-		val url	= show"http://${config.host.cata("127.0.0.1", _.toString)}:${config.port.value.toString}${config.path.value}"
+		val url	= show"http://${config.host.cata("127.0.0.1", _.getHostName)}:${config.port.value.toString}${config.path.value}"
 		INFO(show"point your browser to $url")
 
 		INFO("press enter to stop")
