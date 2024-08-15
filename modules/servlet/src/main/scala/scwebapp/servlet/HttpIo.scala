@@ -35,7 +35,7 @@ object HttpIo {
 					}
 				}
 				asyncCtx.addListener(
-						new AsyncListener {
+					new AsyncListener {
 						def onStartAsync(ev:AsyncEvent):Unit	= {}
 						def onComplete(ev:AsyncEvent):Unit		= { alive.set(false)	}
 						def onTimeout(ev:AsyncEvent):Unit		= { completeWith(timeoutResponse())	}
