@@ -84,9 +84,6 @@ trait HttpRequest {
 
 	def body:HttpInput
 
-	@deprecated("use queryParameters or formParameters instead", "0.310.0")
-	def parameters:CaseParameters
-
 	final def formParameters(defaultEncoding:Charset):Either[String,CaseParameters]	=
 		for {
 			contentType	<- headers.first(ContentType):Either[String,Option[ContentType]]

@@ -46,8 +46,13 @@ object mimeType {
 	//------------------------------------------------------------------------------
 	//## multipart
 
-	val multipart_byteranges	= MimeType("multipart",		"byteranges")
+	val multipart_byteranges	= MimeType("multipart",	"byteranges")
 
 	def multipart_byteranges_boundary(boundary:String):MimeType	=
 		multipart_byteranges.addParameter("boundary", boundary)
+
+	val multipart_formData		= MimeType("multipart",	"form-data")
+
+	def multipart_formData_boundary(boundary:String):MimeType	=
+		multipart_formData.addParameter("boundary", boundary)
 }
